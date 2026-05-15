@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pizza Azura — Admin Dashboard">
+    <title>Pizza Azura — Admin</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo">🍕</div>
+        <h1>Pizza Azura</h1>
+        <p>Admin Dashboard</p>
+        <div class="login-form">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-input" id="loginUser" placeholder="Masukkan username" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-input" id="loginPass" placeholder="Masukkan password" autocomplete="current-password">
+            </div>
+            <div class="login-error" id="loginError"></div>
+            <button class="login-btn" id="loginBtn" onclick="doLogin()">🔐 Login</button>
+        </div>
+    </div>
+</div>
+
+<!-- DASHBOARD (hidden until login) -->
+<div class="dashboard" id="dashboard" style="display:none;">
+
+    <!-- HEADER -->
+    <header class="admin-header">
+        <div class="admin-header-inner">
+            <a href="/admin" class="admin-logo">
+                <span class="logo-icon">🍕</span>
+                <span class="logo-text">Pizza Azura</span>
+                <span class="admin-badge">ADMIN</span>
+            </a>
+            <div class="admin-actions">
+                <button class="reset-btn" onclick="resetData()">🔄 Reset Data</button>
+                <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <!-- STATS -->
+        <div class="stats-row" id="statsRow"></div>
+
+        <!-- FILTER & ORDERS -->
+        <div class="section-header">
+            <h2 class="section-title">📋 Daftar Pesanan</h2>
+            <div class="filter-tabs">
+                <button class="filter-btn active" onclick="filterOrders('all', this)">Semua</button>
+                <button class="filter-btn" onclick="filterOrders('pending', this)">⏳ Pending</button>
+                <button class="filter-btn" onclick="filterOrders('done', this)">✅ Selesai</button>
+            </div>
+        </div>
+
+        <div class="order-list" id="orderList"></div>
+    </main>
+</div>
+
+<!-- ORDER DETAIL POPUP -->
+<div class="modal-overlay" id="orderDetailModal">
+    <div class="modal-popup">
+        <button class="modal-close" onclick="closeOrderDetail()">&times;</button>
+        <div id="orderDetailContent"></div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

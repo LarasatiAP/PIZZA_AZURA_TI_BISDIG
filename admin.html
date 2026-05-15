@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pizza Azura — Dashboard Admin untuk mengelola pesanan, antrean, dan stok bahan.">
+    <title>Pizza Azura — Admin Dashboard</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="admin-header">
+    <div class="admin-header-inner">
+        <a href="admin.html" class="admin-logo">
+            <span class="logo-icon">🍕</span>
+            <span class="logo-text">Pizza Azura</span>
+            <span class="admin-badge">ADMIN</span>
+        </a>
+        <nav class="admin-nav">
+            <button class="admin-nav-btn active" onclick="switchPanel('orders', this)" id="nav-orders">📋 Antrean</button>
+            <button class="admin-nav-btn" onclick="switchPanel('stock', this)" id="nav-stock">📦 Stok</button>
+        </nav>
+        <div class="admin-actions">
+            <a href="index.html" class="admin-link">🌐 Lihat Toko</a>
+            <button class="reset-btn" onclick="resetData()">🔄 Reset Data</button>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN -->
+<main class="admin-main">
+
+    <!-- WARNINGS BAR -->
+    <div class="warnings-bar hidden" id="warningsBar">
+        <span class="warn-icon">⚠️</span>
+        <span class="warn-text">Stok menipis:</span>
+        <div class="warn-items" id="warnItems"></div>
+    </div>
+
+    <!-- ORDERS PANEL -->
+    <div class="admin-panel active" id="panel-orders">
+        <!-- Stats -->
+        <div class="stats-row" id="orderStats"></div>
+
+        <!-- Filter -->
+        <div class="section-header">
+            <h2 class="section-title">Antrean Pesanan</h2>
+            <div class="filter-tabs">
+                <button class="filter-btn active" onclick="filterOrders('all', this)">Semua</button>
+                <button class="filter-btn" onclick="filterOrders('pending', this)">⏳ Pending</button>
+                <button class="filter-btn" onclick="filterOrders('processing', this)">📋 Diproses</button>
+                <button class="filter-btn" onclick="filterOrders('cooking', this)">🔥 Dibuat</button>
+                <button class="filter-btn" onclick="filterOrders('done', this)">✅ Selesai</button>
+            </div>
+        </div>
+
+        <!-- Order List -->
+        <div class="order-list" id="orderList"></div>
+    </div>
+
+    <!-- STOCK PANEL -->
+    <div class="admin-panel" id="panel-stock">
+        <div class="section-header">
+            <h2 class="section-title">Monitoring Stok Bahan</h2>
+        </div>
+        <div class="stock-grid" id="stockGrid"></div>
+    </div>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
