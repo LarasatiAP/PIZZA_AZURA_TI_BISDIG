@@ -204,6 +204,12 @@ app.post('/api/reset', authMiddleware, (req, res) => {
 // PAGE ROUTES
 // ============================================
 
+// Admin login page — always accessible
+app.get('/admin-login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
+});
+
+// Admin dashboard — redirect to login if no valid token
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });

@@ -15,9 +15,9 @@ let currentOrderFilter = 'all';
 let autoRefreshInterval = null;
 
 // ---- HELPERS ----
-function getToken() { return localStorage.getItem('pizzaAzura_adminToken'); }
-function setToken(token) { localStorage.setItem('pizzaAzura_adminToken', token); }
-function clearToken() { localStorage.removeItem('pizzaAzura_adminToken'); }
+function getToken() { return sessionStorage.getItem('adminToken'); }
+function setToken(token) { sessionStorage.setItem('adminToken', token); }
+function clearToken() { sessionStorage.removeItem('adminToken'); sessionStorage.removeItem('adminUsername'); }
 
 function formatCurrency(amount) { return 'Rp ' + amount.toLocaleString('id-ID'); }
 
@@ -31,90 +31,44 @@ async function apiFetch(url, options = {}) {
 
 // ---- INITIALIZE ----
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check if already logged in
     const token = getToken();
     if (token) {
         try {
             const res = await apiFetch('/api/auth/check');
             if (res.ok) {
+                const data = await res.json();
+                const username = data.username || sessionStorage.getItem('adminUsername') || 'Admin';
+                const usernameEl = document.getElementById('adminUsername');
+                const avatarEl = document.getElementById('userAvatar');
+                if (usernameEl) usernameEl.textContent = username;
+                if (avatarEl) avatarEl.textContent = username.charAt(0).toUpperCase();
                 showDashboard();
                 return;
             }
         } catch (e) { /* token invalid */ }
         clearToken();
     }
-    showLogin();
-});
-
-// Enter key login
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
-        doLogin();
-    }
+    // Redirect to dedicated login page
+    window.location.href = '/admin-login';
 });
 
 // ---- AUTH ----
 function showLogin() {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'none';
-    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+    window.location.href = '/admin-login';
 }
 
 function showDashboard() {
-    document.getElementById('loginScreen').style.display = 'none';
+    const loading = document.getElementById('authLoading');
+    if (loading) loading.style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadDashboard();
     autoRefreshInterval = setInterval(loadDashboard, 5000);
 }
 
-async function doLogin() {
-    const username = document.getElementById('loginUser').value.trim();
-    const password = document.getElementById('loginPass').value;
-    const errorEl = document.getElementById('loginError');
-    const btn = document.getElementById('loginBtn');
-
-    if (!username || !password) {
-        errorEl.textContent = '⚠️ Masukkan username dan password';
-        return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = '⏳ Memproses...';
-    errorEl.textContent = '';
-
-    try {
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            errorEl.textContent = '❌ ' + (data.error || 'Login gagal');
-            btn.disabled = false;
-            btn.textContent = '🔐 Login';
-            return;
-        }
-
-        setToken(data.token);
-        showDashboard();
-        showToast('✅ Login berhasil!');
-
-    } catch (err) {
-        errorEl.textContent = '❌ Terjadi kesalahan';
-    }
-
-    btn.disabled = false;
-    btn.textContent = '🔐 Login';
-}
-
 async function doLogout() {
     try { await apiFetch('/api/auth/logout', { method: 'POST' }); } catch (e) {}
     clearToken();
-    showLogin();
-    showToast('👋 Logout berhasil');
+    window.location.href = '/admin-login';
 }
 
 // ---- DASHBOARD ----
