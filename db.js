@@ -26,6 +26,7 @@ async function getDb() {
 
     initSchema();
     seedIfEmpty();
+    seedSettingsIfEmpty();
     saveDb();
 
     return db;
@@ -105,6 +106,12 @@ function initSchema() {
             FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE
         )
     `);
+    db.run(`
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    `);
 }
 
 // ---- SEED DATA ----
@@ -146,6 +153,29 @@ function seedIfEmpty() {
     }
 
     console.log('✅ Database seeded successfully');
+}
+
+function seedSettingsIfEmpty() {
+    const settingsCheck = db.exec("SELECT COUNT(*) FROM settings");
+    if (settingsCheck.length === 0 || settingsCheck[0].values[0][0] === 0) {
+        const defaultSettings = [
+            ['slogan', 'Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.'],
+            ['wa_link', 'https://wa.me/6285198042502'],
+            ['ig_link', '#'],
+            ['fb_link', '#'],
+            ['tw_link', '#'],
+            ['op_weekday', 'Senin - Jumat: 10.00 - 22.00'],
+            ['op_weekend', 'Sabtu - Minggu: 11.00 - 23.00'],
+            ['op_holiday', 'Libur Nasional: Buka'],
+            ['contact_address', '📍 Jl. Sudirman No. 123, Jakarta'],
+            ['contact_phone', '📞 +62 851-9804-2502'],
+            ['contact_email', '✉️ hello@pizzaazura.com']
+        ];
+        for (const s of defaultSettings) {
+            db.run("INSERT INTO settings (key, value) VALUES (?, ?)", s);
+        }
+        console.log('✅ Settings seeded');
+    }
 }
 
 // ---- QUERY HELPERS ----

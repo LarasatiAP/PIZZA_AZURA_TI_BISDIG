@@ -292,3 +292,13 @@ function showToast(message) {
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
+
+// ---- MOBILE MENU ----
+function toggleMobileMenu() {
+    if (window.innerWidth <= 768) {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) {
+            menu.classList.toggle('open');
+        }
+    }
+}

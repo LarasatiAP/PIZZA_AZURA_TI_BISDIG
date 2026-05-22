@@ -38,30 +38,61 @@
             <img src="/images/logo.png" alt="Pizza Azura" class="logo-img">
         </a>
         <div class="nav-links">
-            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Light/Dark">
-                <span class="theme-icon" id="themeIcon">☀️</span>
-            </button>
-            <a href="/admin-login" class="cart-btn" style="text-decoration: none;">🔧 Admin</a>
-            <button class="cart-btn" id="openCartBtn" onclick="openCart()">
-                🛒 Keranjang
+            <div class="nav-menu" id="navMenu">
+                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Light/Dark">
+                    <div class="theme-thumb" id="themeThumb"></div>
+                </button>
+            </div>
+            
+            <button class="cart-btn cart-icon-btn" id="openCartBtn" onclick="openCart()" title="Keranjang">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                 <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+
+            <button class="burger-btn" onclick="toggleMobileMenu()">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
         </div>
     </div>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-pizza-bg">
-        <img src="/images/pizza_bg.png" alt="" class="hero-pizza-img">
+<!-- HERO SCROLLYTELLING BANNER -->
+<section class="scrolly-banner" id="scrollyBanner">
+    <!-- PRELOADER -->
+    <div id="scrollyPreloader" class="scrolly-preloader">
+        <div class="scrolly-spinner"></div>
+        <p>Loading Experience... <span id="scrollyProgress">0</span>%</p>
     </div>
-    <h1>Pesan <span>Pizza</span> Favoritmu<br>Tanpa Antri!</h1>
-    <p class="hero-tagline">Freshly Baked Est.2020</p>
-    <a href="https://wa.me/6285198042502" class="hero-wa" target="_blank">
-        <svg class="wa-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        085198042502
-    </a>
+    
+    <div class="scrolly-sticky">
+        <canvas id="heroCanvas"></canvas>
+        
+        <div class="scrolly-text-overlay hero-split" id="textOverlay0">
+            <h1 class="hero-banner-title">Pesan Pizza Favoritmu<br><span>Tanpa Antri!</span></h1>
+            <p class="hero-banner-desc">Pilih menu, tambahkan topping, dan checkout langsung dari HP kamu. Cepat, mudah, dan pastinya nikmat.</p>
+        </div>
+        
+        <div class="scrolly-text-overlay text-left" id="textOverlay1">
+            <h2 class="scrolly-slogan">Dibuat dengan Bahan Segar</h2>
+        </div>
+        
+        <div class="scrolly-text-overlay text-right" id="textOverlay2">
+            <h2 class="scrolly-slogan">Dipanggang Sempurna untuk Anda</h2>
+        </div>
+        
+        <div class="scrolly-text-overlay" id="textOverlay3">
+            <h2 class="scrolly-slogan mb-4">Mulai Pesan Sekarang</h2>
+            <button class="hero-btn-primary" onclick="document.querySelector('.menu-section').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
+        </div>
+    </div>
+</section>
+
+<!-- BEST SELLERS -->
+<section class="bestseller-section">
+    <h2 class="section-heading" style="color: var(--accent);"><span style="font-size: 24px;">🔥</span> Top 3 Menu Terlaris</h2>
+    <div class="bestseller-grid" id="bestsellerGrid">
+        <!-- JS RENDER -->
+    </div>
 </section>
 
 <!-- MENU GRID -->
@@ -71,6 +102,42 @@
         <div class="loading-state"><div class="spinner"></div><p>Memuat menu...</p></div>
     </div>
 </section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="Pizza Azura" class="logo-img">
+            </a>
+            <p id="footerSlogan">Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.</p>
+            <div class="footer-socials">
+                <a href="#" aria-label="Instagram" id="footerIgLink"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                <a href="#" aria-label="Facebook" id="footerFbLink"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                <a href="#" aria-label="Twitter" id="footerTwLink"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h3>Jam Operasional</h3>
+            <ul>
+                <li id="footerOpWeekday">Senin - Jumat: 10.00 - 22.00</li>
+                <li id="footerOpWeekend">Sabtu - Minggu: 11.00 - 23.00</li>
+                <li id="footerOpHoliday">Libur Nasional: Buka</li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h3>Hubungi Kami</h3>
+            <ul>
+                <li id="footerAddress">📍 Jl. Sudirman No. 123, Jakarta</li>
+                <li id="footerPhone">📞 +62 851-9804-2502</li>
+                <li id="footerEmail">✉️ hello@pizzaazura.com</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Pizza Azura. All rights reserved.</p>
+    </div>
+</footer>
 
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal">
@@ -105,5 +172,6 @@
 
 <div class="toast" id="toast"></div>
 <script src="/js/app.js"></script>
+<script src="/js/scroll.js"></script>
 </body>
 </html>

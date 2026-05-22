@@ -87,6 +87,12 @@ body::before {
     font-weight: 600;
 }
 
+.admin-nav-container {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
 .admin-nav {
     display: flex;
     align-items: center;
@@ -541,13 +547,85 @@ body::before {
 
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ---- BURGER MENU ---- */
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 101;
+}
+
+.burger-menu span {
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 10px;
+    transition: all 0.3s linear;
+}
+
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
-    .admin-header-inner { flex-wrap: wrap; height: auto; padding: 12px 0; gap: 8px; }
-    .admin-nav { width: 100%; overflow-x: auto; }
+    .burger-menu { display: flex; }
+    
+    .admin-header-inner { 
+        justify-content: space-between; 
+        height: 70px;
+    }
+
+    .admin-nav-container {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: rgba(15, 13, 21, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        gap: 16px;
+        z-index: 99;
+    }
+
+    .admin-nav-container.open {
+        display: flex;
+    }
+
+    .admin-nav { 
+        flex-direction: column;
+        width: 100%; 
+    }
+    
+    .admin-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    
+    .admin-nav-btn, .admin-link, .reset-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .stock-grid { grid-template-columns: 1fr; }
     .order-card-header { flex-direction: column; align-items: flex-start; }
+    
+    /* Order Cards Responsive */
+    .order-card { padding: 14px; }
+    .order-id { font-size: 14px; }
+    .order-meta { font-size: 11px; gap: 8px; }
+    .customer-name { font-size: 13px; }
+    .customer-tag { font-size: 11px; padding: 3px 8px; }
+    .order-item-row { font-size: 12px; padding: 4px 0; }
+    .order-total { font-size: 14px; margin-bottom: 10px; }
+    .order-actions { gap: 6px; }
+    .action-btn { padding: 6px 12px; font-size: 11px; }
 }
 
 ::-webkit-scrollbar { width: 6px; }

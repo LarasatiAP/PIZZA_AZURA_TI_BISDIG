@@ -18,13 +18,20 @@
             <span class="logo-text">Pizza Azura</span>
             <span class="admin-badge">ADMIN</span>
         </a>
-        <nav class="admin-nav">
-            <button class="admin-nav-btn active" onclick="switchPanel('orders', this)" id="nav-orders">📋 Antrean</button>
-            <button class="admin-nav-btn" onclick="switchPanel('stock', this)" id="nav-stock">📦 Stok</button>
-        </nav>
-        <div class="admin-actions">
-            <a href="index.html" class="admin-link">🌐 Lihat Toko</a>
-            <button class="reset-btn" onclick="resetData()">🔄 Reset Data</button>
+        <button class="burger-menu" id="burgerMenu" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="admin-nav-container" id="mobileMenu">
+            <nav class="admin-nav">
+                <button class="admin-nav-btn active" onclick="switchPanel('orders', this); toggleMobileMenu()" id="nav-orders">📋 Antrean</button>
+                <button class="admin-nav-btn" onclick="switchPanel('stock', this); toggleMobileMenu()" id="nav-stock">📦 Stok</button>
+            </nav>
+            <div class="admin-actions">
+                <a href="index.html" class="admin-link">🌐 Lihat Toko</a>
+                <button class="reset-btn" onclick="resetData(); toggleMobileMenu()">🔄 Reset Data</button>
+            </div>
         </div>
     </div>
 </header>

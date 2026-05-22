@@ -245,7 +245,7 @@ function showOrderDetail(orderId) {
 
     let actionHtml = '';
     if (order.status === 'pending') {
-        actionHtml = `<button class="action-btn success" style="width:100%;padding:16px;font-size:18px;" onclick="updateStatus('${order.id}','done');closeOrderDetail()">✅ Selesaikan Pesanan</button>`;
+        actionHtml = `<button class="action-btn success modal-action-btn" onclick="updateStatus('${order.id}','done');closeOrderDetail()">✅ Selesaikan Pesanan</button>`;
     }
 
     document.getElementById('orderDetailContent').innerHTML = `
@@ -287,3 +287,15 @@ function closeOrderDetail() {
 document.getElementById('orderDetailModal')?.addEventListener('click', e => {
     if (e.target.id === 'orderDetailModal') closeOrderDetail();
 });
+
+// ---- MOBILE MENU ----
+function toggleMobileMenu() {
+    if (window.innerWidth <= 768) {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) {
+            menu.classList.toggle('open');
+        }
+    }
+}
+
+// Settings logic moved to admin-settings.js

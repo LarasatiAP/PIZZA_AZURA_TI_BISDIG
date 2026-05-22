@@ -73,6 +73,32 @@ app.get('/api/toppings', (req, res) => {
 });
 
 // ============================================
+// SETTINGS ROUTES
+// ============================================
+
+app.get('/api/settings', (req, res) => {
+    const settings = queryAll('SELECT * FROM settings');
+    const result = {};
+    for (const s of settings) {
+        result[s.key] = s.value;
+    }
+    res.json(result);
+});
+
+app.put('/api/settings', authMiddleware, (req, res) => {
+    const settings = req.body;
+    for (const key in settings) {
+        const existing = queryOne('SELECT * FROM settings WHERE key = ?', [key]);
+        if (existing) {
+            runSql('UPDATE settings SET value = ? WHERE key = ?', [settings[key], key]);
+        } else {
+            runSql('INSERT INTO settings (key, value) VALUES (?, ?)', [key, settings[key]]);
+        }
+    }
+    res.json({ success: true });
+});
+
+// ============================================
 // ORDER ROUTES
 // ============================================
 
@@ -212,6 +238,11 @@ app.get('/admin-login', (req, res) => {
 // Admin dashboard — redirect to login if no valid token
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Admin settings form page
+app.get('/admin-settings', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-settings.html'));
 });
 
 // ============================================

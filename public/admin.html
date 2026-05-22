@@ -61,13 +61,21 @@
                 <span class="logo-text">Pizza Azura</span>
                 <span class="admin-badge">ADMIN</span>
             </a>
-            <div class="admin-actions" style="display:flex;align-items:center;gap:12px;">
-                <div class="admin-user-info">
-                    <div class="user-avatar" id="userAvatar">A</div>
-                    <span id="adminUsername">Admin</span>
+            <button class="burger-menu" id="burgerMenu" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="admin-nav-container" id="mobileMenu">
+                <div class="admin-actions">
+                    <div class="admin-user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <span id="adminUsername">Admin</span>
+                    </div>
+                    <button class="reset-btn" onclick="window.location.href='/admin-settings';">⚙️ Pengaturan</button>
+                    <button class="reset-btn" onclick="resetData(); toggleMobileMenu()">🔄 Reset Data</button>
+                    <button class="logout-btn" onclick="doLogout(); toggleMobileMenu()">🚪 Logout</button>
                 </div>
-                <button class="reset-btn" onclick="resetData()">🔄 Reset Data</button>
-                <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
             </div>
         </div>
     </header>

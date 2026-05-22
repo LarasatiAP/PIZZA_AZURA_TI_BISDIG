@@ -267,10 +267,95 @@ body::before {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
 
+/* ---- BURGER MENU ---- */
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 101;
+}
+
+.burger-menu span {
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 10px;
+    transition: all 0.3s linear;
+}
+
+.admin-nav-container {
+    display: flex;
+    align-items: center;
+}
+
+.modal-action-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    justify-content: center;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
-    .admin-header-inner { flex-wrap: wrap; height: auto; padding: 12px 0; gap: 8px; }
+    .burger-menu { display: flex; }
+    
+    .admin-header-inner { 
+        justify-content: space-between; 
+        height: 70px;
+        flex-wrap: nowrap;
+        padding: 0; 
+    }
+
+    .admin-nav-container {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: rgba(26, 26, 30, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        z-index: 99;
+    }
+
+    .admin-nav-container.open { display: flex; }
+
+    .admin-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .admin-actions > button, .admin-actions > div {
+        width: 100%;
+    }
+
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .order-card-header { flex-direction: column; align-items: flex-start; }
     .login-card { margin: 16px; padding: 32px 24px; }
+    
+    /* Order Detail Popup Mobile Size */
+    .modal-popup {
+        padding: 20px;
+        width: 90%;
+        max-height: 85vh;
+    }
+    
+    .modal-close {
+        top: 12px;
+        right: 12px;
+    }
+    
+    .modal-action-btn {
+        padding: 12px;
+        font-size: 15px;
+    }
 }
