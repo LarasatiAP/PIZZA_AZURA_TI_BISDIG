@@ -1,0 +1,15 @@
+{
+  "name": "pizza-azura",
+  "version": "1.0.0",
+  "description": "Pizza Azura — Fullstack Digital Ordering System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "nodemon": "^3.1.14",
+    "sql.js": "^1.11.0"
+  }
+}

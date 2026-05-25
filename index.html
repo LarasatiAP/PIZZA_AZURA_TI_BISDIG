@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pizza Azura — Pesan pizza favorit Anda secara digital. Pilih menu, topping, dan langsung checkout tanpa antri!">
+    <title>Pizza Azura — Digital Ordering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+</head>
+<body>
+<!-- PRELOADER -->
+<div id="scrollyPreloader" class="scrolly-preloader">
+    <div class="scrolly-spinner"></div>
+    <p>Loading Experience... <span id="scrollyProgress">0</span>%</p>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">🍕</span>
+            <span class="logo-text">Pizza Azura</span>
+        </a>
+        <div class="nav-links">
+            <a href="admin.html" class="nav-link">🔧 Admin</a>
+            <button class="cart-btn" id="openCartBtn" onclick="openCart()">
+                🛒 Keranjang
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- HERO SCROLLYTELLING BANNER -->
+<section class="scrolly-banner" id="scrollyBanner">
+    <div class="scrolly-sticky">
+        <canvas id="heroCanvas"></canvas>
+        
+        <div class="scrolly-text-overlay" id="textOverlay0">
+            <h1 class="hero-banner-title">Pesan Pizza Favoritmu<br><span>Tanpa Antri!</span></h1>
+            <p class="hero-banner-desc">Pilih menu, tambahkan topping, dan checkout langsung dari HP kamu. Cepat, mudah, dan pastinya nikmat.</p>
+        </div>
+        
+        <div class="scrolly-text-overlay text-left" id="textOverlay1">
+            <h2 class="scrolly-slogan">Dibuat dengan Bahan Segar</h2>
+        </div>
+        
+        <div class="scrolly-text-overlay text-right" id="textOverlay2">
+            <h2 class="scrolly-slogan">Dipanggang Sempurna untuk Anda</h2>
+        </div>
+        
+        <div class="scrolly-text-overlay" id="textOverlay3">
+            <h2 class="scrolly-slogan mb-4">Mulai Pesan Sekarang</h2>
+            <button class="hero-btn-primary" onclick="document.querySelector('.menu-section').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
+        </div>
+    </div>
+</section>
+
+
+<!-- CATEGORY TABS -->
+<div class="category-tabs">
+    <button class="tab-btn active" onclick="filterMenu('all')">🍕 Semua</button>
+    <button class="tab-btn" onclick="filterMenu('classic')">⭐ Classic</button>
+    <button class="tab-btn" onclick="filterMenu('premium')">👑 Premium</button>
+</div>
+
+<!-- MENU GRID -->
+<section class="menu-section">
+    <div class="menu-grid" id="menuGrid">
+        <!-- Rendered by JS -->
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🍕</span>
+                <span class="logo-text">Pizza Azura</span>
+            </a>
+            <p>Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.</p>
+            <div class="footer-socials">
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h3>Jam Operasional</h3>
+            <ul>
+                <li>Senin - Jumat: 10.00 - 22.00</li>
+                <li>Sabtu - Minggu: 11.00 - 23.00</li>
+                <li>Libur Nasional: Buka</li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h3>Hubungi Kami</h3>
+            <ul>
+                <li>📍 Jl. Sudirman No. 123, Jakarta</li>
+                <li>📞 +62 851-9804-2502</li>
+                <li>✉️ hello@pizzaazura.com</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Pizza Azura. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Detail Menu</h2>
+            <button class="modal-close" onclick="closeModal('detailModal')">&times;</button>
+        </div>
+        <div id="detailContent">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="modal-overlay" id="cartModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>🛒 Keranjang</h2>
+            <button class="modal-close" onclick="closeModal('cartModal')">&times;</button>
+        </div>
+        <div id="cartContent">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>📋 Checkout</h2>
+            <button class="modal-close" onclick="closeModal('checkoutModal')">&times;</button>
+        </div>
+        <div id="checkoutContent">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ORDER SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+    <div class="modal">
+        <div id="successContent" style="text-align:center; padding: 20px 0;">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ORDER STATUS VIEW (hidden by default) -->
+<div id="statusView" style="display:none;">
+    <div class="status-container">
+        <a href="#" class="back-btn" onclick="hideStatusView()">← Kembali ke Menu</a>
+        <div class="status-card" id="statusCard">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/scroll.js"></script>
+</body>
+</html>

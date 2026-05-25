@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Pengaturan — Pizza Azura</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+</head>
+<body>
+
+<header class="admin-header">
+    <div class="admin-header-inner">
+        <a href="/admin" class="admin-logo">
+            <span class="logo-icon">🍕</span>
+            <span class="logo-text">Pizza Azura</span>
+            <span class="admin-badge">ADMIN</span>
+        </a>
+        <div class="admin-nav-container">
+            <div class="admin-actions">
+                <button class="reset-btn" onclick="window.location.href='/admin'">🔙 Kembali ke Dashboard</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="admin-main">
+    <div class="section-header">
+        <h2 class="section-title" id="formTitle">⚙️ Edit Pengaturan</h2>
+    </div>
+    
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:600px;">
+        <div id="dynamicForm">
+            <div style="text-align:center;color:var(--text-muted);padding:20px;">Memuat form...</div>
+        </div>
+        <button id="saveBtn" onclick="saveSettings()" style="width:100%;margin-top:20px;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:600;font-family:inherit;cursor:pointer;font-size:14px;display:none;">💾 Simpan Pengaturan</button>
+    </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/admin-settings.js"></script>
+</body>
+</html>
