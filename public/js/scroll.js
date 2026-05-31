@@ -11,51 +11,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const images = [];
     let loadedImages = 0;
     let currentFrame = -1;
+    let initialFrameLoaded = false;
+    let minLoadedIndex = -1;
+    let maxLoadedIndex = -1;
 
-    // Load images
+    // Immediately hide the preloader
+    if (preloader) {
+        preloader.classList.add('hidden');
+    }
+
+    // Load images in forward order (adapting to manually deleted frames)
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
         const img = new Image();
-        // Pad with zeros to match ezgif-frame-001.jpg format
         const paddedIndex = i.toString().padStart(3, '0');
-        img.src = `pizza/ezgif-frame-${paddedIndex}.jpg`;
+        img.src = `pizza2/ezgif-frame-${paddedIndex}.png`;
         
         img.onload = () => {
             loadedImages++;
-            const percent = Math.floor((loadedImages / TOTAL_FRAMES) * 100);
-            progressText.textContent = percent;
+            images[i - 1] = img;
             
-            if (loadedImages === TOTAL_FRAMES) {
+            // Update loaded boundaries dynamically
+            if (minLoadedIndex === -1 || (i - 1) < minLoadedIndex) {
+                minLoadedIndex = i - 1;
+            }
+            if (maxLoadedIndex === -1 || (i - 1) > maxLoadedIndex) {
+                maxLoadedIndex = i - 1;
+            }
+            
+            if (!initialFrameLoaded) {
+                initialFrameLoaded = true;
                 initCanvas();
+            } else {
+                // Reactive update: if we're at the top and still loading,
+                // re-evaluate scroll to display the absolute best/closest available frame.
+                if (window.scrollY === 0 || currentFrame === -1) {
+                    handleScroll();
+                }
+            }
+
+            if (progressText) {
+                const percent = Math.floor((loadedImages / TOTAL_FRAMES) * 100);
+                progressText.textContent = percent;
             }
         };
         
-        // Handle image load error gracefully
         img.onerror = () => {
             loadedImages++;
-            if (loadedImages === TOTAL_FRAMES) {
+            // In case some images are missing/deleted, still ensure initialization occurs
+            if (loadedImages === TOTAL_FRAMES && !initialFrameLoaded) {
+                initialFrameLoaded = true;
                 initCanvas();
             }
         };
-        
-        images.push(img);
     }
 
     function initCanvas() {
-        // Hide preloader
-        preloader.classList.add('hidden');
-        
-        // Set canvas internal resolution to match the first image
-        if (images[0].naturalWidth) {
-            canvas.width = images[0].naturalWidth;
-            canvas.height = images[0].naturalHeight;
-        } else {
-            canvas.width = 1920;
-            canvas.height = 1080;
-        }
+        // High-DPI Resolution Setup
+        resizeCanvas();
 
-        // Initial draw
-        updateCanvas(0);
-        
         // Setup scroll listener with requestAnimationFrame for performance
         let ticking = false;
         window.addEventListener('scroll', () => {
@@ -68,32 +81,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        window.addEventListener('resize', resizeCanvas);
+
         // Trigger once to set initial state
         handleScroll();
+    }
+
+    function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+
+        // Apply high quality smoothing
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // Redraw current frame
+        if (currentFrame !== -1) {
+            updateCanvas(currentFrame);
+        } else {
+            // Draw initial frame (which fallback will map to the first loaded frame)
+            updateCanvas(minLoadedIndex !== -1 ? minLoadedIndex : 0);
+        }
     }
 
     function handleScroll() {
         const bannerRect = banner.getBoundingClientRect();
         
-        // Calculate how much we've scrolled inside the banner
-        // when banner.top == 0, progress is 0.
-        // when banner.bottom == window.innerHeight, progress is 1.
-        
         const startScroll = 0;
-        // The total scrollable distance is banner height minus window height
         const maxScroll = banner.scrollHeight - window.innerHeight;
         
-        // banner.offsetTop is the distance from top of document
         const scrollY = window.scrollY;
         const bannerTop = banner.offsetTop;
         
         let progress = (scrollY - bannerTop) / maxScroll;
-        
-        // Clamp progress between 0 and 1
         progress = Math.max(0, Math.min(1, progress));
         
-        // Map progress to frame index
-        const frameIndex = Math.floor(progress * (TOTAL_FRAMES - 1));
+        // Map progress dynamically to the exact range of files that successfully loaded!
+        let frameIndex;
+        if (minLoadedIndex !== -1 && maxLoadedIndex !== -1 && maxLoadedIndex > minLoadedIndex) {
+            frameIndex = minLoadedIndex + Math.floor(progress * (maxLoadedIndex - minLoadedIndex));
+        } else {
+            frameIndex = Math.floor(progress * (TOTAL_FRAMES - 1));
+        }
         
         if (frameIndex !== currentFrame) {
             updateCanvas(frameIndex);
@@ -104,15 +136,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCanvas(index) {
-        const img = images[index];
+        let img = images[index];
+        
+        // If image is not loaded/exists, find the closest loaded one
+        if (!img || !img.complete || !img.naturalWidth) {
+            let closestImg = null;
+            let minDiff = Infinity;
+            for (let i = 0; i < TOTAL_FRAMES; i++) {
+                if (images[i] && images[i].complete && images[i].naturalWidth) {
+                    const diff = Math.abs(i - index);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestImg = images[i];
+                    }
+                }
+            }
+            img = closestImg;
+        }
+
         if (img && img.complete && img.naturalWidth) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Draw using object-fit: cover logic
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            const imgWidth = img.naturalWidth;
+            const imgHeight = img.naturalHeight;
+
+            const canvasRatio = canvasWidth / canvasHeight;
+            const imgRatio = imgWidth / imgHeight;
+
+            let sx, sy, sWidth, sHeight;
+
+            if (imgRatio > canvasRatio) {
+                // Image is wider than canvas
+                sHeight = imgHeight;
+                sWidth = imgHeight * canvasRatio;
+                sx = (imgWidth - sWidth) / 2;
+                sy = 0;
+            } else {
+                // Image is taller than canvas
+                sWidth = imgWidth;
+                sHeight = imgWidth / canvasRatio;
+                sx = 0;
+                sy = (imgHeight - sHeight) / 2;
+            }
+
+            ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvasWidth, canvasHeight);
         }
     }
 
     function updateTextOverlays(progress) {
-        // Text overlay timing
+        // Text overlay timing (start overlay0 at -0.05 for public version)
         const overlays = [
             { el: document.getElementById('textOverlay0'), start: -0.05, end: 0.15 },
             { el: document.getElementById('textOverlay1'), start: 0.25, end: 0.40 },
@@ -123,19 +198,15 @@ document.addEventListener('DOMContentLoaded', () => {
         overlays.forEach(overlay => {
             if (!overlay.el) return;
             
-            // Fade in and out
             let opacity = 0;
-            const fadeWindow = 0.05; // 5% scroll for fade transition
+            const fadeWindow = 0.05;
             
             if (progress >= overlay.start && progress <= overlay.end) {
-                // Fully visible in the middle
                 opacity = 1;
                 
-                // Fade in at the start
                 if (progress < overlay.start + fadeWindow) {
                     opacity = (progress - overlay.start) / fadeWindow;
                 }
-                // Fade out at the end
                 else if (progress > overlay.end - fadeWindow) {
                     opacity = (overlay.end - progress) / fadeWindow;
                 }

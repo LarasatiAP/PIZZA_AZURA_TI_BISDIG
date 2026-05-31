@@ -5,6 +5,7 @@
  */
 
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { getDb, saveDb, queryAll, queryOne, runSql, getLastInsertId, getNextQueueNumber } = require('./db');
@@ -16,7 +17,8 @@ const PORT = 3000;
 const activeTokens = new Map();
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---- AUTH MIDDLEWARE ----
@@ -66,6 +68,107 @@ app.post('/api/auth/logout', (req, res) => {
 
 app.get('/api/menu', (req, res) => {
     res.json(queryAll('SELECT * FROM menu'));
+});
+
+// Helper to save Base64 image to filesystem
+function saveBase64Image(base64Str, menuId) {
+    if (!base64Str || !base64Str.startsWith('data:image/')) {
+        return base64Str;
+    }
+    
+    try {
+        const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (!matches || matches.length !== 3) {
+            return base64Str;
+        }
+        
+        const contentType = matches[1];
+        const base64Data = matches[2];
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        let ext = 'png';
+        if (contentType.includes('jpeg') || contentType.includes('jpg')) {
+            ext = 'jpg';
+        } else if (contentType.includes('gif')) {
+            ext = 'gif';
+        } else if (contentType.includes('webp')) {
+            ext = 'webp';
+        }
+        
+        const uploadDir = path.join(__dirname, 'public', 'images', 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        
+        const fileName = `menu_${menuId}_${Date.now()}.${ext}`;
+        const filePath = path.join(uploadDir, fileName);
+        fs.writeFileSync(filePath, buffer);
+        
+        return `/images/uploads/${fileName}`;
+    } catch (err) {
+        console.error('Error saving base64 image:', err);
+        return base64Str;
+    }
+}
+
+// Add a new menu item (admin only)
+app.post('/api/menu', authMiddleware, (req, res) => {
+    let { id, name, description, image, category, price_s, price_m, is_bestseller } = req.body;
+    if (!id || !name || price_s === undefined || price_m === undefined) {
+        return res.status(400).json({ error: 'Data menu tidak lengkap' });
+    }
+    
+    const existing = queryOne('SELECT * FROM menu WHERE id = ?', [id]);
+    if (existing) {
+        return res.status(400).json({ error: 'ID Menu sudah digunakan' });
+    }
+    
+    if (image && image.startsWith('data:image/')) {
+        image = saveBase64Image(image, id);
+    }
+    
+    runSql(
+        'INSERT INTO menu (id, name, description, image, category, price_s, price_m, price_l, is_bestseller) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)',
+        [id, name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0]
+    );
+    res.json({ success: true });
+});
+
+// Update a menu item (admin only)
+app.put('/api/menu/:id', authMiddleware, (req, res) => {
+    let { name, description, image, category, price_s, price_m, is_bestseller } = req.body;
+    const { id } = req.params;
+    
+    const existing = queryOne('SELECT * FROM menu WHERE id = ?', [id]);
+    if (!existing) {
+        return res.status(404).json({ error: 'Menu tidak ditemukan' });
+    }
+    
+    if (!name || price_s === undefined || price_m === undefined) {
+        return res.status(400).json({ error: 'Data menu tidak lengkap' });
+    }
+    
+    if (image && image.startsWith('data:image/')) {
+        image = saveBase64Image(image, id);
+    }
+    
+    runSql(
+        'UPDATE menu SET name = ?, description = ?, image = ?, category = ?, price_s = ?, price_m = ?, is_bestseller = ? WHERE id = ?',
+        [name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, id]
+    );
+    res.json({ success: true });
+});
+
+// Delete a menu item (admin only)
+app.delete('/api/menu/:id', authMiddleware, (req, res) => {
+    const { id } = req.params;
+    const existing = queryOne('SELECT * FROM menu WHERE id = ?', [id]);
+    if (!existing) {
+        return res.status(404).json({ error: 'Menu tidak ditemukan' });
+    }
+    
+    runSql('DELETE FROM menu WHERE id = ?', [id]);
+    res.json({ success: true });
 });
 
 app.get('/api/toppings', (req, res) => {

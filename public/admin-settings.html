@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengaturan Toko — Pizza Azura</title>
-    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="css/admin.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
     <style>
         .settings-grid {
@@ -128,16 +128,50 @@
         <div class="settings-card">
             <h3>🌐 Media Sosial</h3>
             <div class="form-group">
-                <label>Link Instagram</label>
-                <input type="text" id="set_ig_link" class="form-input" placeholder="https://instagram.com/...">
-            </div>
-            <div class="form-group">
                 <label>Link Facebook</label>
                 <input type="text" id="set_fb_link" class="form-input" placeholder="https://facebook.com/...">
             </div>
             <div class="form-group">
-                <label>Link Twitter / X</label>
-                <input type="text" id="set_tw_link" class="form-input" placeholder="https://twitter.com/...">
+                <label>Link Instagram</label>
+                <input type="text" id="set_ig_link" class="form-input" placeholder="https://instagram.com/...">
+            </div>
+            <div class="form-group">
+                <label>Link TikTok</label>
+                <input type="text" id="set_tt_link" class="form-input" placeholder="https://vt.tiktok.com/...">
+            </div>
+        </div>
+
+        <!-- Tentang Pizza Azura -->
+        <div class="settings-card">
+            <h3>📖 Tentang Pizza Azura</h3>
+            <div class="form-group">
+                <label>Deskripsi Tentang Kami (Gunakan baris baru untuk memisah paragraf)</label>
+                <textarea id="set_about_content" class="form-input" rows="8" placeholder="Masukkan cerita/deskripsi Tentang Kami..."></textarea>
+            </div>
+        </div>
+
+        <!-- WebGIS Lokasi Toko -->
+        <div class="settings-card">
+            <h3>🗺️ WebGIS Lokasi Toko</h3>
+            <div class="form-group">
+                <label>Latitude (Garis Lintang)</label>
+                <input type="text" id="set_store_lat" class="form-input" placeholder="contoh: -6.2146">
+            </div>
+            <div class="form-group">
+                <label>Longitude (Garis Bujur)</label>
+                <input type="text" id="set_store_lng" class="form-input" placeholder="contoh: 106.8215">
+            </div>
+            <div class="form-group">
+                <label>Nama Toko (Map Popup)</label>
+                <input type="text" id="set_store_name" class="form-input" placeholder="contoh: Pizza Azura Jakarta">
+            </div>
+            <div class="form-group">
+                <label>Alamat Toko (Map Popup)</label>
+                <input type="text" id="set_store_address" class="form-input" placeholder="contoh: Jl. Sudirman No. 123">
+            </div>
+            <div class="form-group">
+                <label>Link Google Maps (Tombol Arah)</label>
+                <input type="text" id="set_store_maps_link" class="form-input" placeholder="https://maps.app.goo.gl/...">
             </div>
         </div>
         

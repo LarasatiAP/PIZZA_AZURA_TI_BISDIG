@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Pizza Azura — Admin Dashboard">
     <title>Pizza Azura — Admin</title>
-    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="css/admin.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
     <style>
         #authLoading {
@@ -53,45 +53,196 @@
 </div>
 
 <!-- DASHBOARD -->
-<div class="dashboard" id="dashboard" style="display:none;">
-    <header class="admin-header">
-        <div class="admin-header-inner">
-            <a href="/admin" class="admin-logo">
-                <span class="logo-icon">🍕</span>
-                <span class="logo-text">Pizza Azura</span>
-                <span class="admin-badge">ADMIN</span>
+<div class="admin-layout" id="dashboard" style="display:none;">
+    <!-- LEFT SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div>
+            <a href="/admin" class="sidebar-logo">
+                <img src="images/logo.png" alt="Pizza Azura">
+                <span class="sidebar-logo-text">Pizza Azura</span>
             </a>
-            <button class="burger-menu" id="burgerMenu" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="admin-nav-container" id="mobileMenu">
-                <div class="admin-actions">
-                    <div class="admin-user-info">
-                        <div class="user-avatar" id="userAvatar">A</div>
-                        <span id="adminUsername">Admin</span>
+            
+            <nav class="sidebar-menu">
+                <button class="sidebar-menu-item active" id="tabOrdersBtn" onclick="switchTab('orders')">
+                    Antrean Pesanan
+                </button>
+                <button class="sidebar-menu-item" id="tabMenuBtn" onclick="switchTab('menu')">
+                    Kelola Menu Pizza
+                </button>
+                <button class="sidebar-menu-item" id="tabSettingsBtn" onclick="switchTab('settings')">
+                    Pengaturan Toko
+                </button>
+                
+                <button class="sidebar-menu-item danger" onclick="doLogout()" style="margin-top: 24px;">
+                    Keluar (Logout)
+                </button>
+            </nav>
+        </div>
+
+        <div class="sidebar-profile">
+            <div class="user-avatar" id="userAvatar" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:16px;">A</div>
+            <div>
+                <div id="adminUsername" style="font-weight:700; font-size:14px; color:var(--text-primary);">Admin</div>
+                <div style="font-size:12px; color:var(--text-muted);">Restaurant Staff</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- RIGHT CONTENT AREA -->
+    <div class="admin-content-wrapper">
+        <!-- TOP BAR -->
+        <header class="admin-top-bar">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebarMenu()" id="sidebarToggleBtn" title="Menu">
+                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 class="top-bar-title" id="topBarTitle">Antrean Pesanan</h1>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" style="padding:32px;">
+            <!-- TAB PESANAN -->
+            <div id="ordersTab">
+                <div class="stats-row" id="statsRow"></div>
+                <div class="section-header">
+                    <h2 class="section-title">Daftar Antrean Pesanan</h2>
+                    <div class="filter-tabs" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <button class="filter-btn active" onclick="filterOrders('all', this)">Semua</button>
+                        <button class="filter-btn" onclick="filterOrders('pending', this)">Pending</button>
+                        <button class="filter-btn" onclick="filterOrders('done', this)">Selesai</button>
+                        <button class="filter-btn" onclick="resetData()" style="color:var(--warning); border-color:var(--warning); background:none; margin-left:12px; font-weight:600;">Reset Data Pesanan</button>
                     </div>
-                    <button class="reset-btn" onclick="window.location.href='/admin-settings';">⚙️ Pengaturan</button>
-                    <button class="reset-btn" onclick="resetData(); toggleMobileMenu()">🔄 Reset Data</button>
-                    <button class="logout-btn" onclick="doLogout(); toggleMobileMenu()">🚪 Logout</button>
+                </div>
+                <div class="order-list" id="orderList"></div>
+            </div>
+
+            <!-- TAB KELOLA MENU -->
+            <div id="menuTab" style="display:none;">
+                <div class="section-header" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 class="section-title">Kelola Menu Pizza</h2>
+                    <button class="filter-btn active" onclick="openMenuFormModal()" style="background:var(--success); border-color:var(--success); font-weight:700; font-size:14px; padding:10px 20px; box-shadow:0 4px 10px rgba(34,197,94,0.3); border:none;">Tambah Pizza Baru</button>
+                </div>
+                <div class="order-list" id="adminMenuList">
+                    <div class="loading-state"><p>Memuat daftar menu...</p></div>
                 </div>
             </div>
-        </div>
-    </header>
 
-    <main class="admin-main">
-        <div class="stats-row" id="statsRow"></div>
-        <div class="section-header">
-            <h2 class="section-title">📋 Daftar Pesanan</h2>
-            <div class="filter-tabs">
-                <button class="filter-btn active" onclick="filterOrders('all', this)">Semua</button>
-                <button class="filter-btn" onclick="filterOrders('pending', this)">⏳ Pending</button>
-                <button class="filter-btn" onclick="filterOrders('done', this)">✅ Selesai</button>
+            <!-- TAB PENGATURAN TOKO -->
+            <div id="settingsTab" style="display:none;">
+                <div class="section-header" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 class="section-title">Pengaturan Toko</h2>
+                    <button id="saveSettingsBtn" onclick="saveAllSettings()" style="padding:10px 24px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:700;font-family:inherit;cursor:pointer;font-size:14px;box-shadow: 0 4px 10px rgba(255,107,107,0.3);">Simpan Semua Pengaturan</button>
+                </div>
+                
+                <div id="loadingSettings" style="text-align:center; padding: 40px; color: var(--text-muted);">Memuat data pengaturan...</div>
+
+                <div class="settings-grid" id="settingsContainer" style="display:none;">
+                    <!-- Slogan & Identitas -->
+                    <div class="settings-card">
+                        <h3>Slogan & Banner</h3>
+                        <div class="form-group">
+                            <label>Slogan Footer</label>
+                            <textarea id="set_slogan" class="form-input" rows="3" placeholder="Masukkan slogan footer"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Link WhatsApp (Banner Atas)</label>
+                            <input type="text" id="set_wa_link" class="form-input" placeholder="https://wa.me/628...">
+                        </div>
+                    </div>
+
+                    <!-- Jam Operasional -->
+                    <div class="settings-card">
+                        <h3>Jam Operasional</h3>
+                        <div class="form-group">
+                            <label>Senin - Jumat</label>
+                            <input type="text" id="set_op_weekday" class="form-input" placeholder="Senin - Jumat: 10.00 - 22.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Sabtu - Minggu</label>
+                            <input type="text" id="set_op_weekend" class="form-input" placeholder="Sabtu - Minggu: 11.00 - 23.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Libur Nasional</label>
+                            <input type="text" id="set_op_holiday" class="form-input" placeholder="Libur Nasional: Buka">
+                        </div>
+                    </div>
+
+                    <!-- Kontak & Alamat -->
+                    <div class="settings-card">
+                        <h3>Kontak & Alamat</h3>
+                        <div class="form-group">
+                            <label>Alamat (Footer)</label>
+                            <textarea id="set_contact_address" class="form-input" rows="2" placeholder="Alamat lengkap..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Telepon</label>
+                            <input type="text" id="set_contact_phone" class="form-input" placeholder="+62 8...">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" id="set_contact_email" class="form-input" placeholder="hello@pizzaazura.com">
+                        </div>
+                    </div>
+
+                    <!-- Media Sosial -->
+                    <div class="settings-card">
+                        <h3>Media Sosial</h3>
+                        <div class="form-group">
+                            <label>Link Facebook</label>
+                            <input type="text" id="set_fb_link" class="form-input" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label>Link Instagram</label>
+                            <input type="text" id="set_ig_link" class="form-input" placeholder="https://instagram.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label>Link TikTok</label>
+                            <input type="text" id="set_tt_link" class="form-input" placeholder="https://vt.tiktok.com/...">
+                        </div>
+                    </div>
+
+                    <!-- Tentang Pizza Azura -->
+                    <div class="settings-card">
+                        <h3>Tentang Pizza Azura</h3>
+                        <div class="form-group">
+                            <label>Deskripsi Tentang Kami (Gunakan baris baru untuk memisah paragraf)</label>
+                            <textarea id="set_about_content" class="form-input" rows="8" placeholder="Masukkan cerita/deskripsi Tentang Kami..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- WebGIS Lokasi Toko -->
+                    <div class="settings-card">
+                        <h3>WebGIS Lokasi Toko</h3>
+                        <div class="form-group">
+                            <label>Latitude (Garis Lintang)</label>
+                            <input type="text" id="set_store_lat" class="form-input" placeholder="contoh: -6.2146">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude (Garis Bujur)</label>
+                            <input type="text" id="set_store_lng" class="form-input" placeholder="contoh: 106.8215">
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Toko (Map Popup)</label>
+                            <input type="text" id="set_store_name" class="form-input" placeholder="contoh: Pizza Azura Jakarta">
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat Toko (Map Popup)</label>
+                            <input type="text" id="set_store_address" class="form-input" placeholder="contoh: Jl. Sudirman No. 123">
+                        </div>
+                        <div class="form-group">
+                            <label>Link Google Maps (Tombol Arah)</label>
+                            <input type="text" id="set_store_maps_link" class="form-input" placeholder="https://maps.app.goo.gl/...">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="order-list" id="orderList"></div>
-    </main>
+        </main>
+    </div>
 </div>
 
 <!-- ORDER DETAIL POPUP -->
@@ -99,6 +250,74 @@
     <div class="modal-popup">
         <button class="modal-close" onclick="closeOrderDetail()">&times;</button>
         <div id="orderDetailContent"></div>
+    </div>
+</div>
+
+<!-- ADD/EDIT MENU FORM POPUP -->
+<div class="modal-overlay" id="menuFormModal">
+    <div class="modal-popup" style="max-width: 550px;">
+        <button class="modal-close" onclick="closeMenuFormModal()">&times;</button>
+        <h2 id="menuFormTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--accent);">Tambah Pizza Baru</h2>
+        <form id="menuForm" onsubmit="saveMenuItem(event)">
+            <div class="form-group">
+                <label>ID Pizza (Unique, Huruf Kecil & Underscore)</label>
+                <input type="text" id="menu_id" class="form-input" placeholder="contoh: beef_pepperoni" required>
+            </div>
+            <div class="form-group">
+                <label>Nama Pizza</label>
+                <input type="text" id="menu_name" class="form-input" placeholder="contoh: Pizza Beef Pepperoni" required>
+            </div>
+            <div class="form-group">
+                <label>Deskripsi Singkat</label>
+                <textarea id="menu_description" class="form-input" rows="3" placeholder="contoh: Lelehan keju mozzarella dengan pepperoni daging sapi premium..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Kategori</label>
+                <select id="menu_category" class="form-input" style="background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
+                    <option value="classic">Classic</option>
+                    <option value="standard">Standard</option>
+                    <option value="premium">Premium</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Harga Size 22 (Small - Rp)</label>
+                <input type="number" id="menu_price_s" class="form-input" placeholder="25000" required>
+            </div>
+            <div class="form-group">
+                <label>Harga Size 26 (Medium - Rp)</label>
+                <input type="number" id="menu_price_m" class="form-input" placeholder="40000" required>
+            </div>
+            <div class="form-group">
+                <label>Gambar Pizza (Pilih Preset Bawaan)</label>
+                <select id="menu_image_preset" class="form-input" style="background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
+                    <option value="/images/pizza_supreme.png">Preset: Super Supreme</option>
+                    <option value="/images/pizza_pepperoni.png">Preset: Beef Pepperoni</option>
+                    <option value="/images/pizza_corn_cheese.png">Preset: Corn Cheese</option>
+                    <option value="/images/pizza_sosis.png">Preset: Sosis</option>
+                    <option value="/images/pizza_chicken.png">Preset: Chicken Cheese</option>
+                    <option value="/images/pizza_mushroom.png">Preset: Mushroom Corn</option>
+                    <option value="/images/pizza_tuna.png">Preset: Tuna Corn Mayo</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin-top:16px;">
+                <label>Atau Upload Gambar Kustom (.jpg / .png)</label>
+                <input type="file" id="menu_image_file" class="form-input" accept="image/*" onchange="previewCustomImage(event)" style="padding: 8px;">
+                <div id="imagePreviewContainer" style="margin-top: 12px; display: none; align-items: center; gap: 12px;">
+                    <img id="menu_image_preview" src="" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <span style="font-size: 13px; color: var(--text-secondary); font-weight:600;">Pratinjau Gambar</span>
+                        <button type="button" onclick="clearCustomImage()" style="background:none; border:none; color:var(--danger); font-size:11px; cursor:pointer; text-align:left; padding:0;">✕ Hapus Gambar Kustom</button>
+                    </div>
+                </div>
+                <input type="hidden" id="menu_image_base64">
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:16px; margin-bottom:12px;">
+                <input type="checkbox" id="menu_is_bestseller" style="width:20px; height:20px; cursor:pointer;">
+                <label for="menu_is_bestseller" style="margin-bottom:0; cursor:pointer; text-transform:none; font-size:14px; font-weight:600; color:var(--text-primary);">Jadikan Menu Terlaris (Tampilkan di Top 3)</label>
+            </div>
+            <button type="submit" id="menuSubmitBtn" style="width:100%; border:none; margin-top:20px; cursor:pointer; padding:14px; background:var(--accent); color:white; border-radius:8px; font-weight:700; font-family:inherit; font-size:15px; box-shadow:0 4px 10px rgba(255,107,107,0.3);">💾 Simpan Pizza</button>
+        </form>
     </div>
 </div>
 

@@ -29,6 +29,14 @@ let currentSettings = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
     checkAuth();
+    // Ganti logo navbar ke logo Pizza Azura saat halaman pengaturan dibuka
+    try {
+        const adminLogo = document.querySelector('.admin-logo');
+        if (adminLogo) {
+            adminLogo.innerHTML = '<img src="/images/logo.png" alt="Pizza Azura" class="logo-img-admin">';
+        }
+    } catch(e) { /* ignore if DOM not ready */ }
+
     if (!type) return; // If on menu page, do nothing more
 
     const formTitle = document.getElementById('formTitle');
@@ -65,16 +73,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         html = `
             <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
                 <div>
-                    <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Link Instagram</label>
-                    <input type="text" id="set_ig_link" value="${currentSettings.ig_link || ''}" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
-                </div>
-                <div>
                     <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Link Facebook</label>
                     <input type="text" id="set_fb_link" value="${currentSettings.fb_link || ''}" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
                 </div>
                 <div>
-                    <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Link Twitter</label>
-                    <input type="text" id="set_tw_link" value="${currentSettings.tw_link || ''}" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
+                    <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Link Instagram</label>
+                    <input type="text" id="set_ig_link" value="${currentSettings.ig_link || ''}" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
+                </div>
+                <div>
+                    <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Link TikTok</label>
+                    <input type="text" id="set_tt_link" value="${currentSettings.tt_link || ''}" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
                 </div>
             </div>`;
     } else if (type === 'jam') {
@@ -133,9 +141,9 @@ async function saveSettings() {
     if (type === 'slogan') payload.slogan = getVal('set_slogan');
     if (type === 'walink') payload.wa_link = getVal('set_wa_link');
     if (type === 'sosmed') {
-        payload.ig_link = getVal('set_ig_link');
         payload.fb_link = getVal('set_fb_link');
-        payload.tw_link = getVal('set_tw_link');
+        payload.ig_link = getVal('set_ig_link');
+        payload.tt_link = getVal('set_tt_link');
     }
     if (type === 'jam') {
         payload.op_weekday = getVal('set_op_weekday');
@@ -149,6 +157,12 @@ async function saveSettings() {
     }
 
     const saveBtn = document.getElementById('saveBtn');
+    // Simple URL validation for social fields when present
+    const isValidUrl = (u) => !u || /^https?:\/\//i.test(u);
+    if (payload.fb_link !== undefined && !isValidUrl(payload.fb_link)) { showToast('❌ URL Facebook tidak valid'); return; }
+    if (payload.ig_link !== undefined && !isValidUrl(payload.ig_link)) { showToast('❌ URL Instagram tidak valid'); return; }
+    if (payload.tt_link !== undefined && !isValidUrl(payload.tt_link)) { showToast('❌ URL TikTok tidak valid'); return; }
+
     saveBtn.disabled = true;
     saveBtn.textContent = '⏳ Menyimpan...';
 

@@ -112,6 +112,14 @@ function initSchema() {
             value TEXT
         )
     `);
+    
+    // Dynamically alter menu table to add is_bestseller if it doesn't exist
+    try {
+        db.run("ALTER TABLE menu ADD COLUMN is_bestseller INTEGER DEFAULT 0");
+        console.log('✅ Column is_bestseller added to menu table');
+    } catch (e) {
+        // Already exists
+    }
 }
 
 // ---- SEED DATA ----
@@ -157,24 +165,42 @@ function seedIfEmpty() {
 
 function seedSettingsIfEmpty() {
     const settingsCheck = db.exec("SELECT COUNT(*) FROM settings");
+    const defaultSettings = [
+        ['slogan', 'Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.'],
+        ['wa_link', 'https://wa.me/6282174666003'],
+        ['ig_link', 'https://www.instagram.com/pizzaazzura?igsh=MW9zcmtnNDAwdzlheQ=='],
+        ['fb_link', '#'],
+        ['tw_link', '#'],
+        ['tt_link', 'https://vt.tiktok.com/ZS9v7FKmt/'],
+        ['op_weekday', 'Senin - Jumat: 10.00 - 22.00'],
+        ['op_weekend', 'Sabtu - Minggu: 11.00 - 23.00'],
+        ['op_holiday', 'Libur Nasional: Buka'],
+        ['contact_address', '📍 Jl. Sudirman No. 123, Jakarta'],
+        ['contact_phone', '📞 +62 851-9804-2502'],
+        ['contact_email', '✉️ hello@pizzaazura.com'],
+        ['about_content', 'Pizza Azura hadir untuk memberi pengalaman pesan pizza tanpa ribet: langsung dari HP, tanpa antre, dan dengan rasa yang selalu konsisten. Kami memilih bahan terbaik — keju berkualitas, saus rahasia, dan topping premium — lalu memanggang setiap pesanan dengan perhatian ekstra sehingga setiap gigitan terasa lezat dan memuaskan.\n\nSelain menu klasik favorit keluarga, kami juga menawarkan variasi pizza kekinian dengan kombinasi topping unik yang pas untuk semua suasana. Inilah cara baru menikmati pizza: praktis, cepat, dan tetap terjaga kualitasnya.\n\nPizza Azura dibuat untuk siapa saja yang ingin makan enak tanpa perlu keluar rumah. Dari pesanan antar cepat hingga pickup langsung di lokasi, kami hadir untuk memanjakan selera Anda di setiap momen special.'],
+        ['store_lat', '-6.2146'],
+        ['store_lng', '106.8215'],
+        ['store_name', 'Pizza Azura Jakarta'],
+        ['store_address', 'Jl. Sudirman No. 123, Jakarta Selatan'],
+        ['store_maps_link', 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8']
+    ];
+    
     if (settingsCheck.length === 0 || settingsCheck[0].values[0][0] === 0) {
-        const defaultSettings = [
-            ['slogan', 'Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.'],
-            ['wa_link', 'https://wa.me/6285198042502'],
-            ['ig_link', '#'],
-            ['fb_link', '#'],
-            ['tw_link', '#'],
-            ['op_weekday', 'Senin - Jumat: 10.00 - 22.00'],
-            ['op_weekend', 'Sabtu - Minggu: 11.00 - 23.00'],
-            ['op_holiday', 'Libur Nasional: Buka'],
-            ['contact_address', '📍 Jl. Sudirman No. 123, Jakarta'],
-            ['contact_phone', '📞 +62 851-9804-2502'],
-            ['contact_email', '✉️ hello@pizzaazura.com']
-        ];
+        // First time: insert all defaults
         for (const s of defaultSettings) {
             db.run("INSERT INTO settings (key, value) VALUES (?, ?)", s);
         }
         console.log('✅ Settings seeded');
+    } else {
+        // Existing database: check and insert missing keys
+        for (const [key, value] of defaultSettings) {
+            const exists = db.exec("SELECT 1 FROM settings WHERE key = ?", [key]);
+            if (exists.length === 0 || exists[0].values.length === 0) {
+                db.run("INSERT INTO settings (key, value) VALUES (?, ?)", [key, value]);
+                console.log(`✅ Added missing setting: ${key}`);
+            }
+        }
     }
 }
 
