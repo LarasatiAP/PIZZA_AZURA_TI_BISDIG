@@ -167,7 +167,7 @@ function seedSettingsIfEmpty() {
     const settingsCheck = db.exec("SELECT COUNT(*) FROM settings");
     const defaultSettings = [
         ['slogan', 'Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.'],
-        ['wa_link', 'https://wa.me/6282174666003'],
+        ['wa_link', 'https://wa.me/6282171938725'],
         ['ig_link', 'https://www.instagram.com/pizzaazzura?igsh=MW9zcmtnNDAwdzlheQ=='],
         ['fb_link', '#'],
         ['tw_link', '#'],
@@ -183,7 +183,9 @@ function seedSettingsIfEmpty() {
         ['store_lng', '106.8215'],
         ['store_name', 'Pizza Azura Jakarta'],
         ['store_address', 'Jl. Sudirman No. 123, Jakarta Selatan'],
-        ['store_maps_link', 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8']
+        ['store_maps_link', 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8'],
+        ['fonnte_token', ''],
+        ['admin_wa', '6282171938725']
     ];
     
     if (settingsCheck.length === 0 || settingsCheck[0].values[0][0] === 0) {

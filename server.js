@@ -201,6 +201,67 @@ app.put('/api/settings', authMiddleware, (req, res) => {
     res.json({ success: true });
 });
 
+// Helper function to send WhatsApp via Fonnte API
+async function sendWhatsAppNotification(orderId, queueNumber, customerName, phone, orderType, notes, total, items) {
+    try {
+        const tokenSetting = queryOne("SELECT value FROM settings WHERE key = 'fonnte_token'");
+        const adminWaSetting = queryOne("SELECT value FROM settings WHERE key = 'admin_wa'");
+        
+        const fonnteToken = tokenSetting ? tokenSetting.value : '';
+        const adminWa = adminWaSetting ? adminWaSetting.value : '6282171938725';
+        
+        if (!fonnteToken) {
+            console.log('⚠️ Fonnte API Token is not configured. Skipping auto-WhatsApp notification.');
+            return;
+        }
+
+        const q = String(queueNumber).padStart(3, '0');
+        const itemList = items.map(i => {
+            let detail = `- ${i.name} (Size ${i.size}) x${i.quantity}`;
+            if (i.toppings && i.toppings.length > 0) {
+                const toppingsStr = i.toppings.map(t => t.name).join(', ');
+                detail += `\n  + Topping: ${toppingsStr}`;
+            }
+            if (i.notes) {
+                detail += `\n  * Catatan item: ${i.notes}`;
+            }
+            return detail;
+        }).join('\n');
+
+        const message = `🍕 *PESANAN BARU - PIZZA AZURA* 🍕\n\n` +
+            `ID Pesanan : *${orderId}*\n` +
+            `No Antrian : *#${q}*\n` +
+            `Pelanggan  : *${customerName}*\n` +
+            `No WA      : ${phone || '-'}\n` +
+            `Tipe       : *${orderType === 'dinein' ? '🍽️ Dine In' : '📦 Take Away'}*\n` +
+            `Catatan    : ${notes || '-'}\n\n` +
+            `*Detail Pesanan:*\n${itemList}\n\n` +
+            `*Total Bayar:* *Rp ${total.toLocaleString('id-ID')}*\n\n` +
+            `Silakan konfirmasi pesanan ini melalui dashboard admin Anda.`;
+
+        const response = await fetch('https://api.fonnte.com/send', {
+            method: 'POST',
+            headers: {
+                'Authorization': fonnteToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                target: adminWa,
+                message: message
+            })
+        });
+
+        const resData = await response.json();
+        if (response.ok && resData.status) {
+            console.log('✅ WhatsApp notification sent successfully to admin:', adminWa);
+        } else {
+            console.error('❌ Failed to send WhatsApp notification via Fonnte:', resData);
+        }
+    } catch (err) {
+        console.error('❌ Error sending WhatsApp notification:', err);
+    }
+}
+
 // ============================================
 // ORDER ROUTES
 // ============================================
@@ -244,6 +305,10 @@ app.post('/api/orders', (req, res) => {
     }
 
     saveDb();
+
+    // Send WhatsApp notification in the background
+    sendWhatsAppNotification(orderId, queueNumber, customerName, phone, orderType, notes, total, items);
+
     res.json({ id: orderId, queueNumber, total, status: 'pending', createdAt: now });
 });
 
