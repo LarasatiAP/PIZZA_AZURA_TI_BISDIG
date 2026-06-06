@@ -1,6 +1,6 @@
 /**
  * ============================================
- * PIZZA AZURA — Express Server
+ * PIZZA AZURA — Express Server (MySQL)
  * ============================================
  */
 
@@ -8,7 +8,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { getDb, saveDb, queryAll, queryOne, runSql, getLastInsertId, getNextQueueNumber } = require('./db');
+const { getPool, queryAll, queryOne, runSql, getLastInsertId, getNextQueueNumber } = require('./db');
 
 const app = express();
 const PORT = 3000;
@@ -39,15 +39,20 @@ function authMiddleware(req, res, next) {
 // AUTH ROUTES
 // ============================================
 
-app.post('/api/auth/login', (req, res) => {
-    const { username, password } = req.body;
-    const admin = queryOne('SELECT * FROM admins WHERE username = ? AND password = ?', [username, password]);
-    if (!admin) {
-        return res.status(401).json({ error: 'Username atau password salah' });
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const admin = await queryOne('SELECT * FROM admins WHERE username = ? AND password = ?', [username, password]);
+        if (!admin) {
+            return res.status(401).json({ error: 'Username atau password salah' });
+        }
+        const token = crypto.randomBytes(32).toString('hex');
+        activeTokens.set(token, { id: admin.id, username: admin.username });
+        res.json({ token, username: admin.username });
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    const token = crypto.randomBytes(32).toString('hex');
-    activeTokens.set(token, { id: admin.id, username: admin.username });
-    res.json({ token, username: admin.username });
 });
 
 app.get('/api/auth/check', authMiddleware, (req, res) => {
@@ -66,8 +71,14 @@ app.post('/api/auth/logout', (req, res) => {
 // MENU ROUTES
 // ============================================
 
-app.get('/api/menu', (req, res) => {
-    res.json(queryAll('SELECT * FROM menu'));
+app.get('/api/menu', async (req, res) => {
+    try {
+        const menu = await queryAll('SELECT * FROM menu');
+        res.json(menu);
+    } catch (err) {
+        console.error('Get menu error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Helper to save Base64 image to filesystem
@@ -112,221 +123,294 @@ function saveBase64Image(base64Str, menuId) {
 }
 
 // Add a new menu item (admin only)
-app.post('/api/menu', authMiddleware, (req, res) => {
-    let { id, name, description, image, category, price_s, price_m, is_bestseller } = req.body;
-    if (!id || !name || price_s === undefined || price_m === undefined) {
-        return res.status(400).json({ error: 'Data menu tidak lengkap' });
+app.post('/api/menu', authMiddleware, async (req, res) => {
+    try {
+        let { id, name, description, image, category, price_s, price_m, is_bestseller } = req.body;
+        if (!id || !name || price_s === undefined || price_m === undefined) {
+            return res.status(400).json({ error: 'Data menu tidak lengkap' });
+        }
+        
+        const existing = await queryOne('SELECT * FROM menu WHERE id = ?', [id]);
+        if (existing) {
+            return res.status(400).json({ error: 'ID Menu sudah digunakan' });
+        }
+        
+        if (image && image.startsWith('data:image/')) {
+            image = saveBase64Image(image, id);
+        }
+        
+        await runSql(
+            'INSERT INTO menu (id, name, description, image, category, price_s, price_m, price_l, is_bestseller) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)',
+            [id, name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Add menu error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    
-    const existing = queryOne('SELECT * FROM menu WHERE id = ?', [id]);
-    if (existing) {
-        return res.status(400).json({ error: 'ID Menu sudah digunakan' });
-    }
-    
-    if (image && image.startsWith('data:image/')) {
-        image = saveBase64Image(image, id);
-    }
-    
-    runSql(
-        'INSERT INTO menu (id, name, description, image, category, price_s, price_m, price_l, is_bestseller) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)',
-        [id, name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0]
-    );
-    res.json({ success: true });
 });
 
 // Update a menu item (admin only)
-app.put('/api/menu/:id', authMiddleware, (req, res) => {
-    let { name, description, image, category, price_s, price_m, is_bestseller } = req.body;
-    const { id } = req.params;
-    
-    const existing = queryOne('SELECT * FROM menu WHERE id = ?', [id]);
-    if (!existing) {
-        return res.status(404).json({ error: 'Menu tidak ditemukan' });
+app.put('/api/menu/:id', authMiddleware, async (req, res) => {
+    try {
+        let { name, description, image, category, price_s, price_m, is_bestseller } = req.body;
+        const { id } = req.params;
+        
+        const existing = await queryOne('SELECT * FROM menu WHERE id = ?', [id]);
+        if (!existing) {
+            return res.status(404).json({ error: 'Menu tidak ditemukan' });
+        }
+        
+        if (!name || price_s === undefined || price_m === undefined) {
+            return res.status(400).json({ error: 'Data menu tidak lengkap' });
+        }
+        
+        if (image && image.startsWith('data:image/')) {
+            image = saveBase64Image(image, id);
+        }
+        
+        await runSql(
+            'UPDATE menu SET name = ?, description = ?, image = ?, category = ?, price_s = ?, price_m = ?, is_bestseller = ? WHERE id = ?',
+            [name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, id]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Update menu error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    
-    if (!name || price_s === undefined || price_m === undefined) {
-        return res.status(400).json({ error: 'Data menu tidak lengkap' });
-    }
-    
-    if (image && image.startsWith('data:image/')) {
-        image = saveBase64Image(image, id);
-    }
-    
-    runSql(
-        'UPDATE menu SET name = ?, description = ?, image = ?, category = ?, price_s = ?, price_m = ?, is_bestseller = ? WHERE id = ?',
-        [name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, id]
-    );
-    res.json({ success: true });
 });
 
 // Delete a menu item (admin only)
-app.delete('/api/menu/:id', authMiddleware, (req, res) => {
-    const { id } = req.params;
-    const existing = queryOne('SELECT * FROM menu WHERE id = ?', [id]);
-    if (!existing) {
-        return res.status(404).json({ error: 'Menu tidak ditemukan' });
+app.delete('/api/menu/:id', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const existing = await queryOne('SELECT * FROM menu WHERE id = ?', [id]);
+        if (!existing) {
+            return res.status(404).json({ error: 'Menu tidak ditemukan' });
+        }
+        
+        await runSql('DELETE FROM menu WHERE id = ?', [id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Delete menu error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    
-    runSql('DELETE FROM menu WHERE id = ?', [id]);
-    res.json({ success: true });
 });
 
-app.get('/api/toppings', (req, res) => {
-    res.json(queryAll('SELECT * FROM toppings'));
+app.get('/api/toppings', async (req, res) => {
+    try {
+        const toppings = await queryAll('SELECT * FROM toppings');
+        res.json(toppings);
+    } catch (err) {
+        console.error('Get toppings error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // ============================================
 // SETTINGS ROUTES
 // ============================================
 
-app.get('/api/settings', (req, res) => {
-    const settings = queryAll('SELECT * FROM settings');
-    const result = {};
-    for (const s of settings) {
-        result[s.key] = s.value;
+app.get('/api/settings', async (req, res) => {
+    try {
+        const settings = await queryAll('SELECT * FROM settings');
+        const result = {};
+        for (const s of settings) {
+            result[s.key] = s.value;
+        }
+        res.json(result);
+    } catch (err) {
+        console.error('Get settings error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    res.json(result);
 });
 
-app.put('/api/settings', authMiddleware, (req, res) => {
-    const settings = req.body;
-    for (const key in settings) {
-        const existing = queryOne('SELECT * FROM settings WHERE key = ?', [key]);
-        if (existing) {
-            runSql('UPDATE settings SET value = ? WHERE key = ?', [settings[key], key]);
-        } else {
-            runSql('INSERT INTO settings (key, value) VALUES (?, ?)', [key, settings[key]]);
+app.put('/api/settings', authMiddleware, async (req, res) => {
+    try {
+        const settings = req.body;
+        for (const key in settings) {
+            const existing = await queryOne('SELECT * FROM settings WHERE `key` = ?', [key]);
+            if (existing) {
+                await runSql('UPDATE settings SET value = ? WHERE `key` = ?', [settings[key], key]);
+            } else {
+                await runSql('INSERT INTO settings (`key`, value) VALUES (?, ?)', [key, settings[key]]);
+            }
         }
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Update settings error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    res.json({ success: true });
 });
 
 // ============================================
 // ORDER ROUTES
 // ============================================
 
-app.post('/api/orders', (req, res) => {
-    const { customerName, phone, orderType, paymentMethod, notes, items } = req.body;
+app.post('/api/orders', async (req, res) => {
+    try {
+        const { customerName, phone, orderType, paymentMethod, notes, items } = req.body;
 
-    if (!customerName || !items || items.length === 0) {
-        return res.status(400).json({ error: 'Data tidak lengkap' });
-    }
-
-    const queueNumber = getNextQueueNumber();
-    const now = new Date().toISOString();
-    const orderId = 'AZR-' + Date.now().toString(36).toUpperCase();
-
-    // Calculate total
-    let total = 0;
-    for (const item of items) {
-        const toppingTotal = (item.toppings || []).reduce((s, t) => s + t.price, 0);
-        total += (item.price + toppingTotal) * item.quantity;
-    }
-
-    runSql(
-        "INSERT INTO orders (id, queue_number, customer_name, phone, order_type, payment_method, notes, total, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)",
-        [orderId, queueNumber, customerName, phone || '', orderType, paymentMethod, notes || '', total, now, now]
-    );
-
-    for (const item of items) {
-        runSql(
-            "INSERT INTO order_items (order_id, menu_id, menu_name, menu_image, size, price, quantity, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            [orderId, item.menuId, item.name, item.image, item.size, item.price, item.quantity, item.notes || '']
-        );
-        const itemId = getLastInsertId();
-
-        for (const topping of (item.toppings || [])) {
-            runSql(
-                "INSERT INTO order_item_toppings (order_item_id, topping_id, topping_name, topping_price) VALUES (?, ?, ?, ?)",
-                [itemId, topping.id, topping.name, topping.price]
-            );
+        if (!customerName || !items || items.length === 0) {
+            return res.status(400).json({ error: 'Data tidak lengkap' });
         }
-    }
 
-    saveDb();
-    res.json({ id: orderId, queueNumber, total, status: 'pending', createdAt: now });
+        const queueNumber = await getNextQueueNumber();
+        const now = new Date().toISOString();
+        const orderId = 'AZR-' + Date.now().toString(36).toUpperCase();
+
+        // Calculate total
+        let total = 0;
+        for (const item of items) {
+            const toppingTotal = (item.toppings || []).reduce((s, t) => s + t.price, 0);
+            total += (item.price + toppingTotal) * item.quantity;
+        }
+
+        await runSql(
+            "INSERT INTO orders (id, queue_number, customer_name, phone, order_type, payment_method, notes, total, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)",
+            [orderId, queueNumber, customerName, phone || '', orderType, paymentMethod, notes || '', total, now, now]
+        );
+
+        for (const item of items) {
+            const result = await runSql(
+                "INSERT INTO order_items (order_id, menu_id, menu_name, menu_image, size, price, quantity, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [orderId, item.menuId, item.name, item.image, item.size, item.price, item.quantity, item.notes || '']
+            );
+            const itemId = result.insertId;
+
+            for (const topping of (item.toppings || [])) {
+                await runSql(
+                    "INSERT INTO order_item_toppings (order_item_id, topping_id, topping_name, topping_price) VALUES (?, ?, ?, ?)",
+                    [itemId, topping.id, topping.name, topping.price]
+                );
+            }
+        }
+
+        res.json({ id: orderId, queueNumber, total, status: 'pending', createdAt: now });
+    } catch (err) {
+        console.error('Create order error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Get all orders (admin)
-app.get('/api/orders', authMiddleware, (req, res) => {
-    const orders = queryAll('SELECT * FROM orders ORDER BY created_at DESC');
+app.get('/api/orders', authMiddleware, async (req, res) => {
+    try {
+        const orders = await queryAll('SELECT * FROM orders ORDER BY created_at DESC');
 
-    const fullOrders = orders.map(order => {
-        const items = queryAll('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
-        const itemsWithToppings = items.map(item => ({
-            ...item,
-            toppings: queryAll('SELECT * FROM order_item_toppings WHERE order_item_id = ?', [item.id])
-        }));
-        return { ...order, items: itemsWithToppings };
-    });
+        const fullOrders = [];
+        for (const order of orders) {
+            const items = await queryAll('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
+            const itemsWithToppings = [];
+            for (const item of items) {
+                const toppings = await queryAll('SELECT * FROM order_item_toppings WHERE order_item_id = ?', [item.id]);
+                itemsWithToppings.push({ ...item, toppings });
+            }
+            fullOrders.push({ ...order, items: itemsWithToppings });
+        }
 
-    res.json(fullOrders);
+        res.json(fullOrders);
+    } catch (err) {
+        console.error('Get orders error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Get single order (customer status check)
-app.get('/api/orders/:id', (req, res) => {
-    const order = queryOne('SELECT * FROM orders WHERE id = ?', [req.params.id]);
-    if (!order) return res.status(404).json({ error: 'Pesanan tidak ditemukan' });
+app.get('/api/orders/:id', async (req, res) => {
+    try {
+        const order = await queryOne('SELECT * FROM orders WHERE id = ?', [req.params.id]);
+        if (!order) return res.status(404).json({ error: 'Pesanan tidak ditemukan' });
 
-    const items = queryAll('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
-    order.items = items.map(item => ({
-        ...item,
-        toppings: queryAll('SELECT * FROM order_item_toppings WHERE order_item_id = ?', [item.id])
-    }));
+        const items = await queryAll('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
+        const itemsWithToppings = [];
+        for (const item of items) {
+            const toppings = await queryAll('SELECT * FROM order_item_toppings WHERE order_item_id = ?', [item.id]);
+            itemsWithToppings.push({ ...item, toppings });
+        }
+        order.items = itemsWithToppings;
 
-    res.json(order);
+        res.json(order);
+    } catch (err) {
+        console.error('Get order error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Update order status (admin)
-app.put('/api/orders/:id/status', authMiddleware, (req, res) => {
-    const { status } = req.body;
-    const now = new Date().toISOString();
+app.put('/api/orders/:id/status', authMiddleware, async (req, res) => {
+    try {
+        const { status } = req.body;
+        const now = new Date().toISOString();
 
-    const existing = queryOne('SELECT * FROM orders WHERE id = ?', [req.params.id]);
-    if (!existing) return res.status(404).json({ error: 'Pesanan tidak ditemukan' });
+        const existing = await queryOne('SELECT * FROM orders WHERE id = ?', [req.params.id]);
+        if (!existing) return res.status(404).json({ error: 'Pesanan tidak ditemukan' });
 
-    runSql('UPDATE orders SET status = ?, updated_at = ? WHERE id = ?', [status, now, req.params.id]);
-    res.json({ ...existing, status, updated_at: now });
+        await runSql('UPDATE orders SET status = ?, updated_at = ? WHERE id = ?', [status, now, req.params.id]);
+        res.json({ ...existing, status, updated_at: now });
+    } catch (err) {
+        console.error('Update order status error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Delete order (admin)
-app.delete('/api/orders/:id', authMiddleware, (req, res) => {
-    // Delete related data first (sql.js doesn't auto-cascade)
-    const items = queryAll('SELECT id FROM order_items WHERE order_id = ?', [req.params.id]);
-    for (const item of items) {
-        runSql('DELETE FROM order_item_toppings WHERE order_item_id = ?', [item.id]);
+app.delete('/api/orders/:id', authMiddleware, async (req, res) => {
+    try {
+        // Foreign keys with ON DELETE CASCADE handle cleanup automatically
+        await runSql('DELETE FROM orders WHERE id = ?', [req.params.id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Delete order error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
-    runSql('DELETE FROM order_items WHERE order_id = ?', [req.params.id]);
-    runSql('DELETE FROM orders WHERE id = ?', [req.params.id]);
-    res.json({ success: true });
 });
 
 // ============================================
 // STATS (admin)
 // ============================================
 
-app.get('/api/stats', authMiddleware, (req, res) => {
-    const today = new Date().toISOString().split('T')[0];
+app.get('/api/stats', authMiddleware, async (req, res) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
 
-    res.json({
-        totalOrders: (queryOne('SELECT COUNT(*) as c FROM orders') || {}).c || 0,
-        todayOrders: (queryOne("SELECT COUNT(*) as c FROM orders WHERE DATE(created_at) = ?", [today]) || {}).c || 0,
-        totalRevenue: (queryOne("SELECT COALESCE(SUM(total), 0) as s FROM orders WHERE status = 'done'") || {}).s || 0,
-        todayRevenue: (queryOne("SELECT COALESCE(SUM(total), 0) as s FROM orders WHERE status = 'done' AND DATE(created_at) = ?", [today]) || {}).s || 0,
-        pendingOrders: (queryOne("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'") || {}).c || 0,
-        doneOrders: (queryOne("SELECT COUNT(*) as c FROM orders WHERE status = 'done'") || {}).c || 0,
-    });
+        const [totalOrders, todayOrders, totalRevenue, todayRevenue, pendingOrders, doneOrders] = await Promise.all([
+            queryOne('SELECT COUNT(*) as c FROM orders'),
+            queryOne("SELECT COUNT(*) as c FROM orders WHERE DATE(created_at) = ?", [today]),
+            queryOne("SELECT COALESCE(SUM(total), 0) as s FROM orders WHERE status = 'done'"),
+            queryOne("SELECT COALESCE(SUM(total), 0) as s FROM orders WHERE status = 'done' AND DATE(created_at) = ?", [today]),
+            queryOne("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'"),
+            queryOne("SELECT COUNT(*) as c FROM orders WHERE status = 'done'"),
+        ]);
+
+        res.json({
+            totalOrders: totalOrders.c || 0,
+            todayOrders: todayOrders.c || 0,
+            totalRevenue: totalRevenue.s || 0,
+            todayRevenue: todayRevenue.s || 0,
+            pendingOrders: pendingOrders.c || 0,
+            doneOrders: doneOrders.c || 0,
+        });
+    } catch (err) {
+        console.error('Get stats error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // ============================================
 // RESET (admin)
 // ============================================
 
-app.post('/api/reset', authMiddleware, (req, res) => {
-    runSql('DELETE FROM order_item_toppings');
-    runSql('DELETE FROM order_items');
-    runSql('DELETE FROM orders');
-    res.json({ success: true });
+app.post('/api/reset', authMiddleware, async (req, res) => {
+    try {
+        await runSql('DELETE FROM order_item_toppings');
+        await runSql('DELETE FROM order_items');
+        await runSql('DELETE FROM orders');
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Reset error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // ============================================
@@ -353,15 +437,15 @@ app.get('/admin-settings', (req, res) => {
 // ============================================
 
 async function start() {
-    await getDb(); // Initialize database
+    await getPool(); // Initialize MySQL connection pool
 
     app.listen(PORT, '0.0.0.0', () => {
         console.log('');
-        console.log('  🍕 Pizza Azura Server');
+        console.log('  🍕 Pizza Azura Server (MySQL)');
         console.log('  ─────────────────────────────');
         console.log(`  🌐 Customer:  http://localhost:${PORT}`);
-        console.log(`  📱 Mobile:    http://192.168.1.146:${PORT}`);
         console.log(`  🔧 Admin:     http://localhost:${PORT}/admin`);
+        console.log(`  💾 Database:  MySQL → pizza_azura`);
         console.log('  ─────────────────────────────');
         console.log('');
     });
