@@ -343,6 +343,7 @@
             // Store token in sessionStorage (cleared when browser/tab closes)
             sessionStorage.setItem('adminToken', data.token);
             sessionStorage.setItem('adminUsername', data.username);
+            sessionStorage.setItem('adminRole', data.role || 'admin');
 
             // Redirect to admin dashboard
             window.location.href = '/admin';

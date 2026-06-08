@@ -64,17 +64,21 @@
             
             <nav class="sidebar-menu">
                 <button class="sidebar-menu-item active" id="tabOrdersBtn" onclick="switchTab('orders')">
-                    Antrean Pesanan
+                    📦 Antrean Pesanan
                 </button>
                 <button class="sidebar-menu-item" id="tabMenuBtn" onclick="switchTab('menu')">
-                    Kelola Menu Pizza
+                    🍕 Kelola Menu Pizza
                 </button>
                 <button class="sidebar-menu-item" id="tabSettingsBtn" onclick="switchTab('settings')">
-                    Pengaturan Toko
+                    ⚙️ Pengaturan Toko
+                </button>
+                <!-- KELOLA ADMIN (Super Admin Only) -->
+                <button class="sidebar-menu-item" id="tabAdminMgmtBtn" onclick="switchTab('adminMgmt')" style="display:none;">
+                    👑 Kelola Admin
                 </button>
                 
                 <button class="sidebar-menu-item danger" onclick="doLogout()" style="margin-top: 24px;">
-                    Keluar (Logout)
+                    🚪 Keluar (Logout)
                 </button>
             </nav>
         </div>
@@ -83,7 +87,7 @@
             <div class="user-avatar" id="userAvatar" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:16px;">A</div>
             <div>
                 <div id="adminUsername" style="font-weight:700; font-size:14px; color:var(--text-primary);">Admin</div>
-                <div style="font-size:12px; color:var(--text-muted);">Restaurant Staff</div>
+                <div id="adminRoleBadge" class="role-badge role-admin">Admin</div>
             </div>
         </div>
     </aside>
@@ -115,7 +119,17 @@
                         <button class="filter-btn active" onclick="filterOrders('all', this)">Semua</button>
                         <button class="filter-btn" onclick="filterOrders('pending', this)">Pending</button>
                         <button class="filter-btn" onclick="filterOrders('done', this)">Selesai</button>
-                        <button class="filter-btn" onclick="resetData()" style="color:var(--warning); border-color:var(--warning); background:none; margin-left:12px; font-weight:600;">Reset Data Pesanan</button>
+                        <div class="export-buttons" style="display:flex; gap:6px; margin-left:12px;">
+                            <button class="export-btn export-excel" onclick="exportExcel()" title="Export ke Excel">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                Excel
+                            </button>
+                            <button class="export-btn export-pdf" onclick="exportPDF()" title="Export ke PDF">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                PDF
+                            </button>
+                        </div>
+                        <button class="filter-btn" onclick="resetData()" style="color:var(--warning); border-color:var(--warning); background:none; margin-left:8px; font-weight:600;">Reset Data Pesanan</button>
                     </div>
                 </div>
                 <div class="order-list" id="orderList"></div>
@@ -241,6 +255,29 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB KELOLA ADMIN (Super Admin Only) -->
+            <div id="adminMgmtTab" style="display:none;">
+                <div class="section-header" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 class="section-title">👑 Kelola Admin</h2>
+                    <button class="filter-btn active" onclick="openAdminFormModal()" style="background:var(--info); border-color:var(--info); font-weight:700; font-size:14px; padding:10px 20px; box-shadow:0 4px 10px rgba(59,130,246,0.3); border:none;">+ Tambah Admin Baru</button>
+                </div>
+                <div class="admin-table-wrap">
+                    <table class="admin-table" id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:40px;">Memuat data admin...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
     </div>
 </div>
@@ -317,6 +354,26 @@
                 <label for="menu_is_bestseller" style="margin-bottom:0; cursor:pointer; text-transform:none; font-size:14px; font-weight:600; color:var(--text-primary);">Jadikan Menu Terlaris (Tampilkan di Top 3)</label>
             </div>
             <button type="submit" id="menuSubmitBtn" style="width:100%; border:none; margin-top:20px; cursor:pointer; padding:14px; background:var(--accent); color:white; border-radius:8px; font-weight:700; font-family:inherit; font-size:15px; box-shadow:0 4px 10px rgba(255,107,107,0.3);">💾 Simpan Pizza</button>
+        </form>
+    </div>
+</div>
+
+<!-- ADD/EDIT ADMIN FORM POPUP -->
+<div class="modal-overlay" id="adminFormModal">
+    <div class="modal-popup" style="max-width: 480px;">
+        <button class="modal-close" onclick="closeAdminFormModal()">&times;</button>
+        <h2 id="adminFormTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--info);">👑 Tambah Admin Baru</h2>
+        <form id="adminForm" onsubmit="saveAdmin(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="admin_username" class="form-input" placeholder="Masukkan username" required>
+            </div>
+            <div class="form-group">
+                <label id="admin_password_label">Password</label>
+                <input type="password" id="admin_password" class="form-input" placeholder="Masukkan password" required>
+                <small id="admin_password_hint" style="display:none; color:var(--text-muted); font-size:12px; margin-top:4px;">Kosongkan jika tidak ingin mengubah password</small>
+            </div>
+            <button type="submit" id="adminSubmitBtn" style="width:100%; border:none; margin-top:20px; cursor:pointer; padding:14px; background:var(--info); color:white; border-radius:8px; font-weight:700; font-family:inherit; font-size:15px; box-shadow:0 4px 10px rgba(59,130,246,0.3);">💾 Simpan Admin</button>
         </form>
     </div>
 </div>

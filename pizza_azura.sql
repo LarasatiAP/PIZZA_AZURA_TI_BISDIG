@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS `toppings` (
 CREATE TABLE IF NOT EXISTS `admins` (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `username` VARCHAR(100) NOT NULL UNIQUE,
-  `password` VARCHAR(255) NOT NULL
+  `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'admin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -121,8 +122,8 @@ INSERT INTO `toppings` (`id`, `name`, `price`) VALUES
 -- ============================================
 -- SEED DATA: admins (default: admin / admin123)
 -- ============================================
-INSERT INTO `admins` (`username`, `password`) VALUES
-('admin', 'admin123');
+INSERT INTO `admins` (`username`, `password`, `role`) VALUES
+('admin', 'admin123', 'super_admin');
 
 -- ============================================
 -- SEED DATA: settings

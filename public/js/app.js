@@ -122,7 +122,7 @@ function renderBestsellers() {
     }
     
     bg.innerHTML = topItems.map(item => `
-        <div class="bestseller-item" onclick="openDetail('${item.id}')">
+        <div class="bestseller-item">
             <div class="bestseller-image-wrap">
                 <img class="bestseller-img" src="${item.image}" alt="${item.name}" loading="lazy">
                 <div class="bestseller-badge">🔥 TOP SELLER</div>
@@ -140,7 +140,7 @@ function renderBestsellers() {
                         <span class="size-price">${formatCurrency(item.price_m)}</span>
                     </div>
                 </div>
-                <button class="bestseller-add-btn" onclick="event.stopPropagation();openDetail('${item.id}')">
+                <button class="bestseller-add-btn" onclick="openDetail('${item.id}')">
                     <span>Pesan Sekarang</span> <span class="plus-icon">+</span>
                 </button>
             </div>

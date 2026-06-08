@@ -13,11 +13,13 @@ const STATUS_LABELS = {
 
 let currentOrderFilter = 'all';
 let autoRefreshInterval = null;
+let currentAdminRole = 'admin'; // will be set on login
 
 // ---- HELPERS ----
 function getToken() { return sessionStorage.getItem('adminToken'); }
 function setToken(token) { sessionStorage.setItem('adminToken', token); }
-function clearToken() { sessionStorage.removeItem('adminToken'); sessionStorage.removeItem('adminUsername'); }
+function clearToken() { sessionStorage.removeItem('adminToken'); sessionStorage.removeItem('adminUsername'); sessionStorage.removeItem('adminRole'); }
+function getAdminRole() { return sessionStorage.getItem('adminRole') || 'admin'; }
 
 function formatCurrency(amount) { return 'Rp ' + amount.toLocaleString('id-ID'); }
 
@@ -38,10 +40,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (res.ok) {
                 const data = await res.json();
                 const username = data.username || sessionStorage.getItem('adminUsername') || 'Admin';
+                const role = data.role || sessionStorage.getItem('adminRole') || 'admin';
+                
+                // Store role
+                sessionStorage.setItem('adminRole', role);
+                currentAdminRole = role;
+                
                 const usernameEl = document.getElementById('adminUsername');
                 const avatarEl = document.getElementById('userAvatar');
                 if (usernameEl) usernameEl.textContent = username;
                 if (avatarEl) avatarEl.textContent = username.charAt(0).toUpperCase();
+                
+                // Show role badge
+                updateRoleBadge(role);
+                
+                // Show/hide super admin features
+                setupRoleUI(role);
+                
                 showDashboard();
                 return;
             }
@@ -51,6 +66,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Redirect to dedicated login page
     window.location.href = '/admin-login';
 });
+
+// ---- ROLE-BASED UI ----
+function updateRoleBadge(role) {
+    const badge = document.getElementById('adminRoleBadge');
+    if (!badge) return;
+    if (role === 'super_admin') {
+        badge.textContent = '👑 Super Admin';
+        badge.className = 'role-badge role-super-admin';
+    } else {
+        badge.textContent = 'Admin';
+        badge.className = 'role-badge role-admin';
+    }
+}
+
+function setupRoleUI(role) {
+    const adminMgmtBtn = document.getElementById('tabAdminMgmtBtn');
+    if (adminMgmtBtn) {
+        adminMgmtBtn.style.display = (role === 'super_admin') ? 'flex' : 'none';
+    }
+}
 
 // ---- AUTH ----
 function showLogin() {
@@ -215,6 +250,67 @@ async function resetData() {
     } catch (e) { showToast('❌ Gagal reset'); }
 }
 
+// ---- EXPORT PDF & EXCEL ----
+function exportExcel() {
+    const token = getToken();
+    if (!token) { showToast('❌ Sesi tidak valid'); return; }
+    
+    showToast('📊 Mengunduh file Excel...');
+    
+    fetch('/api/export/orders/excel', {
+        headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Export gagal');
+        return res.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PizzaAzura_Pesanan_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('✅ File Excel berhasil diunduh');
+    })
+    .catch(err => {
+        console.error('Export Excel error:', err);
+        showToast('❌ Gagal export Excel');
+    });
+}
+
+function exportPDF() {
+    const token = getToken();
+    if (!token) { showToast('❌ Sesi tidak valid'); return; }
+    
+    showToast('📄 Mengunduh file PDF...');
+    
+    fetch('/api/export/orders/pdf', {
+        headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Export gagal');
+        return res.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PizzaAzura_Pesanan_${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('✅ File PDF berhasil diunduh');
+    })
+    .catch(err => {
+        console.error('Export PDF error:', err);
+        showToast('❌ Gagal export PDF');
+    });
+}
+
 // ---- TOAST ----
 function showToast(message) {
     const toast = document.getElementById('toast');
@@ -225,7 +321,6 @@ function showToast(message) {
 
 // ---- ORDER DETAIL POPUP ----
 let allOrders = [];
-const _origLoadOrders = loadOrders;
 
 async function loadOrders() {
     try {
@@ -305,10 +400,12 @@ function switchTab(tab) {
     const ordersTab = document.getElementById('ordersTab');
     const menuTab = document.getElementById('menuTab');
     const settingsTab = document.getElementById('settingsTab');
+    const adminMgmtTab = document.getElementById('adminMgmtTab');
     
     const ordersBtn = document.getElementById('tabOrdersBtn');
     const menuBtn = document.getElementById('tabMenuBtn');
     const settingsBtn = document.getElementById('tabSettingsBtn');
+    const adminMgmtBtn = document.getElementById('tabAdminMgmtBtn');
     
     const topBarTitle = document.getElementById('topBarTitle');
     
@@ -320,16 +417,18 @@ function switchTab(tab) {
     ordersTab.style.display = 'none';
     menuTab.style.display = 'none';
     settingsTab.style.display = 'none';
+    if (adminMgmtTab) adminMgmtTab.style.display = 'none';
     
     // Deactivate all buttons
     ordersBtn.classList.remove('active');
     menuBtn.classList.remove('active');
     settingsBtn.classList.remove('active');
+    if (adminMgmtBtn) adminMgmtBtn.classList.remove('active');
     
     if (tab === 'orders') {
         ordersTab.style.display = 'block';
         ordersBtn.classList.add('active');
-        topBarTitle.innerHTML = 'Antrean Pesanan';
+        topBarTitle.innerHTML = '📦 Antrean Pesanan';
         
         loadDashboard();
         if (!autoRefreshInterval) {
@@ -338,7 +437,7 @@ function switchTab(tab) {
     } else if (tab === 'menu') {
         menuTab.style.display = 'block';
         menuBtn.classList.add('active');
-        topBarTitle.innerHTML = 'Kelola Menu Pizza';
+        topBarTitle.innerHTML = '🍕 Kelola Menu Pizza';
         
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
@@ -348,13 +447,29 @@ function switchTab(tab) {
     } else if (tab === 'settings') {
         settingsTab.style.display = 'block';
         settingsBtn.classList.add('active');
-        topBarTitle.innerHTML = 'Pengaturan Toko';
+        topBarTitle.innerHTML = '⚙️ Pengaturan Toko';
         
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
             autoRefreshInterval = null;
         }
         loadSettingsTab();
+    } else if (tab === 'adminMgmt') {
+        // Security: only allow super_admin
+        if (getAdminRole() !== 'super_admin') {
+            showToast('⛔ Akses ditolak — fitur ini hanya untuk Super Admin');
+            switchTab('orders');
+            return;
+        }
+        adminMgmtTab.style.display = 'block';
+        adminMgmtBtn.classList.add('active');
+        topBarTitle.innerHTML = '👑 Kelola Admin';
+        
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+        }
+        loadAdminList();
     }
 }
 
@@ -686,4 +801,181 @@ function clearCustomImage() {
     document.getElementById('menu_image_base64').value = '';
     document.getElementById('imagePreviewContainer').style.display = 'none';
     document.getElementById('menu_image_preview').src = '';
+}
+
+// ============================================
+// ADMIN MANAGEMENT (Super Admin Only)
+// ============================================
+
+let adminList = [];
+let editingAdminId = null;
+
+async function loadAdminList() {
+    try {
+        const res = await apiFetch('/api/admins');
+        if (res.ok) {
+            adminList = await res.json();
+            renderAdminTable(adminList);
+        } else if (res.status === 403) {
+            showToast('⛔ Akses ditolak — hanya untuk Super Admin');
+            switchTab('orders');
+        }
+    } catch (e) {
+        console.error('Load admin error:', e);
+        showToast('❌ Gagal memuat daftar admin');
+    }
+}
+
+function renderAdminTable(admins) {
+    const tbody = document.getElementById('adminTableBody');
+    if (!admins.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:40px;">Tidak ada data admin</td></tr>';
+        return;
+    }
+
+    const myUsername = sessionStorage.getItem('adminUsername') || '';
+
+    tbody.innerHTML = admins.map((admin, idx) => {
+        const roleBadge = admin.role === 'super_admin'
+            ? '<span class="role-badge role-super-admin">👑 Super Admin</span>'
+            : '<span class="role-badge role-admin">🔧 Admin</span>';
+        
+        const isSelf = admin.username === myUsername;
+        const isSuperAdmin = admin.role === 'super_admin';
+        const selfTag = isSelf ? ' <span style="font-size:11px; color:var(--accent); font-weight:700;">(Anda)</span>' : '';
+        
+        // Super admin: hanya bisa edit diri sendiri, tidak bisa dihapus siapapun
+        // Admin biasa: bisa di-edit dan dihapus oleh super admin
+        let actionButtons = '';
+        if (isSuperAdmin) {
+            // Super admin hanya bisa di-edit oleh dirinya sendiri
+            if (isSelf) {
+                actionButtons = `<button class="action-btn" onclick="openAdminFormModal(${admin.id})" style="padding:6px 12px; font-size:12px;">✏️ Edit</button>`;
+            } else {
+                actionButtons = '<span style="font-size:12px; color:var(--text-muted);">—</span>';
+            }
+        } else {
+            // Admin biasa: bisa edit & hapus
+            actionButtons = `
+                <button class="action-btn" onclick="openAdminFormModal(${admin.id})" style="padding:6px 12px; font-size:12px;">✏️ Edit</button>
+                <button class="action-btn danger" onclick="deleteAdmin(${admin.id})" style="padding:6px 12px; font-size:12px;">🗑️ Hapus</button>
+            `;
+        }
+        
+        return `
+            <tr>
+                <td>${idx + 1}</td>
+                <td><strong>${admin.username}</strong>${selfTag}</td>
+                <td>${roleBadge}</td>
+                <td>
+                    <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                        ${actionButtons}
+                    </div>
+                </td>
+            </tr>`;
+    }).join('');
+}
+
+function openAdminFormModal(adminId = null) {
+    editingAdminId = adminId;
+    const modal = document.getElementById('adminFormModal');
+    const form = document.getElementById('adminForm');
+    const title = document.getElementById('adminFormTitle');
+    const passwordInput = document.getElementById('admin_password');
+    const passwordHint = document.getElementById('admin_password_hint');
+    
+    form.reset();
+    
+    if (adminId) {
+        const admin = adminList.find(a => a.id === adminId);
+        const isSuperAdmin = admin && admin.role === 'super_admin';
+        title.textContent = isSuperAdmin ? '👑 Edit Akun Super Admin' : '✏️ Edit Admin';
+        if (admin) {
+            document.getElementById('admin_username').value = admin.username;
+        }
+        passwordInput.required = false;
+        passwordInput.placeholder = 'Kosongkan jika tidak diubah';
+        passwordHint.style.display = 'block';
+    } else {
+        title.textContent = '➕ Tambah Admin Baru';
+        passwordInput.required = true;
+        passwordInput.placeholder = 'Masukkan password';
+        passwordHint.style.display = 'none';
+    }
+    
+    modal.classList.add('active');
+}
+
+function closeAdminFormModal() {
+    document.getElementById('adminFormModal').classList.remove('active');
+}
+
+document.getElementById('adminFormModal')?.addEventListener('click', e => {
+    if (e.target.id === 'adminFormModal') closeAdminFormModal();
+});
+
+async function saveAdmin(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('admin_username').value.trim();
+    const password = document.getElementById('admin_password').value;
+    
+    if (!username) {
+        showToast('⚠️ Username wajib diisi');
+        return;
+    }
+    
+    if (!editingAdminId && !password) {
+        showToast('⚠️ Password wajib diisi untuk admin baru');
+        return;
+    }
+    
+    const payload = { username };
+    if (password) payload.password = password;
+    
+    const method = editingAdminId ? 'PUT' : 'POST';
+    const url = editingAdminId ? `/api/admins/${editingAdminId}` : '/api/admins';
+    
+    const submitBtn = document.getElementById('adminSubmitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Menyimpan...';
+    
+    try {
+        const res = await apiFetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const result = await res.json();
+        if (res.ok) {
+            showToast('✅ Admin berhasil disimpan');
+            closeAdminFormModal();
+            loadAdminList();
+        } else {
+            showToast('❌ ' + (result.error || 'Gagal menyimpan admin'));
+        }
+    } catch (err) {
+        showToast('❌ Kesalahan koneksi server');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '💾 Simpan Admin';
+    }
+}
+
+async function deleteAdmin(adminId) {
+    if (!confirm('Yakin ingin menghapus admin ini? Akses login akan dicabut.')) return;
+    
+    try {
+        const res = await apiFetch(`/api/admins/${adminId}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (res.ok) {
+            showToast('🗑️ Admin berhasil dihapus');
+            loadAdminList();
+        } else {
+            showToast('❌ ' + (result.error || 'Gagal menghapus admin'));
+        }
+    } catch (e) {
+        showToast('❌ Kesalahan koneksi server');
+    }
 }
