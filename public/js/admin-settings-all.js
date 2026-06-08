@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const adminLogo = document.querySelector('.admin-logo');
         if (adminLogo) {
-            adminLogo.innerHTML = '<img src="/images/logo.png" alt="Pizza Azura" class="logo-img-admin">';
+            adminLogo.innerHTML = '<img src="/images/logo.webp" alt="Pizza Azura" class="logo-img-admin">';
         }
     } catch(e) { /* ignore if DOM not ready */ }
     
@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('set_store_name').value = s.store_name || 'Pizza Azura Jakarta';
         document.getElementById('set_store_address').value = s.store_address || 'Jl. Sudirman No. 123, Jakarta Selatan';
         document.getElementById('set_store_maps_link').value = s.store_maps_link || 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8';
+        document.getElementById('set_fonnte_token').value = s.fonnte_token || '';
+        document.getElementById('set_admin_wa').value = s.admin_wa || '6285198042502';
 
         document.getElementById('loadingSettings').style.display = 'none';
         document.getElementById('settingsContainer').style.display = 'grid';
@@ -82,7 +84,9 @@ async function saveAllSettings() {
         store_lng: document.getElementById('set_store_lng').value.trim(),
         store_name: document.getElementById('set_store_name').value.trim(),
         store_address: document.getElementById('set_store_address').value.trim(),
-        store_maps_link: document.getElementById('set_store_maps_link').value.trim()
+        store_maps_link: document.getElementById('set_store_maps_link').value.trim(),
+        fonnte_token: document.getElementById('set_fonnte_token').value.trim(),
+        admin_wa: document.getElementById('set_admin_wa').value.trim()
     };
 
     // Simple URL validation: allow empty or starting with http/https

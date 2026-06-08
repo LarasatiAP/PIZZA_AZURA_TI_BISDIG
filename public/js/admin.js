@@ -521,6 +521,10 @@ async function loadSettingsTab() {
         document.getElementById('set_store_name').value = s.store_name || 'Pizza Azura Jakarta';
         document.getElementById('set_store_address').value = s.store_address || 'Jl. Sudirman No. 123, Jakarta Selatan';
         document.getElementById('set_store_maps_link').value = s.store_maps_link || 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8';
+        
+        // WhatsApp settings
+        document.getElementById('set_fonnte_token').value = s.fonnte_token || '';
+        document.getElementById('set_admin_wa').value = s.admin_wa || '6285198042502';
 
         loading.style.display = 'none';
         container.style.display = 'grid';
@@ -548,11 +552,13 @@ async function saveAllSettings() {
         store_lng: document.getElementById('set_store_lng').value.trim(),
         store_name: document.getElementById('set_store_name').value.trim(),
         store_address: document.getElementById('set_store_address').value.trim(),
-        store_maps_link: document.getElementById('set_store_maps_link').value.trim()
+        store_maps_link: document.getElementById('set_store_maps_link').value.trim(),
+        fonnte_token: document.getElementById('set_fonnte_token').value.trim(),
+        admin_wa: document.getElementById('set_admin_wa').value.trim()
     };
 
-    // Simple URL validation
-    const isValidUrl = (u) => !u || /^https?:\/\//i.test(u);
+    // Simple URL validation (allow empty, #, or starting with http/https)
+    const isValidUrl = (u) => !u || u === '#' || /^https?:\/\//i.test(u);
     if (!isValidUrl(payload.fb_link) || !isValidUrl(payload.ig_link) || !isValidUrl(payload.tt_link)) {
         showToast('❌ Salah satu URL sosial tidak valid. Gunakan http(s)://');
         return;
@@ -669,13 +675,13 @@ function openMenuFormModal(menuId = null) {
             const previewImg = document.getElementById('menu_image_preview');
             
             const presets = [
-                '/images/pizza_supreme.png', 'images/pizza_supreme.png',
-                '/images/pizza_pepperoni.png', 'images/pizza_pepperoni.png',
-                '/images/pizza_corn_cheese.png', 'images/pizza_corn_cheese.png',
-                '/images/pizza_sosis.png', 'images/pizza_sosis.png',
-                '/images/pizza_chicken.png', 'images/pizza_chicken.png',
-                '/images/pizza_mushroom.png', 'images/pizza_mushroom.png',
-                '/images/pizza_tuna.png', 'images/pizza_tuna.png'
+                '/images/pizza_supreme.webp', 'images/pizza_supreme.webp',
+                '/images/pizza_pepperoni.webp', 'images/pizza_pepperoni.webp',
+                '/images/pizza_corn_cheese.webp', 'images/pizza_corn_cheese.webp',
+                '/images/pizza_sosis.webp', 'images/pizza_sosis.webp',
+                '/images/pizza_chicken.webp', 'images/pizza_chicken.webp',
+                '/images/pizza_mushroom.webp', 'images/pizza_mushroom.webp',
+                '/images/pizza_tuna.webp', 'images/pizza_tuna.webp'
             ];
             
             const isCustom = item.image && (item.image.startsWith('data:') || !presets.includes(item.image));
@@ -685,16 +691,16 @@ function openMenuFormModal(menuId = null) {
                 previewImg.src = item.image;
                 previewContainer.style.display = 'flex';
                 // Set preset dropdown selection blank or default to Supreme
-                presetSelect.value = '/images/pizza_supreme.png';
+                presetSelect.value = '/images/pizza_supreme.webp';
             } else {
-                presetSelect.value = item.image || '/images/pizza_supreme.png';
+                presetSelect.value = item.image || '/images/pizza_supreme.webp';
                 previewContainer.style.display = 'none';
             }
         }
     } else {
         title.innerHTML = 'Tambah Pizza Baru';
         idInput.disabled = false;
-        document.getElementById('menu_image_preset').value = '/images/pizza_supreme.png';
+        document.getElementById('menu_image_preset').value = '/images/pizza_supreme.webp';
     }
     
     modal.classList.add('active');

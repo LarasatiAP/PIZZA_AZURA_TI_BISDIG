@@ -11,7 +11,7 @@
 <div class="admin-shell">
     <header class="admin-header">
         <div class="brand-header">
-            <img src="<?= base_url('assets/images/logo.png') ?>" alt="Azura Pizza Logo" class="brand-logo" onerror="this.style.display='none'">
+            <img src="<?= base_url('assets/images/logo.webp') ?>" alt="Azura Pizza Logo" class="brand-logo" onerror="this.style.display='none'">
             <div>
                 <p class="brand-tag">Bakule Azura</p>
                 <h1>Kelola Menu Pizza</h1>

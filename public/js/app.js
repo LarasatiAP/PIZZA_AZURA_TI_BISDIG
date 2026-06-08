@@ -210,29 +210,22 @@ async function submitOrder(){
     const name=document.getElementById('custName').value.trim();if(!name){showToast('⚠️ Masukkan nama!');return}
     const cart=getCart();if(!cart.length){showToast('⚠️ Keranjang kosong!');return}
     const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='⏳ Memproses pesanan...';
-    const waNumber = '6282174666003';
     const customerPhone = document.getElementById('custPhone')?.value.trim() || '';
     const orderType = document.querySelector('input[name="orderType"]:checked').value;
     try{
         const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerName:name,phone:customerPhone,orderType:orderType,paymentMethod:'whatsapp',notes:document.getElementById('orderNotes')?.value||'',items:cart})});
         const result=await res.json();
         if(!res.ok){showToast('❌ '+(result.error||'Gagal menyimpan pesanan'));btn.disabled=false;btn.textContent='✅ Konfirmasi Pesanan';return}
-        const q = String(result.queueNumber).padStart(3,'0');
-        const itemList = cart.map(i => `${i.name} (Size ${i.size}) x${i.quantity}`).join('\n');
-        const waMessage = `Halo Admin,\nSaya ${name}\nNomor WA: ${customerPhone}\nJenis Pesanan: ${orderType}\n\nDetail Pesanan:\n${itemList}\n\nNomor Antrian: #${q}\nTotal: Rp ${formatCurrency(result.total).replace('Rp ', '')}`;
-        const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
-        const waWindow = window.open(waLink, '_blank');
-        if(!waWindow){showToast('⚠️ Izinkan popup/WhatsApp untuk melanjutkan pesanan ke admin.');}
-        saveCart([]);updateCartBadge();closeModal('checkoutModal');showSuccessModal(result,cart);
+        saveCart([]);updateCartBadge();closeModal('checkoutModal');showSuccessModal(result,cart,customerPhone,orderType,name);
     }catch{showToast('❌ Kesalahan menyimpan pesanan');btn.disabled=false;btn.textContent='✅ Konfirmasi Pesanan'}
 }
-function showSuccessModal(order,items){
+function showSuccessModal(order,items,customerPhone,orderType,customerName){
     const q=String(order.queueNumber).padStart(3,'0');
-    const waNumber = '6282174666003';
+    const waNumber = (typeof settingsData !== 'undefined' && settingsData.admin_wa) ? settingsData.admin_wa : '6285198042502';
     const itemList = items.map(i => `${i.name} (Size ${i.size}) x${i.quantity}`).join('\n');
-    const waMessage = `Halo, saya ingin mengkonfirmasi pesanan saya:\n\nNo Antrian: #${q}\nTotal: Rp ${order.total.toLocaleString('id-ID')}\n\nDetail:\n${itemList}\n\nTerima kasih!`;
+    const waMessage = `Halo Admin,\nSaya ${customerName || 'Pelanggan'}\nNomor WA: ${customerPhone || '-'}\nJenis Pesanan: ${orderType || '-'}\n\nDetail Pesanan:\n${itemList}\n\nNomor Antrian: #${q}\nTotal: Rp ${order.total.toLocaleString('id-ID')}\n\nTerima kasih!`;
     const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
-    document.getElementById('successContent').innerHTML=`<div style="padding:20px 0"><div style="font-size:48px;margin-bottom:8px">🎉</div><h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Pesanan Berhasil!</h2><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px">Nomor antrian kamu:</p><div class="queue-number-display">#${q}</div><div class="success-total">${formatCurrency(order.total)}</div><p style="color:var(--text-muted);font-size:12px;margin-bottom:16px">Total Pembayaran</p><div class="success-details">${items.map(i=>{const t=(i.price+i.toppings.reduce((s,t)=>s+t.price,0))*i.quantity;return`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)"><span>${i.name} (Size ${i.size}) ×${i.quantity}</span><span style="color:var(--accent);font-weight:600">${formatCurrency(t)}</span></div>`}).join('')}</div><div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:12px;padding:14px;margin:14px 0"><p style="font-size:13px;color:var(--accent);font-weight:600">📢 Pesanan Anda sudah dikirim ke WhatsApp admin. Silakan tunggu konfirmasi selanjutnya.</p></div><a href="${waLink}" target="_blank" class="checkout-btn" style="display:inline-block;text-align:center;text-decoration:none;margin-bottom:10px;background:linear-gradient(135deg,#25d366,#20ba5a)">💬 Buka WhatsApp Admin Lagi</a><button class="checkout-btn" onclick="closeModal('successModal')" style="background:var(--accent)">Kembali ke Menu</button></div>`;
+    document.getElementById('successContent').innerHTML=`<div style="padding:20px 0"><div style="font-size:48px;margin-bottom:8px">🎉</div><h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Pesanan Berhasil!</h2><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px">Nomor antrian kamu:</p><div class="queue-number-display">#${q}</div><div class="success-total">${formatCurrency(order.total)}</div><p style="color:var(--text-muted);font-size:12px;margin-bottom:16px">Total Pembayaran</p><div class="success-details">${items.map(i=>{const t=(i.price+i.toppings.reduce((s,t)=>s+t.price,0))*i.quantity;return`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)"><span>${i.name} (Size ${i.size}) ×${i.quantity}</span><span style="color:var(--accent);font-weight:600">${formatCurrency(t)}</span></div>`}).join('')}</div><div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:12px;padding:14px;margin:14px 0"><p style="font-size:13px;color:var(--accent);font-weight:600">📢 Pesanan Anda sudah masuk ke sistem kami dan sedang dikirim otomatis ke WhatsApp admin. Silakan tunggu konfirmasi selanjutnya.</p></div><a href="${waLink}" target="_blank" class="checkout-btn" style="display:inline-block;text-align:center;text-decoration:none;margin-bottom:10px;background:linear-gradient(135deg,#25d366,#20ba5a)">💬 Kirim Ulang Manual ke WA Admin</a><button class="checkout-btn" onclick="closeModal('successModal')" style="background:var(--accent)">Kembali ke Menu</button></div>`;
     openModal('successModal');
 }
 

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const adminLogo = document.querySelector('.admin-logo');
         if (adminLogo) {
-            adminLogo.innerHTML = '<img src="/images/logo.png" alt="Pizza Azura" class="logo-img-admin">';
+            adminLogo.innerHTML = '<img src="/images/logo.webp" alt="Pizza Azura" class="logo-img-admin">';
         }
     } catch(e) { /* ignore if DOM not ready */ }
 
@@ -157,8 +157,8 @@ async function saveSettings() {
     }
 
     const saveBtn = document.getElementById('saveBtn');
-    // Simple URL validation for social fields when present
-    const isValidUrl = (u) => !u || /^https?:\/\//i.test(u);
+    // Simple URL validation for social fields when present (allow empty, #, or http/https)
+    const isValidUrl = (u) => !u || u === '#' || /^https?:\/\//i.test(u);
     if (payload.fb_link !== undefined && !isValidUrl(payload.fb_link)) { showToast('❌ URL Facebook tidak valid'); return; }
     if (payload.ig_link !== undefined && !isValidUrl(payload.ig_link)) { showToast('❌ URL Instagram tidak valid'); return; }
     if (payload.tt_link !== undefined && !isValidUrl(payload.tt_link)) { showToast('❌ URL TikTok tidak valid'); return; }
