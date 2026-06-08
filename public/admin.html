@@ -58,7 +58,7 @@
     <aside class="admin-sidebar" id="adminSidebar">
         <div>
             <a href="/admin" class="sidebar-logo">
-                <img src="images/logo.png" alt="Pizza Azura">
+                <img src="images/logo.webp" alt="Pizza Azura">
                 <span class="sidebar-logo-text">Pizza Azura</span>
             </a>
             
@@ -240,6 +240,21 @@
                         </div>
                     </div>
                 </div>
+
+                    <!-- WhatsApp Gateway API (Fonnte) -->
+                    <div class="settings-card">
+                        <h3>💬 Auto-Send WhatsApp Gateway (Fonnte)</h3>
+                        <div class="form-group">
+                            <label>Fonnte API Token</label>
+                            <input type="text" id="set_fonnte_token" class="form-input" placeholder="Masukkan Token API Fonnte Anda">
+                            <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Dapatkan gratis dari <a href="https://fonnte.com" target="_blank" style="color:var(--accent)">fonnte.com</a>. Kosongkan jika ingin menonaktifkan pengiriman otomatis.</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor WhatsApp Admin Utama (Tanpa '+')</label>
+                            <input type="text" id="set_admin_wa" class="form-input" placeholder="contoh: 6285198042502">
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -290,13 +305,13 @@
             <div class="form-group">
                 <label>Gambar Pizza (Pilih Preset Bawaan)</label>
                 <select id="menu_image_preset" class="form-input" style="background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
-                    <option value="/images/pizza_supreme.png">Preset: Super Supreme</option>
-                    <option value="/images/pizza_pepperoni.png">Preset: Beef Pepperoni</option>
-                    <option value="/images/pizza_corn_cheese.png">Preset: Corn Cheese</option>
-                    <option value="/images/pizza_sosis.png">Preset: Sosis</option>
-                    <option value="/images/pizza_chicken.png">Preset: Chicken Cheese</option>
-                    <option value="/images/pizza_mushroom.png">Preset: Mushroom Corn</option>
-                    <option value="/images/pizza_tuna.png">Preset: Tuna Corn Mayo</option>
+                    <option value="/images/pizza_supreme.webp">Preset: Super Supreme</option>
+                    <option value="/images/pizza_pepperoni.webp">Preset: Beef Pepperoni</option>
+                    <option value="/images/pizza_corn_cheese.webp">Preset: Corn Cheese</option>
+                    <option value="/images/pizza_sosis.webp">Preset: Sosis</option>
+                    <option value="/images/pizza_chicken.webp">Preset: Chicken Cheese</option>
+                    <option value="/images/pizza_mushroom.webp">Preset: Mushroom Corn</option>
+                    <option value="/images/pizza_tuna.webp">Preset: Tuna Corn Mayo</option>
                 </select>
             </div>
             

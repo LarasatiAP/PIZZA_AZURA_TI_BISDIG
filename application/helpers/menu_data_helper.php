@@ -14,7 +14,7 @@ $menu_items = [
         'harga' => 25000,
         'extra_mozarela' => 35000,
         'deskripsi' => 'Corn dan keju mozarela',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Corn Sosis',
@@ -22,7 +22,7 @@ $menu_items = [
         'harga' => 25000,
         'extra_mozarela' => 35000,
         'deskripsi' => 'Jagung dan sosis',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Chicken Cheese',
@@ -30,7 +30,7 @@ $menu_items = [
         'harga' => 35000,
         'extra_mozarela' => 45000,
         'deskripsi' => 'Ayam dan keju mozarela',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Chicken Blackpepper',
@@ -38,7 +38,7 @@ $menu_items = [
         'harga' => 35000,
         'extra_mozarela' => 45000,
         'deskripsi' => 'Ayam dengan merica hitam',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Mushroom Corn',
@@ -46,7 +46,7 @@ $menu_items = [
         'harga' => 35000,
         'extra_mozarela' => 45000,
         'deskripsi' => 'Jamur dan jagung',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Chicken Corn Mayo',
@@ -54,7 +54,7 @@ $menu_items = [
         'harga' => 35000,
         'extra_mozarela' => 45000,
         'deskripsi' => 'Ayam, jagung dan mayo',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Tuna Corn Mayo',
@@ -62,7 +62,7 @@ $menu_items = [
         'harga' => 35000,
         'extra_mozarela' => 45000,
         'deskripsi' => 'Tuna, jagung dan mayo',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Beef Pepperoni',
@@ -70,7 +70,7 @@ $menu_items = [
         'harga' => 45000,
         'extra_mozarela' => null,
         'deskripsi' => 'Daging sapi dan pepperoni',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Beef Petties',
@@ -78,7 +78,7 @@ $menu_items = [
         'harga' => 45000,
         'extra_mozarela' => null,
         'deskripsi' => 'Daging sapi premium',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Super Supreme',
@@ -86,7 +86,7 @@ $menu_items = [
         'harga' => 55000,
         'extra_mozarela' => null,
         'deskripsi' => 'Kombinasi topping lengkap',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
 
     // Size 26
@@ -96,7 +96,7 @@ $menu_items = [
         'harga' => 40000,
         'extra_mozarela' => 55000,
         'deskripsi' => 'Corn dan keju mozarela',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Corn Sosis',
@@ -104,7 +104,7 @@ $menu_items = [
         'harga' => 40000,
         'extra_mozarela' => 55000,
         'deskripsi' => 'Jagung dan sosis',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Chicken Cheese',
@@ -112,7 +112,7 @@ $menu_items = [
         'harga' => 55000,
         'extra_mozarela' => 65000,
         'deskripsi' => 'Ayam dan keju mozarela',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Chicken Blackpepper',
@@ -120,7 +120,7 @@ $menu_items = [
         'harga' => 55000,
         'extra_mozarela' => 65000,
         'deskripsi' => 'Ayam dengan merica hitam',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Mushroom Corn',
@@ -128,7 +128,7 @@ $menu_items = [
         'harga' => 55000,
         'extra_mozarela' => 65000,
         'deskripsi' => 'Jamur dan jagung',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Chicken Corn Mayo',
@@ -136,7 +136,7 @@ $menu_items = [
         'harga' => 55000,
         'extra_mozarela' => 65000,
         'deskripsi' => 'Ayam, jagung dan mayo',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Tuna Corn Mayo',
@@ -144,7 +144,7 @@ $menu_items = [
         'harga' => 55000,
         'extra_mozarela' => 65000,
         'deskripsi' => 'Tuna, jagung dan mayo',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Beef Pepperoni',
@@ -152,7 +152,7 @@ $menu_items = [
         'harga' => 65000,
         'extra_mozarela' => null,
         'deskripsi' => 'Daging sapi dan pepperoni',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Beef Petties',
@@ -160,7 +160,7 @@ $menu_items = [
         'harga' => 65000,
         'extra_mozarela' => null,
         'deskripsi' => 'Daging sapi premium',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
     [
         'nama_pizza' => 'Pizza Super Supreme',
@@ -168,7 +168,7 @@ $menu_items = [
         'harga' => 75000,
         'extra_mozarela' => null,
         'deskripsi' => 'Kombinasi topping lengkap',
-        'gambar' => 'pizza-default.png'
+        'gambar' => 'pizza-default.webp'
     ],
 ];
 

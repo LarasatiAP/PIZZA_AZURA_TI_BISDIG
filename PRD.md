@@ -95,7 +95,7 @@ The codebase is split into two implementations:
     *   Highlight low-stock warnings at the top of the dashboard.
     *   Quick-edit inputs to restock or manually adjust raw material quantities (e.g., Keju, Sosis, Adonan, Pepperoni).
 5.  **Store Settings Control (Fullstack Mode)**:
-    *   Update restaurant operational details: Slogan text, WhatsApp connection links, Social media tags (IG, FB, Twitter), Operating Hours (Weekday/Weekend), Address location, and Store Contact Email/Phone.
+    *   Update restaurant operational details: Slogan text, WhatsApp connection links, Social media tags (IG, FB, TikTok), Operating Hours (Weekday/Weekend), Address location, Store Contact Email/Phone, and Fonnte WhatsApp Gateway parameters (API Token & Admin Phone).
 6.  **Database Reset**:
     *   Option to wipe order history and restore initial database conditions for clean shifts.
 
@@ -202,3 +202,13 @@ All backend endpoints are prefixed with `/api` and expect JSON payloads for requ
     *   Responsive layouts optimized for both handheld mobile browsers (for customers scanning table codes) and tablets/desktops (for kitchen administration).
     *   Smooth transitions and micro-animations for cart additions, state switches, and warning banners.
 *   **Usability**: Direct, simplified ordering process requires minimal taps from landing to checkout receipt.
+
+---
+
+## 8. Recent Architectural Modifications & Hotfixes (June 2026)
+1. **WhatsApp Administration Routing**:
+   * Migrated default restaurant admin WhatsApp notifications (both auto-Fonnte notifications and client-compiled links) from `6282171938725` to the new official contact line: **`+62 851-9804-2502`** (stored as `6285198042502` for API compatibility).
+2. **Settings Tab Standardization**:
+   * Standardized settings form layouts across dashboard views. Enabled WhatsApp Gateway configuration (Fonnte API Token and Admin WhatsApp Number) directly inside the admin control panel.
+3. **Database Integrity Optimization**:
+   * Enabled SQLite foreign key enforcement (`PRAGMA foreign_keys = ON;`) at database startup. This ensures cascading delete integrity for related order rows and toppings.

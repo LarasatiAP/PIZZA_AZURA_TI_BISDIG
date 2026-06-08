@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
         const img = new Image();
         const paddedIndex = i.toString().padStart(3, '0');
-        img.src = `pizza2/ezgif-frame-${paddedIndex}.png`;
+        img.src = `pizza2/ezgif-frame-${paddedIndex}.webp`;
         
         img.onload = () => {
             loadedImages++;

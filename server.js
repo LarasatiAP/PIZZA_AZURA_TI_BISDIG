@@ -129,7 +129,7 @@ app.post('/api/menu', authMiddleware, (req, res) => {
     
     runSql(
         'INSERT INTO menu (id, name, description, image, category, price_s, price_m, price_l, is_bestseller) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)',
-        [id, name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0]
+        [id, name, description || '', image || '/images/pizza_supreme.webp', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0]
     );
     res.json({ success: true });
 });
@@ -154,7 +154,7 @@ app.put('/api/menu/:id', authMiddleware, (req, res) => {
     
     runSql(
         'UPDATE menu SET name = ?, description = ?, image = ?, category = ?, price_s = ?, price_m = ?, is_bestseller = ? WHERE id = ?',
-        [name, description || '', image || '/images/pizza_supreme.png', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, id]
+        [name, description || '', image || '/images/pizza_supreme.webp', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, id]
     );
     res.json({ success: true });
 });
@@ -208,7 +208,7 @@ async function sendWhatsAppNotification(orderId, queueNumber, customerName, phon
         const adminWaSetting = queryOne("SELECT value FROM settings WHERE key = 'admin_wa'");
         
         const fonnteToken = tokenSetting ? tokenSetting.value : '';
-        const adminWa = adminWaSetting ? adminWaSetting.value : '6282171938725';
+        const adminWa = adminWaSetting ? adminWaSetting.value : '6285198042502';
         
         if (!fonnteToken) {
             console.log('⚠️ Fonnte API Token is not configured. Skipping auto-WhatsApp notification.');

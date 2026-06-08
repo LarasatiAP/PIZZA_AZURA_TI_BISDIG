@@ -41,6 +41,7 @@ function saveDb() {
 
 // ---- SCHEMA ----
 function initSchema() {
+    db.run('PRAGMA foreign_keys = ON;');
     db.run(`
         CREATE TABLE IF NOT EXISTS menu (
             id TEXT PRIMARY KEY,
@@ -130,16 +131,16 @@ function seedIfEmpty() {
 
     // price_s = Size 22, price_m = Size 26, price_l = not used
     const menuData = [
-        ['corn_cheese', 'Pizza Corn Cheese', 'Perpaduan jagung manis dan keju leleh di atas adonan pizza renyah.', '/images/pizza_corn_cheese.png', 'classic', 25000, 40000, 0],
-        ['corn_sosis', 'Pizza Corn Sosis', 'Jagung manis dengan irisan sosis premium di atas pizza crispy.', '/images/pizza_sosis.png', 'classic', 25000, 40000, 0],
-        ['chicken_cheese', 'Pizza Chicken Cheese', 'Ayam berbumbu dengan lelehan keju mozzarella yang melimpah.', '/images/pizza_chicken.png', 'classic', 35000, 50000, 0],
-        ['chicken_blackpepper', 'Pizza Chicken Blackpepper', 'Ayam blackpepper dengan rempah pilihan dan keju gurih.', '/images/pizza_chicken.png', 'classic', 35000, 55000, 0],
-        ['mushroom_corn', 'Pizza Mushroom Corn', 'Jamur segar dan jagung manis dengan saus spesial.', '/images/pizza_mushroom.png', 'standard', 35000, 55000, 0],
-        ['chicken_corn_mayo', 'Pizza Chicken Corn Mayo', 'Ayam, jagung manis, dan saus mayo creamy yang lezat.', '/images/pizza_chicken.png', 'standard', 35000, 55000, 0],
-        ['tuna_corn_mayo', 'Pizza Tuna Corn Mayo', 'Tuna pilihan dengan jagung dan mayo — kombinasi segar!', '/images/pizza_tuna.png', 'standard', 35000, 55000, 0],
-        ['beef_pepperoni', 'Pizza Beef Pepperoni', 'Pepperoni beef premium dengan keju mozzarella berlapis.', '/images/pizza_pepperoni.png', 'premium', 45000, 65000, 0],
-        ['beef_petties', 'Pizza Beef Petties', 'Daging sapi giling berbumbu spesial di atas pizza renyah.', '/images/pizza_pepperoni.png', 'premium', 45000, 65000, 0],
-        ['super_supreme', 'Pizza Super Supreme', 'Semua topping premium dalam satu pizza — the ultimate choice!', '/images/pizza_supreme.png', 'premium', 55000, 75000, 0],
+        ['corn_cheese', 'Pizza Corn Cheese', 'Perpaduan jagung manis dan keju leleh di atas adonan pizza renyah.', '/images/pizza_corn_cheese.webp', 'classic', 25000, 40000, 0],
+        ['corn_sosis', 'Pizza Corn Sosis', 'Jagung manis dengan irisan sosis premium di atas pizza crispy.', '/images/pizza_sosis.webp', 'classic', 25000, 40000, 0],
+        ['chicken_cheese', 'Pizza Chicken Cheese', 'Ayam berbumbu dengan lelehan keju mozzarella yang melimpah.', '/images/pizza_chicken.webp', 'classic', 35000, 50000, 0],
+        ['chicken_blackpepper', 'Pizza Chicken Blackpepper', 'Ayam blackpepper dengan rempah pilihan dan keju gurih.', '/images/pizza_chicken.webp', 'classic', 35000, 55000, 0],
+        ['mushroom_corn', 'Pizza Mushroom Corn', 'Jamur segar dan jagung manis dengan saus spesial.', '/images/pizza_mushroom.webp', 'standard', 35000, 55000, 0],
+        ['chicken_corn_mayo', 'Pizza Chicken Corn Mayo', 'Ayam, jagung manis, dan saus mayo creamy yang lezat.', '/images/pizza_chicken.webp', 'standard', 35000, 55000, 0],
+        ['tuna_corn_mayo', 'Pizza Tuna Corn Mayo', 'Tuna pilihan dengan jagung dan mayo — kombinasi segar!', '/images/pizza_tuna.webp', 'standard', 35000, 55000, 0],
+        ['beef_pepperoni', 'Pizza Beef Pepperoni', 'Pepperoni beef premium dengan keju mozzarella berlapis.', '/images/pizza_pepperoni.webp', 'premium', 45000, 65000, 0],
+        ['beef_petties', 'Pizza Beef Petties', 'Daging sapi giling berbumbu spesial di atas pizza renyah.', '/images/pizza_pepperoni.webp', 'premium', 45000, 65000, 0],
+        ['super_supreme', 'Pizza Super Supreme', 'Semua topping premium dalam satu pizza — the ultimate choice!', '/images/pizza_supreme.webp', 'premium', 55000, 75000, 0],
     ];
 
     for (const m of menuData) {
@@ -167,7 +168,7 @@ function seedSettingsIfEmpty() {
     const settingsCheck = db.exec("SELECT COUNT(*) FROM settings");
     const defaultSettings = [
         ['slogan', 'Pesan pizza favoritmu secara digital. Cepat, mudah, dan nikmat tanpa perlu antri panjang.'],
-        ['wa_link', 'https://wa.me/6282171938725'],
+        ['wa_link', 'https://wa.me/6285198042502'],
         ['ig_link', 'https://www.instagram.com/pizzaazzura?igsh=MW9zcmtnNDAwdzlheQ=='],
         ['fb_link', '#'],
         ['tw_link', '#'],
@@ -178,14 +179,14 @@ function seedSettingsIfEmpty() {
         ['contact_address', '📍 Jl. Sudirman No. 123, Jakarta'],
         ['contact_phone', '📞 +62 851-9804-2502'],
         ['contact_email', '✉️ hello@pizzaazura.com'],
-        ['about_content', 'Pizza Azura hadir untuk memberi pengalaman pesan pizza tanpa ribet: langsung dari HP, tanpa antre, dan dengan rasa yang selalu konsisten. Kami memilih bahan terbaik — keju berkualitas, saus rahasia, dan topping premium — lalu memanggang setiap pesanan dengan perhatian ekstra sehingga setiap gigitan terasa lezat dan memuaskan.\n\nSelain menu klasik favorit keluarga, kami juga menawarkan variasi pizza kekinian dengan kombinasi topping unik yang pas untuk semua suasana. Inilah cara baru menikmati pizza: praktis, cepat, dan tetap terjaga kualitasnya.\n\nPizza Azura dibuat untuk siapa saja yang ingin makan enak tanpa perlu keluar rumah. Dari pesanan antar cepat hingga pickup langsung di lokasi, kami hadir untuk memanjakan selera Anda di setiap momen special.'],
+        ['about_content', 'Pizza Azura hadir untuk memberi pengalaman pesan pizza tanpa ribet: langsung dari HP, tanpa antre, dan dengan rasa yang selalu konsisten. Kami memilih bahan terbaik — keju berkualitas, saus rahasia, dan topping premium — lalu memanggang setiap pesanan dengan perhatian ekstra sehingga setiap gigitan terasa lezat and memuaskan.\n\nSelain menu klasik favorit keluarga, kami juga menawarkan variasi pizza kekinian dengan kombinasi topping unik yang pas untuk semua suasana. Inilah cara baru menikmati pizza: praktis, cepat, dan tetap terjaga kualitasnya.\n\nPizza Azura dibuat untuk siapa saja yang ingin makan enak tanpa perlu keluar rumah. Dari pesanan antar cepat hingga pickup langsung di lokasi, kami hadir untuk memanjakan selera Anda di setiap momen special.'],
         ['store_lat', '-6.2146'],
         ['store_lng', '106.8215'],
         ['store_name', 'Pizza Azura Jakarta'],
         ['store_address', 'Jl. Sudirman No. 123, Jakarta Selatan'],
         ['store_maps_link', 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8'],
         ['fonnte_token', ''],
-        ['admin_wa', '6282171938725']
+        ['admin_wa', '6285198042502']
     ];
     
     if (settingsCheck.length === 0 || settingsCheck[0].values[0][0] === 0) {

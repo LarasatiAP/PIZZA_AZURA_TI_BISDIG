@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS pizzas (
     harga INT(11) NOT NULL,
     extra_mozarela INT(11) NULL,
     deskripsi TEXT NULL,
-    gambar VARCHAR(100) DEFAULT 'pizza-default.png',
+    gambar VARCHAR(100) DEFAULT 'pizza-default.webp',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS pizzas (
 -- Insert menu items (dari file migration)
 INSERT INTO pizzas VALUES
 -- Size 22
-(1, 'Pizza Corn Cheese', '22', 25000, 35000, 'Corn dan keju mozarela', 'pizza-default.png', NOW(), NOW()),
-(2, 'Pizza Corn Sosis', '22', 25000, 35000, 'Jagung dan sosis', 'pizza-default.png', NOW(), NOW()),
+(1, 'Pizza Corn Cheese', '22', 25000, 35000, 'Corn dan keju mozarela', 'pizza-default.webp', NOW(), NOW()),
+(2, 'Pizza Corn Sosis', '22', 25000, 35000, 'Jagung dan sosis', 'pizza-default.webp', NOW(), NOW()),
 ... [dan seterusnya untuk semua 20 items]
 ```
 
