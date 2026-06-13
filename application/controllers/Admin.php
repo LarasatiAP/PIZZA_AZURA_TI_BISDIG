@@ -67,7 +67,8 @@ class Admin extends CI_Controller {
         $data = [
             'nama_pizza' => $this->input->post('nama_pizza', true),
             'deskripsi' => $this->input->post('deskripsi', true),
-            'harga' => $this->input->post('harga', true),
+            'harga' => (int) $this->input->post('harga', true),
+            'stok' => (int) $this->input->post('stok', true),
             'gambar' => $gambar ?: ''
         ];
 
@@ -98,7 +99,8 @@ class Admin extends CI_Controller {
         $data = [
             'nama_pizza' => $this->input->post('nama_pizza', true),
             'deskripsi' => $this->input->post('deskripsi', true),
-            'harga' => $this->input->post('harga', true),
+            'harga' => (int) $this->input->post('harga', true),
+            'stok' => (int) $this->input->post('stok', true),
         ];
 
         if($gambar) {

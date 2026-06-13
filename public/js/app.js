@@ -61,17 +61,26 @@ async function loadSettings(){
                 else el.innerHTML = val;
             }
         };
+        const formatOpHour = (val, prefix) => {
+            if (!val) return '';
+            if (val.toLowerCase().includes(prefix.toLowerCase().trim())) return val;
+            return prefix + ' ' + val;
+        };
+        const cleanContactValue = (val) => String(val || '')
+            .replace(/^[\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F]+\s*/gu, '')
+            .trim();
+
         setEl('heroWaLink', s.wa_link, true);
         setEl('footerSlogan', s.slogan);
         setEl('footerFbLink', s.fb_link || '#', true);
         setEl('footerIgLink', s.ig_link || 'https://www.instagram.com/pizzaazzura?igsh=MW9zcmtnNDAwdzlheQ==', true);
         setEl('footerTtLink', s.tt_link || 'https://vt.tiktok.com/ZS9v7FKmt/', true);
-        setEl('footerOpWeekday', s.op_weekday);
-        setEl('footerOpWeekend', s.op_weekend);
-        setEl('footerOpHoliday', s.op_holiday);
-        setEl('footerAddress', s.contact_address);
-        setEl('footerPhone', s.contact_phone);
-        setEl('footerEmail', s.contact_email);
+        setEl('footerOpWeekday', formatOpHour(s.op_weekday, 'Senin - Jumat:'));
+        setEl('footerOpWeekend', formatOpHour(s.op_weekend, 'Sabtu - Minggu:'));
+        setEl('footerOpHoliday', formatOpHour(s.op_holiday, 'Libur Nasional:'));
+        setEl('footerAddress', cleanContactValue(s.contact_address) ? `📍 ${cleanContactValue(s.contact_address)}` : '');
+        setEl('footerPhone', cleanContactValue(s.contact_phone) ? `📞 ${cleanContactValue(s.contact_phone)}` : '');
+        setEl('footerEmail', cleanContactValue(s.contact_email) ? `✉️ ${cleanContactValue(s.contact_email)}` : '');
 
         // Dynamically render About Us content
         if (s.about_content) {
@@ -87,18 +96,24 @@ async function loadSettings(){
 function renderMenu(){
     const g=document.getElementById('menuGrid');
     if(!menuData.length){g.innerHTML='<div class="loading-state"><p>Tidak ada menu</p></div>';return}
-    g.innerHTML=menuData.map(item=>`
-        <div class="menu-card" onclick="openDetail('${item.id}')">
-            <div class="card-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div>
+    g.innerHTML=menuData.map(item=>{
+        const isOut = (item.stock !== undefined && item.stock <= 0);
+        return `
+        <div class="menu-card" ${!isOut ? `onclick="openDetail('${item.id}')"` : 'style="opacity:0.7; cursor:not-allowed;"'}>
+            <div class="card-image"><img src="${item.image}" alt="${item.name}" loading="lazy" ${isOut ? 'style="filter: grayscale(100%);"' : ''}></div>
             <div class="card-body">
                 <h3>${item.name}</h3>
                 <p>${item.description}</p>
+                <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-bottom: 8px;">
+                    ${isOut ? 'Stok Habis' : 'Sisa Stok: ' + (item.stock ?? 100) + ' porsi'}
+                </div>
                 <div class="card-footer">
-                    <div class="card-price">${formatCurrency(item.price_s)}<small>Size 22</small></div>
-                    <button class="card-add-btn" onclick="event.stopPropagation();openDetail('${item.id}')">+</button>
+                    ${isOut ? `<div class="card-price"><span style="color:var(--danger); font-weight:700;">Stok Habis</span></div>` : `<div class="card-price">${formatCurrency(item.price_s)}<small>Size 22</small></div>`}
+                    <button class="card-add-btn" ${!isOut ? `onclick="event.stopPropagation();openDetail('${item.id}')"` : 'disabled style="background:var(--border);"'}>+</button>
                 </div>
             </div>
-        </div>`).join('');
+        </div>`
+    }).join('');
 }
 
 function renderBestsellers() {
@@ -121,61 +136,81 @@ function renderBestsellers() {
         return;
     }
     
-    bg.innerHTML = topItems.map(item => `
-        <div class="bestseller-item">
+    bg.innerHTML = topItems.map(item => {
+        const isOut = (item.stock !== undefined && item.stock <= 0);
+        return `
+        <div class="bestseller-item" ${isOut ? 'style="opacity:0.8;"' : ''}>
             <div class="bestseller-image-wrap">
-                <img class="bestseller-img" src="${item.image}" alt="${item.name}" loading="lazy">
+                <img class="bestseller-img" src="${item.image}" alt="${item.name}" loading="lazy" ${isOut ? 'style="filter: grayscale(100%);"' : ''}>
                 <div class="bestseller-badge">🔥 TOP SELLER</div>
             </div>
             <div class="bestseller-details">
                 <h3 class="bestseller-title">${item.name}</h3>
                 <p class="bestseller-description">${item.description}</p>
+                <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-bottom: 12px; margin-top: -4px;">
+                    ${isOut ? 'Stok Habis' : 'Sisa Stok: ' + (item.stock ?? 100) + ' porsi'}
+                </div>
                 <div class="bestseller-sizes">
                     <div class="size-pill">
                         <span class="size-name">Size 22 (Small)</span>
-                        <span class="size-price">${formatCurrency(item.price_s)}</span>
+                        <span class="size-price">${isOut ? '<span style="color:var(--danger)">Habis</span>' : formatCurrency(item.price_s)}</span>
                     </div>
                     <div class="size-pill">
                         <span class="size-name">Size 26 (Medium)</span>
-                        <span class="size-price">${formatCurrency(item.price_m)}</span>
+                        <span class="size-price">${isOut ? '<span style="color:var(--danger)">Habis</span>' : formatCurrency(item.price_m)}</span>
                     </div>
                 </div>
-                <button class="bestseller-add-btn" onclick="openDetail('${item.id}')">
-                    <span>Pesan Sekarang</span> <span class="plus-icon">+</span>
+                <button class="bestseller-add-btn" ${!isOut ? `onclick="openDetail('${item.id}')"` : 'disabled style="background:var(--border); cursor:not-allowed;"'}>
+                    <span>${isOut ? 'Stok Habis' : 'Pesan Sekarang'}</span> ${!isOut ? '<span class="plus-icon">+</span>' : ''}
                 </button>
             </div>
-        </div>`).join('');
+        </div>`
+    }).join('');
 }
 
 // DETAIL
 function openDetail(id){currentMenuItem=menuData.find(m=>m.id===id);if(!currentMenuItem)return;selectedSize='22';selectedToppings=[];selectedQty=1;renderDetail();openModal('detailModal')}
 function renderDetail(){
     const item=currentMenuItem,prices={'22':item.price_s,'26':item.price_m};
+    const availableStock = Math.max(0, Number(item.stock ?? 0));
+    const isOut = availableStock <= 0;
     const tpT=selectedToppings.reduce((s,tid)=>{const t=toppingsData.find(x=>x.id===tid);return s+(t?t.price:0)},0);
     const total=(prices[selectedSize]+tpT)*selectedQty;
+    selectedQty = Math.min(selectedQty, isOut ? 1 : availableStock);
     document.getElementById('detailContent').innerHTML=`
         <img class="detail-img" src="${item.image}" alt="${item.name}">
         <div class="detail-name">${item.name}</div>
         <div class="detail-desc">${item.description}</div>
+        <div style="font-size: 13px; color: ${isOut ? 'var(--danger)' : 'var(--text-secondary)'}; font-weight: 600; margin-bottom: 8px;">${isOut ? 'Stok Habis' : 'Sisa Stok: ' + availableStock + ' porsi'}</div>
         <div class="option-group"><label>Pilih Ukuran</label><div class="size-options">
             ${['22','26'].map(s=>`<button class="size-btn ${selectedSize===s?'active':''}" onclick="selectSize('${s}')"><span class="size-label">Size ${s}</span><span class="size-price">${formatCurrency(prices[s])}</span></button>`).join('')}
         </div></div>
         <div class="option-group"><label>Tambahan</label><div class="topping-list">
             ${toppingsData.map(t=>`<div class="topping-item ${selectedToppings.includes(t.id)?'selected':''}" onclick="toggleTopping('${t.id}')"><span class="topping-name">🧀 ${t.name}</span><span class="topping-price">+${formatCurrency(t.price)}</span></div>`).join('')}
         </div></div>
-        <div class="option-group"><label>Jumlah</label><div class="qty-control"><button class="qty-btn" onclick="changeQty(-1)">−</button><span class="qty-value">${selectedQty}</span><button class="qty-btn" onclick="changeQty(1)">+</button></div></div>
-        <div class="option-group"><label>Catatan (opsional)</label><textarea class="notes-input" id="itemNotes" placeholder="Contoh: tidak pedas..."></textarea></div>
-        <button class="add-to-cart-btn" onclick="addItemToCart()">🛒 Tambah — ${formatCurrency(total)}</button>`;
+        <div class="option-group"><label>Jumlah</label><div class="qty-control"><button class="qty-btn" onclick="changeQty(-1)" ${isOut ? 'disabled' : ''}>−</button><span class="qty-value">${selectedQty}</span><button class="qty-btn" onclick="changeQty(1)" ${isOut ? 'disabled' : ''}>+</button></div></div>
+        <button class="add-to-cart-btn" onclick="addItemToCart()" ${isOut ? 'disabled style="background:var(--border); cursor:not-allowed;"' : ''}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M6 6h15l-1.5 7.5H7.5"></path><path d="M6 6L4 2H2"></path><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle></svg>${isOut ? 'Stok Habis' : 'Tambah — ' + formatCurrency(total)}</button>`;
 }
 function selectSize(s){selectedSize=s;renderDetail()}
 function toggleTopping(id){const i=selectedToppings.indexOf(id);if(i>=0)selectedToppings.splice(i,1);else selectedToppings.push(id);renderDetail()}
-function changeQty(d){selectedQty=Math.max(1,selectedQty+d);renderDetail()}
+function changeQty(d){
+    const availableStock = Math.max(0, Number(currentMenuItem?.stock ?? 0));
+    if (availableStock <= 0) return;
+    selectedQty = Math.min(availableStock, Math.max(1, selectedQty + d));
+    renderDetail();
+}
 
 // ADD TO CART
 function addItemToCart(){
-    const item=currentMenuItem,prices={'22':item.price_s,'26':item.price_m},cart=getCart();
+    const item=currentMenuItem;
+    if (!item) return;
+    const availableStock = Math.max(0, Number(item.stock ?? 0));
+    if (availableStock <= 0) { showToast('❌ Stok menu ini sudah habis'); return; }
+    if (selectedQty > availableStock) { showToast('❌ Stok tidak cukup. Maksimal ' + availableStock + ' porsi'); return; }
+
+    const prices={'22':item.price_s,'26':item.price_m},cart=getCart();
     cart.push({cartId:Date.now()+'_'+Math.random().toString(36).substr(2,5),menuId:item.id,name:item.name,image:item.image,size:selectedSize,price:prices[selectedSize],
-        toppings:selectedToppings.map(tid=>{const t=toppingsData.find(x=>x.id===tid);return{id:t.id,name:t.name,price:t.price}}),quantity:selectedQty,notes:document.getElementById('itemNotes')?.value||''});
+        toppings:selectedToppings.map(tid=>{const t=toppingsData.find(x=>x.id===tid);return{id:t.id,name:t.name,price:t.price}}),quantity:selectedQty,notes:''});
     saveCart(cart);closeModal('detailModal');updateCartBadge();showToast('✅ Ditambahkan!')
 }
 
@@ -183,14 +218,14 @@ function addItemToCart(){
 function openCart(){renderCart();openModal('cartModal')}
 function renderCart(){
     const cart=getCart(),c=document.getElementById('cartContent');
-    if(!cart.length){c.innerHTML='<div class="cart-empty"><span>🛒</span><p>Keranjang masih kosong</p></div>';return}
+    if(!cart.length){c.innerHTML='<div class="cart-empty"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 8px;"><path d="M6 6h15l-1.5 7.5H7.5"></path><path d="M6 6L4 2H2"></path><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle></svg><p>Keranjang masih kosong</p></div>';return}
     const total=getCartTotal();
     c.innerHTML=`<div class="cart-items">${cart.map(item=>{
         const tp=item.toppings.reduce((s,t)=>s+t.price,0),it=(item.price+tp)*item.quantity;
-        return`<div class="cart-item"><img class="cart-item-img" src="${item.image}" alt="${item.name}"><div class="cart-item-info"><h4>${item.name} (Size ${item.size}) ×${item.quantity}</h4><div class="cart-item-details">${item.toppings.length?'+ '+item.toppings.map(t=>t.name).join(', '):''}${item.notes?'<br>📝 '+item.notes:''}</div><div class="cart-item-price">${formatCurrency(it)}</div></div><button class="cart-item-remove" onclick="removeCartItem('${item.cartId}')">🗑️</button></div>`
-    }).join('')}</div><div class="cart-summary"><div class="cart-summary-row total"><span>Total</span><span>${formatCurrency(total)}</span></div></div><button class="checkout-btn" onclick="goToCheckout()">Lanjut ke Checkout →</button>`;
+        return`<div class="cart-item"><img class="cart-item-img" src="${item.image}" alt="${item.name}"><div class="cart-item-info"><h4>${item.name} (Size ${item.size}) ×${item.quantity}</h4><div class="cart-item-details">${item.toppings.length?'+ '+item.toppings.map(t=>t.name).join(', '):''}${item.notes?'<br>📝 '+item.notes:''}</div><div class="cart-item-price">${formatCurrency(it)}</div></div><button class="cart-item-remove" onclick="removeCartItem('${item.cartId}')" aria-label="Hapus item" title="Hapus item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg></button></div>`
+    }).join('')}</div><div class="cart-summary"><div class="cart-summary-row total"><span>Total</span><span>${formatCurrency(total)}</span></div></div><button class="checkout-btn" onclick="goToCheckout()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>Lanjut ke Checkout</button>`;
 }
-function removeCartItem(id){saveCart(getCart().filter(i=>i.cartId!==id));updateCartBadge();renderCart();showToast('🗑️ Dihapus')}
+function removeCartItem(id){saveCart(getCart().filter(i=>i.cartId!==id));updateCartBadge();renderCart();showToast('Item dihapus')}
 
 // CHECKOUT
 function goToCheckout(){closeModal('cartModal');renderCheckout();setTimeout(()=>openModal('checkoutModal'),200)}
@@ -198,34 +233,43 @@ function renderCheckout(){
     const total=getCartTotal();
     const gisInfo = window.taggedGisLocation ? `📍 GIS Delivery Location:\nKoordinat: ${window.taggedGisLocation.lat}, ${window.taggedGisLocation.lng}\nJarak ke toko: ${window.taggedGisLocation.dist} km\n\n` : '';
     document.getElementById('checkoutContent').innerHTML=`
-        <div class="form-group"><label>Nama Pemesan</label><input type="text" class="form-input" id="custName" placeholder="Masukkan nama kamu"></div>
-        <div class="form-group"><label>Nomor WhatsApp</label><input type="tel" class="form-input" id="custPhone" placeholder="+62 8..."></div>
-        <div class="form-group"><label>Tipe Pesanan</label><div class="radio-group"><div class="radio-option"><input type="radio" name="orderType" id="typeDinein" value="dinein" checked><label for="typeDinein">🍽️ Dine In</label></div><div class="radio-option"><input type="radio" name="orderType" id="typeTakeaway" value="takeaway"><label for="typeTakeaway">📦 Take Away</label></div></div></div>
-        <div class="form-group"><label>Pembayaran</label><div class="payment-note">✅ Pembayaran menggunakan WhatsApp. Setelah pesanan dikonfirmasi, kami akan menghubungi kamu lewat WhatsApp.</div></div>
+        <div class="form-group"><label>Nama Pemesan</label><input type="text" class="form-input" id="custName" placeholder="Masukkan nama kamu" required></div>
+        <div class="form-group"><label>Tipe Pesanan</label><div class="radio-group"><div class="radio-option"><input type="radio" name="orderType" id="typeDinein" value="dinein" checked><label for="typeDinein"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M3 12h18"></path><path d="M5 12v8h14v-8"></path><path d="M7 8V4h10v4"></path><path d="M7 12v2"></path><path d="M17 12v2"></path></svg>Dine In</label></div><div class="radio-option"><input type="radio" name="orderType" id="typeTakeaway" value="takeaway"><label for="typeTakeaway"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M3 7h18"></path><path d="M5 7v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7"></path><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M9 11h6"></path></svg>Take Away</label></div></div></div>
         <div class="form-group"><label>Catatan</label><textarea class="notes-input" id="orderNotes" placeholder="Opsional">${gisInfo}</textarea></div>
         <div class="cart-summary"><div class="cart-summary-row total"><span>Total</span><span>${formatCurrency(total)}</span></div></div>
-        <button class="checkout-btn" onclick="submitOrder()" id="submitBtn">✅ Konfirmasi Pesanan</button>`;
+        <button class="checkout-btn" onclick="submitOrder()" id="submitBtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M20 6L9 17l-5-5"></path></svg>Konfirmasi & Hubungi WhatsApp</button>`;
 }
 async function submitOrder(){
     const name=document.getElementById('custName').value.trim();if(!name){showToast('⚠️ Masukkan nama!');return}
     const cart=getCart();if(!cart.length){showToast('⚠️ Keranjang kosong!');return}
     const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='⏳ Memproses pesanan...';
-    const customerPhone = document.getElementById('custPhone')?.value.trim() || '';
     const orderType = document.querySelector('input[name="orderType"]:checked').value;
+    const notes = document.getElementById('orderNotes')?.value || '';
     try{
-        const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerName:name,phone:customerPhone,orderType:orderType,paymentMethod:'whatsapp',notes:document.getElementById('orderNotes')?.value||'',items:cart})});
+        const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerName:name,phone:'',orderType:orderType,paymentMethod:'whatsapp',notes,items:cart})});
         const result=await res.json();
-        if(!res.ok){showToast('❌ '+(result.error||'Gagal menyimpan pesanan'));btn.disabled=false;btn.textContent='✅ Konfirmasi Pesanan';return}
-        saveCart([]);updateCartBadge();closeModal('checkoutModal');showSuccessModal(result,cart,customerPhone,orderType,name);
-    }catch{showToast('❌ Kesalahan menyimpan pesanan');btn.disabled=false;btn.textContent='✅ Konfirmasi Pesanan'}
+        if(!res.ok){showToast('❌ '+(result.error||'Gagal menyimpan pesanan'));btn.disabled=false;btn.textContent='✅ Konfirmasi & Hubungi WhatsApp';return}
+
+        const adminWa = (typeof settingsData !== 'undefined' && settingsData.admin_wa) ? String(settingsData.admin_wa).replace(/\D/g,'') : '6285198042502';
+        const waMessage = `Halo Pizza Azura\n` +
+            `Saya ${name}\n` +
+            `Tipe Pesanan: ${orderType === 'dinein' ? 'Dine In' : 'Take Away'}\n` +
+            `Catatan: ${notes || '-'}\n\n` +
+            `Detail Pesanan:\n` +
+            cart.map(i => `- ${i.name} (Size ${i.size}) x${i.quantity}${i.toppings?.length ? `\n  + Topping: ${i.toppings.map(t => t.name).join(', ')}` : ''}${i.notes ? `\n  * Catatan item: ${i.notes}` : ''}`).join('\n') +
+            `\n\nNomor Antrian: #${String(result.queueNumber).padStart(3,'0')}\n` +
+            `Total: Rp ${result.total.toLocaleString('id-ID')}\n\n` +
+            `Terima kasih!`;
+        const waLink = `https://wa.me/${adminWa}?text=${encodeURIComponent(waMessage)}`;
+
+        saveCart([]);updateCartBadge();closeModal('checkoutModal');
+        window.open(waLink, '_blank', 'noopener,noreferrer');
+        showSuccessModal(result,cart,orderType,name);
+    }catch{showToast('❌ Kesalahan menyimpan pesanan');btn.disabled=false;btn.textContent='✅ Konfirmasi & Hubungi WhatsApp'}
 }
-function showSuccessModal(order,items,customerPhone,orderType,customerName){
+function showSuccessModal(order,items,orderType,customerName){
     const q=String(order.queueNumber).padStart(3,'0');
-    const waNumber = (typeof settingsData !== 'undefined' && settingsData.admin_wa) ? settingsData.admin_wa : '6285198042502';
-    const itemList = items.map(i => `${i.name} (Size ${i.size}) x${i.quantity}`).join('\n');
-    const waMessage = `Halo Admin,\nSaya ${customerName || 'Pelanggan'}\nNomor WA: ${customerPhone || '-'}\nJenis Pesanan: ${orderType || '-'}\n\nDetail Pesanan:\n${itemList}\n\nNomor Antrian: #${q}\nTotal: Rp ${order.total.toLocaleString('id-ID')}\n\nTerima kasih!`;
-    const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
-    document.getElementById('successContent').innerHTML=`<div style="padding:20px 0"><div style="font-size:48px;margin-bottom:8px">🎉</div><h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Pesanan Berhasil!</h2><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px">Nomor antrian kamu:</p><div class="queue-number-display">#${q}</div><div class="success-total">${formatCurrency(order.total)}</div><p style="color:var(--text-muted);font-size:12px;margin-bottom:16px">Total Pembayaran</p><div class="success-details">${items.map(i=>{const t=(i.price+i.toppings.reduce((s,t)=>s+t.price,0))*i.quantity;return`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)"><span>${i.name} (Size ${i.size}) ×${i.quantity}</span><span style="color:var(--accent);font-weight:600">${formatCurrency(t)}</span></div>`}).join('')}</div><div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:12px;padding:14px;margin:14px 0"><p style="font-size:13px;color:var(--accent);font-weight:600">📢 Pesanan Anda sudah masuk ke sistem kami dan sedang dikirim otomatis ke WhatsApp admin. Silakan tunggu konfirmasi selanjutnya.</p></div><a href="${waLink}" target="_blank" class="checkout-btn" style="display:inline-block;text-align:center;text-decoration:none;margin-bottom:10px;background:linear-gradient(135deg,#25d366,#20ba5a)">💬 Kirim Ulang Manual ke WA Admin</a><button class="checkout-btn" onclick="closeModal('successModal')" style="background:var(--accent)">Kembali ke Menu</button></div>`;
+    document.getElementById('successContent').innerHTML=`<div style="padding:20px 0"><div style="font-size:48px;margin-bottom:8px">🎉</div><h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Pesanan Berhasil!</h2><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px">Nomor antrian kamu:</p><div class="queue-number-display">#${q}</div><div class="success-total">${formatCurrency(order.total)}</div><p style="color:var(--text-muted);font-size:12px;margin-bottom:16px">Total Pembayaran</p><div class="success-details">${items.map(i=>{const t=(i.price+i.toppings.reduce((s,t)=>s+t.price,0))*i.quantity;return`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)"><span>${i.name} (Size ${i.size}) ×${i.quantity}</span><span style="color:var(--accent);font-weight:600">${formatCurrency(t)}</span></div>`}).join('')}</div><div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:12px;padding:14px;margin:14px 0"><p style="font-size:13px;color:var(--accent);font-weight:600">📢 Pesanan sudah dikonfirmasi ke Pizza Azura. Kami akan memprosesnya. Mohon ditunggu pesanannya. Terima Kasih</p></div><button class="checkout-btn" onclick="closeModal('successModal')" style="background:var(--accent)">Kembali ke Menu</button></div>`;
     openModal('successModal');
 }
 
@@ -299,7 +343,14 @@ function initGisMap() {
     const storeIcon = L.divIcon({
         html: `<div class="gis-marker store-marker">
                  <div class="marker-pulse"></div>
-                 <div class="marker-icon">🍕</div>
+                 <div class="marker-icon">
+                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                     <path d="M20 9.58V21a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9.58"></path>
+                     <path d="M2 3h20l-2 6.58H4L2 3z"></path>
+                     <path d="M12 14v9"></path>
+                     <path d="M8 14h8"></path>
+                   </svg>
+                 </div>
                </div>`,
         className: 'custom-gis-marker',
         iconSize: [40, 40],
@@ -309,9 +360,12 @@ function initGisMap() {
     const storeMarker = L.marker(storeLatLng, { icon: storeIcon }).addTo(map);
     storeMarker.bindPopup(`
         <div style="font-family:'Outfit', sans-serif;">
-            <h4 style="margin:0 0 5px 0;color:var(--accent);font-size:14px;font-weight:700;">🍕 ${storeName}</h4>
+            <h4 style="margin:0 0 5px 0;color:var(--accent);font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 9.58V21a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9.58"></path><path d="M2 3h20l-2 6.58H4L2 3z"></path></svg>
+                <span>${storeName}</span>
+            </h4>
             <p style="margin:0 0 10px 0;font-size:12px;line-height:1.4;">${storeAddress}<br><i>Freshly Baked Est.2020</i></p>
-            <a href="${storeMapsLink}" target="_blank" class="btn-gis" style="display:inline-block;padding:6px 12px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600;">Petunjuk Arah 🗺️</a>
+            <a href="${storeMapsLink}" target="_blank" class="btn-gis" style="display:inline-block;padding:6px 12px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600;">Petunjuk Arah</a>
         </div>
     `).openPopup();
     
@@ -358,7 +412,12 @@ function initGisMap() {
         const userIcon = L.divIcon({
             html: `<div class="gis-marker user-marker">
                      <div class="marker-pulse blue"></div>
-                     <div class="marker-icon">📍</div>
+                     <div class="marker-icon">
+                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                         <circle cx="12" cy="10" r="3"></circle>
+                       </svg>
+                     </div>
                    </div>`,
             className: 'custom-gis-marker',
             iconSize: [40, 40],
@@ -384,7 +443,10 @@ function initGisMap() {
         
         userMarker.bindPopup(`
             <div style="font-family:'Outfit', sans-serif; min-width:180px;">
-                <h4 style="margin:0 0 5px 0;color:#2563eb;font-size:13px;font-weight:700;">📍 Lokasi Pengiriman Anda</h4>
+                <h4 style="margin:0 0 5px 0;color:#2563eb;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span>Lokasi Pengiriman Anda</span>
+                </h4>
                 <p style="margin:0 0 4px 0;font-size:12px;"><b>Jarak ke Toko:</b> ${dist} km</p>
                 <p style="margin:0 0 10px 0;font-size:11px;color:var(--text-muted);">Lokasi ini akan digunakan sebagai titik antar pesanan.</p>
                 <button onclick="fillAddressCoord(${lat.toFixed(6)}, ${lng.toFixed(6)}, ${dist})" class="btn-gis" style="width:100%;border:none;background:#2563eb;font-family:inherit;cursor:pointer;text-align:center;">Gunakan Lokasi Ini</button>
@@ -405,3 +467,35 @@ window.fillAddressCoord = function(lat, lng, dist) {
         showToast("📍 Lokasi disimpan. Silakan pilih menu pizza untuk memesan!");
     }
 };
+
+// Smooth scrolling for navigation links and mobile sidebar handling
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href^="#"]');
+    if (link) {
+        const targetId = link.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+            e.preventDefault();
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+            
+            // Close mobile menu if open
+            const menu = document.getElementById('navMenu');
+            if (menu && menu.classList.contains('show')) {
+                menu.classList.remove('show');
+            }
+        }
+    }
+});
+
+// Close mobile navigation menu on click outside
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('navMenu');
+    const burgerBtn = document.getElementById('burgerBtn');
+    if (menu && menu.classList.contains('show')) {
+        if (!menu.contains(e.target) && (!burgerBtn || !burgerBtn.contains(e.target))) {
+            menu.classList.remove('show');
+        }
+    }
+});

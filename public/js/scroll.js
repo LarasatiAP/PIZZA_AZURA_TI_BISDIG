@@ -208,7 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     opacity = (progress - overlay.start) / fadeWindow;
                 }
                 else if (progress > overlay.end - fadeWindow) {
-                    opacity = (overlay.end - progress) / fadeWindow;
+                    // Do not fade out the last overlay (textOverlay3)
+                    if (overlay.el.id !== 'textOverlay3') {
+                        opacity = (overlay.end - progress) / fadeWindow;
+                    }
                 }
             }
             

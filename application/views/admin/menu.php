@@ -18,7 +18,7 @@
                 <p class="brand-note">Tambahkan, sunting, atau hapus menu pizza langsung dari dashboard admin.</p>
             </div>
         </div>
-        <a href="<?= site_url('admin/add_menu') ?>" class="btn-primary">+ Tambah Menu Baru</a>
+        <a href="<?= site_url('admin/menu/add') ?>" class="btn-primary">+ Tambah Menu Baru</a>
     </header>
 
     <section class="admin-nav-cards">
@@ -43,6 +43,7 @@
                         <th>Nama Pizza</th>
                         <th>Deskripsi</th>
                         <th>Harga</th>
+                        <th>Stok</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -54,9 +55,10 @@
                         <td><?= $p->nama_pizza ?></td>
                         <td><?= character_limiter($p->deskripsi, 80) ?></td>
                         <td>Rp <?= number_format($p->harga,0,',','.') ?></td>
+                        <td><?= (int) $p->stok ?></td>
                         <td class="action-cell">
-                            <a href="<?= site_url('admin/edit_menu/'.$p->id) ?>" class="btn-secondary small">Edit</a>
-                            <a href="<?= site_url('admin/delete_menu/'.$p->id) ?>" class="btn-danger small" onclick="return confirm('Hapus menu <?= addslashes($p->nama_pizza) ?>?');">Hapus</a>
+                            <a href="<?= site_url('admin/menu/edit/'.$p->id) ?>" class="btn-secondary small">Edit</a>
+                            <a href="<?= site_url('admin/menu/delete/'.$p->id) ?>" class="btn-danger small" onclick="return confirm('Hapus menu <?= addslashes($p->nama_pizza) ?>?');">Hapus</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

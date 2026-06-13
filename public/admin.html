@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Pizza Azura — Admin Dashboard">
     <title>Pizza Azura — Admin</title>
-    <link rel="stylesheet" href="css/admin.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+    <link rel="stylesheet" href="css/admin.css?v=2.5">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="icon" href="images/logo.webp" type="image/webp">
     <style>
         #authLoading {
             position: fixed; inset: 0;
@@ -47,7 +49,9 @@
 
 <!-- AUTH LOADING SCREEN -->
 <div id="authLoading">
-    <span style="font-size:40px">🍕</span>
+    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H3L2 12v2c0 .55.45 1 1 1h1v6h10v-6h4v6h2v-6h1c.55 0 1-.45 1-1zM6 19v-4h6v4H6z"></path>
+    </svg>
     <div class="auth-spinner"></div>
     <p>Memeriksa sesi...</p>
 </div>
@@ -64,21 +68,27 @@
             
             <nav class="sidebar-menu">
                 <button class="sidebar-menu-item active" id="tabOrdersBtn" onclick="switchTab('orders')">
-                    📦 Antrean Pesanan
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    Antrean Pesanan
                 </button>
                 <button class="sidebar-menu-item" id="tabMenuBtn" onclick="switchTab('menu')">
-                    🍕 Kelola Menu Pizza
-                </button>
-                <button class="sidebar-menu-item" id="tabSettingsBtn" onclick="switchTab('settings')">
-                    ⚙️ Pengaturan Toko
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    Kelola Menu Pizza
                 </button>
                 <!-- KELOLA ADMIN (Super Admin Only) -->
+                <button class="sidebar-menu-item" id="tabSettingsBtn" onclick="switchTab('settings')">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Pengaturan Toko
+                </button>
                 <button class="sidebar-menu-item" id="tabAdminMgmtBtn" onclick="switchTab('adminMgmt')" style="display:none;">
-                    👑 Kelola Admin
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Kelola Admin
                 </button>
                 
+                
                 <button class="sidebar-menu-item danger" onclick="doLogout()" style="margin-top: 24px;">
-                    🚪 Keluar (Logout)
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Keluar (Logout)
                 </button>
             </nav>
         </div>
@@ -139,18 +149,18 @@
             <div id="menuTab" style="display:none;">
                 <div class="section-header" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <h2 class="section-title">Kelola Menu Pizza</h2>
-                    <button class="filter-btn active" onclick="openMenuFormModal()" style="background:var(--success); border-color:var(--success); font-weight:700; font-size:14px; padding:10px 20px; box-shadow:0 4px 10px rgba(34,197,94,0.3); border:none;">Tambah Pizza Baru</button>
+                    <button class="filter-btn active" onclick="openMenuFormModal()" style="background:var(--success); border-color:var(--success); color:white; font-weight:700; font-size:14px; padding:10px 20px; box-shadow:0 4px 10px rgba(34,197,94,0.3); border:none;">Tambah Pizza Baru</button>
                 </div>
                 <div class="order-list" id="adminMenuList">
                     <div class="loading-state"><p>Memuat daftar menu...</p></div>
                 </div>
             </div>
 
+
             <!-- TAB PENGATURAN TOKO -->
             <div id="settingsTab" style="display:none;">
                 <div class="section-header" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <h2 class="section-title">Pengaturan Toko</h2>
-                    <button id="saveSettingsBtn" onclick="saveAllSettings()" style="padding:10px 24px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:700;font-family:inherit;cursor:pointer;font-size:14px;box-shadow: 0 4px 10px rgba(255,107,107,0.3);">Simpan Semua Pengaturan</button>
                 </div>
                 
                 <div id="loadingSettings" style="text-align:center; padding: 40px; color: var(--text-muted);">Memuat data pengaturan...</div>
@@ -164,7 +174,7 @@
                             <textarea id="set_slogan" class="form-input" rows="3" placeholder="Masukkan slogan footer"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Link WhatsApp (Banner Atas)</label>
+                            <label>Kontak Pemesanan</label>
                             <input type="text" id="set_wa_link" class="form-input" placeholder="https://wa.me/628...">
                         </div>
                     </div>
@@ -174,15 +184,15 @@
                         <h3>Jam Operasional</h3>
                         <div class="form-group">
                             <label>Senin - Jumat</label>
-                            <input type="text" id="set_op_weekday" class="form-input" placeholder="Senin - Jumat: 10.00 - 22.00">
+                            <input type="text" id="set_op_weekday" class="form-input" placeholder="contoh: 10.00 - 22.00">
                         </div>
                         <div class="form-group">
                             <label>Sabtu - Minggu</label>
-                            <input type="text" id="set_op_weekend" class="form-input" placeholder="Sabtu - Minggu: 11.00 - 23.00">
+                            <input type="text" id="set_op_weekend" class="form-input" placeholder="contoh: 11.00 - 23.00">
                         </div>
                         <div class="form-group">
                             <label>Libur Nasional</label>
-                            <input type="text" id="set_op_holiday" class="form-input" placeholder="Libur Nasional: Buka">
+                            <input type="text" id="set_op_holiday" class="form-input" placeholder="contoh: Buka">
                         </div>
                     </div>
 
@@ -233,12 +243,16 @@
                     <div class="settings-card">
                         <h3>WebGIS Lokasi Toko</h3>
                         <div class="form-group">
+                            <label>Tentukan Lokasi Toko di Peta (Klik / Geser Pin)</label>
+                            <div id="settingsMap" style="width: 100%; height: 250px; border-radius: 8px; border: 1px solid var(--border); margin-top: 8px; margin-bottom: 15px; z-index: 1;"></div>
+                        </div>
+                        <div class="form-group">
                             <label>Latitude (Garis Lintang)</label>
-                            <input type="text" id="set_store_lat" class="form-input" placeholder="contoh: -6.2146">
+                            <input type="text" id="set_store_lat" class="form-input" placeholder="contoh: -6.2146" readonly>
                         </div>
                         <div class="form-group">
                             <label>Longitude (Garis Bujur)</label>
-                            <input type="text" id="set_store_lng" class="form-input" placeholder="contoh: 106.8215">
+                            <input type="text" id="set_store_lng" class="form-input" placeholder="contoh: 106.8215" readonly>
                         </div>
                         <div class="form-group">
                             <label>Nama Toko (Map Popup)</label>
@@ -253,29 +267,26 @@
                             <input type="text" id="set_store_maps_link" class="form-input" placeholder="https://maps.app.goo.gl/...">
                         </div>
                     </div>
+
                 </div>
 
-                    <!-- WhatsApp Gateway API (Fonnte) -->
-                    <div class="settings-card">
-                        <h3>💬 Auto-Send WhatsApp Gateway (Fonnte)</h3>
-                        <div class="form-group">
-                            <label>Fonnte API Token</label>
-                            <input type="text" id="set_fonnte_token" class="form-input" placeholder="Masukkan Token API Fonnte Anda">
-                            <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Dapatkan gratis dari <a href="https://fonnte.com" target="_blank" style="color:var(--accent)">fonnte.com</a>. Kosongkan jika ingin menonaktifkan pengiriman otomatis.</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Nomor WhatsApp Admin Utama (Tanpa '+')</label>
-                            <input type="text" id="set_admin_wa" class="form-input" placeholder="contoh: 6285198042502">
-                        </div>
-                    </div>
+                <!-- Floating Action Button (FAB) for Settings -->
+                <div style="position: fixed; bottom: 30px; right: 30px; z-index: 1000;">
+                    <button id="saveSettingsBtn" onclick="saveAllSettings()" style="padding:15px 30px;background:var(--accent);color:white;border:none;border-radius:50px;font-weight:700;font-family:inherit;cursor:pointer;font-size:16px;box-shadow: 0 10px 25px rgba(255,107,53,0.5); display:inline-flex; align-items:center; gap:8px; transition: transform 0.2s, background 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Simpan Pengaturan
+                    </button>
                 </div>
             </div>
 
             <!-- TAB KELOLA ADMIN (Super Admin Only) -->
             <div id="adminMgmtTab" style="display:none;">
                 <div class="section-header" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h2 class="section-title">👑 Kelola Admin</h2>
-                    <button class="filter-btn active" onclick="openAdminFormModal()" style="background:var(--info); border-color:var(--info); font-weight:700; font-size:14px; padding:10px 20px; box-shadow:0 4px 10px rgba(59,130,246,0.3); border:none;">+ Tambah Admin Baru</button>
+                    <h2 class="section-title"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px; color: var(--accent);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Kelola Admin</h2>
+                    <button class="filter-btn active" onclick="openAdminFormModal()" style="background:var(--info); border-color:var(--info); font-weight:700; font-size:14px; padding:10px 20px; box-shadow:0 4px 10px rgba(59,130,246,0.3); border:none; display:inline-flex; align-items:center; gap:6px;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Tambah Admin Baru</span>
+                    </button>
                 </div>
                 <div class="admin-table-wrap">
                     <table class="admin-table" id="adminTable">
@@ -311,7 +322,7 @@
         <button class="modal-close" onclick="closeMenuFormModal()">&times;</button>
         <h2 id="menuFormTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--accent);">Tambah Pizza Baru</h2>
         <form id="menuForm" onsubmit="saveMenuItem(event)">
-            <div class="form-group">
+            <div class="form-group" id="group_menu_id">
                 <label>ID Pizza (Unique, Huruf Kecil & Underscore)</label>
                 <input type="text" id="menu_id" class="form-input" placeholder="contoh: beef_pepperoni" required>
             </div>
@@ -323,7 +334,7 @@
                 <label>Deskripsi Singkat</label>
                 <textarea id="menu_description" class="form-input" rows="3" placeholder="contoh: Lelehan keju mozzarella dengan pepperoni daging sapi premium..." required></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="group_menu_category">
                 <label>Kategori</label>
                 <select id="menu_category" class="form-input" style="background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
                     <option value="classic">Classic</option>
@@ -340,6 +351,10 @@
                 <input type="number" id="menu_price_m" class="form-input" placeholder="40000" required>
             </div>
             <div class="form-group">
+                <label>Batas Stok (Ketersediaan Porsi)</label>
+                <input type="number" id="menu_stock" class="form-input" placeholder="100" value="100" required>
+            </div>
+            <div class="form-group" id="group_menu_image_preset">
                 <label>Gambar Pizza (Pilih Preset Bawaan)</label>
                 <select id="menu_image_preset" class="form-input" style="background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
                     <option value="/images/pizza_supreme.webp">Preset: Super Supreme</option>
@@ -377,7 +392,10 @@
 <div class="modal-overlay" id="adminFormModal">
     <div class="modal-popup" style="max-width: 480px;">
         <button class="modal-close" onclick="closeAdminFormModal()">&times;</button>
-        <h2 id="adminFormTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--info);">👑 Tambah Admin Baru</h2>
+        <h2 id="adminFormTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--info); display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--info);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span id="adminFormTitleText">Tambah Admin Baru</span>
+        </h2>
         <form id="adminForm" onsubmit="saveAdmin(event)">
             <div class="form-group">
                 <label>Username</label>
@@ -388,12 +406,15 @@
                 <input type="password" id="admin_password" class="form-input" placeholder="Masukkan password" required>
                 <small id="admin_password_hint" style="display:none; color:var(--text-muted); font-size:12px; margin-top:4px;">Kosongkan jika tidak ingin mengubah password</small>
             </div>
-            <button type="submit" id="adminSubmitBtn" style="width:100%; border:none; margin-top:20px; cursor:pointer; padding:14px; background:var(--info); color:white; border-radius:8px; font-weight:700; font-family:inherit; font-size:15px; box-shadow:0 4px 10px rgba(59,130,246,0.3);">💾 Simpan Admin</button>
+            <button type="submit" id="adminSubmitBtn" style="width:100%; border:none; margin-top:20px; cursor:pointer; padding:14px; background:var(--info); color:white; border-radius:8px; font-weight:700; font-family:inherit; font-size:15px; box-shadow:0 4px 10px rgba(59,130,246,0.3); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                <span>Simpan Admin</span>
+            </button>
         </form>
     </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="/js/admin.js"></script>
+<script src="/js/admin.js?v=3.2"></script>
 </body>
 </html>

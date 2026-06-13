@@ -7,8 +7,8 @@
 const ORDER_TYPE_LABELS = { dinein: 'Dine In', takeaway: 'Take Away' };
 const PAYMENT_LABELS = { cash: 'Tunai', qris: 'QRIS', transfer: 'Transfer Bank', whatsapp: 'WhatsApp' };
 const STATUS_LABELS = {
-    pending: { text: 'Menunggu', icon: '⏳' },
-    done: { text: 'Selesai', icon: '✅' },
+    pending: { text: 'Menunggu', icon: '' },
+    done: { text: 'Selesai', icon: '' },
 };
 
 let currentOrderFilter = 'all';
@@ -72,7 +72,7 @@ function updateRoleBadge(role) {
     const badge = document.getElementById('adminRoleBadge');
     if (!badge) return;
     if (role === 'super_admin') {
-        badge.textContent = '👑 Super Admin';
+        badge.textContent = 'Super Admin';
         badge.className = 'role-badge role-super-admin';
     } else {
         badge.textContent = 'Admin';
@@ -123,19 +123,27 @@ async function loadStats() {
 function renderStats(stats) {
     document.getElementById('statsRow').innerHTML = `
         <div class="stat-card">
-            <div class="stat-icon yellow">📦</div>
+            <div class="stat-icon yellow" style="display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
             <div class="stat-info"><h3>${stats.todayOrders}</h3><p>Pesanan Hari Ini</p></div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon green">💰</div>
+            <div class="stat-icon green" style="display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
             <div class="stat-info"><h3>${formatCurrency(stats.todayRevenue)}</h3><p>Pendapatan Hari Ini</p></div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon orange">⏳</div>
+            <div class="stat-icon orange" style="display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ff6b35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
             <div class="stat-info"><h3>${stats.pendingOrders}</h3><p>Pending</p></div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon blue">✅</div>
+            <div class="stat-icon blue" style="display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
             <div class="stat-info"><h3>${stats.doneOrders}</h3><p>Total Selesai</p></div>
         </div>
     `;
@@ -166,7 +174,7 @@ function renderOrders(orders) {
     const container = document.getElementById('orderList');
 
     if (orders.length === 0) {
-        container.innerHTML = `<div class="empty-state"><span>📭</span><p>Belum ada pesanan${currentOrderFilter !== 'all' ? ' dengan status ini' : ''}</p></div>`;
+        container.innerHTML = `<div class="empty-state"><span><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></span><p>Belum ada pesanan${currentOrderFilter !== 'all' ? ' dengan status ini' : ''}</p></div>`;
         return;
     }
 
@@ -179,8 +187,14 @@ function renderOrders(orders) {
         let actionButtons = '';
         if (order.status === 'pending') {
             actionButtons = `
-                <button class="action-btn success" onclick="event.stopPropagation(); updateStatus('${order.id}', 'done')">✅ Selesaikan</button>
-                <button class="action-btn danger" onclick="event.stopPropagation(); deleteOrder('${order.id}')">🗑️ Hapus</button>
+                <button class="action-btn success" onclick="event.stopPropagation(); updateStatus('${order.id}', 'done')" style="display:inline-flex; align-items:center; gap:4px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Selesaikan
+                </button>
+                <button class="action-btn danger" onclick="event.stopPropagation(); deleteOrder('${order.id}')" style="display:inline-flex; align-items:center; gap:4px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Hapus
+                </button>
             `;
         }
 
@@ -192,20 +206,32 @@ function renderOrders(orders) {
                 <div style="display:flex;align-items:center;gap:12px;">
                     <span class="order-queue-badge">#${qNum}</span>
                     <div>
-                        <span class="order-status-badge ${badgeClass}">${sl.icon} ${sl.text}</span>
+                        <span class="order-status-badge ${badgeClass}">${sl.text}</span>
                     </div>
                 </div>
-                <div class="order-meta">
-                    <span>🕐 ${timeStr}</span>
+                <div class="order-meta" style="display:flex;align-items:center;gap:12px;">
+                    <span style="display:inline-flex;align-items:center;gap:4px;">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        ${timeStr}
+                    </span>
                     <span>${ORDER_TYPE_LABELS[order.order_type] || order.order_type}</span>
                     <span>${PAYMENT_LABELS[order.payment_method] || order.payment_method}</span>
                 </div>
             </div>
-            <div class="order-customer">
-                <span class="customer-name">👤 ${order.customer_name}</span>
+            <div class="order-customer" style="display:flex;align-items:center;gap:6px;">
+                <span class="customer-name" style="display:inline-flex;align-items:center;gap:6px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    ${order.customer_name}
+                </span>
             </div>
             <div class="order-items-list">
-                <div class="order-item-row"><span>🍕 ${itemSummary}</span><span style="font-weight:700;color:var(--accent)">${formatCurrency(order.total)}</span></div>
+                <div class="order-item-row" style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="display:inline-flex;align-items:center;gap:6px;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        ${itemSummary}
+                    </span>
+                    <span style="font-weight:700;color:var(--accent)">${formatCurrency(order.total)}</span>
+                </div>
             </div>
             <div class="order-actions">${actionButtons}</div>
         </div>`;
@@ -222,9 +248,9 @@ async function updateStatus(orderId, status) {
         if (res.ok) {
             await loadDashboard();
             const sl = STATUS_LABELS[status];
-            showToast(`${sl.icon} ${orderId} → ${sl.text}`);
+            showToast(`Status pesanan ${orderId} diperbarui menjadi ${sl.text}`);
         }
-    } catch (e) { showToast('❌ Gagal update status'); }
+    } catch (e) { showToast('Gagal memperbarui status'); }
 }
 
 async function deleteOrder(orderId) {
@@ -233,9 +259,9 @@ async function deleteOrder(orderId) {
         const res = await apiFetch(`/api/orders/${orderId}`, { method: 'DELETE' });
         if (res.ok) {
             await loadDashboard();
-            showToast('🗑️ Pesanan dihapus');
+            showToast('Pesanan berhasil dihapus');
         }
-    } catch (e) { showToast('❌ Gagal menghapus'); }
+    } catch (e) { showToast('Gagal menghapus pesanan'); }
 }
 
 // ---- RESET ----
@@ -245,17 +271,17 @@ async function resetData() {
         const res = await apiFetch('/api/reset', { method: 'POST' });
         if (res.ok) {
             await loadDashboard();
-            showToast('🔄 Data pesanan telah direset');
+            showToast('Semua data pesanan telah direset');
         }
-    } catch (e) { showToast('❌ Gagal reset'); }
+    } catch (e) { showToast('Gagal mereset data'); }
 }
 
 // ---- EXPORT PDF & EXCEL ----
 function exportExcel() {
     const token = getToken();
-    if (!token) { showToast('❌ Sesi tidak valid'); return; }
+    if (!token) { showToast('Sesi tidak valid, silakan login kembali'); return; }
     
-    showToast('📊 Mengunduh file Excel...');
+    showToast('Mengunduh file Excel...');
     
     fetch('/api/export/orders/excel', {
         headers: { 'Authorization': 'Bearer ' + token }
@@ -273,19 +299,19 @@ function exportExcel() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('✅ File Excel berhasil diunduh');
+        showToast('File Excel berhasil diunduh');
     })
     .catch(err => {
         console.error('Export Excel error:', err);
-        showToast('❌ Gagal export Excel');
+        showToast('Gagal mengekspor data ke Excel');
     });
 }
 
 function exportPDF() {
     const token = getToken();
-    if (!token) { showToast('❌ Sesi tidak valid'); return; }
+    if (!token) { showToast('Sesi tidak valid, silakan login kembali'); return; }
     
-    showToast('📄 Mengunduh file PDF...');
+    showToast('Mengunduh file PDF...');
     
     fetch('/api/export/orders/pdf', {
         headers: { 'Authorization': 'Bearer ' + token }
@@ -303,11 +329,11 @@ function exportPDF() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('✅ File PDF berhasil diunduh');
+        showToast('File PDF berhasil diunduh');
     })
     .catch(err => {
         console.error('Export PDF error:', err);
-        showToast('❌ Gagal export PDF');
+        showToast('Gagal mengekspor data ke PDF');
     });
 }
 
@@ -428,7 +454,7 @@ function switchTab(tab) {
     if (tab === 'orders') {
         ordersTab.style.display = 'block';
         ordersBtn.classList.add('active');
-        topBarTitle.innerHTML = '📦 Antrean Pesanan';
+        topBarTitle.innerHTML = 'Antrean Pesanan';
         
         loadDashboard();
         if (!autoRefreshInterval) {
@@ -437,7 +463,7 @@ function switchTab(tab) {
     } else if (tab === 'menu') {
         menuTab.style.display = 'block';
         menuBtn.classList.add('active');
-        topBarTitle.innerHTML = '🍕 Kelola Menu Pizza';
+        topBarTitle.innerHTML = 'Kelola Menu Pizza';
         
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
@@ -447,7 +473,7 @@ function switchTab(tab) {
     } else if (tab === 'settings') {
         settingsTab.style.display = 'block';
         settingsBtn.classList.add('active');
-        topBarTitle.innerHTML = '⚙️ Pengaturan Toko';
+        topBarTitle.innerHTML = 'Pengaturan Toko';
         
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
@@ -457,13 +483,13 @@ function switchTab(tab) {
     } else if (tab === 'adminMgmt') {
         // Security: only allow super_admin
         if (getAdminRole() !== 'super_admin') {
-            showToast('⛔ Akses ditolak — fitur ini hanya untuk Super Admin');
+            showToast('Akses ditolak — fitur ini hanya untuk Super Admin');
             switchTab('orders');
             return;
         }
         adminMgmtTab.style.display = 'block';
         adminMgmtBtn.classList.add('active');
-        topBarTitle.innerHTML = '👑 Kelola Admin';
+        topBarTitle.innerHTML = 'Kelola Admin';
         
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
@@ -498,20 +524,22 @@ async function loadSettingsTab() {
     const container = document.getElementById('settingsContainer');
     loading.style.display = 'block';
     container.style.display = 'none';
-    
+
     try {
         const res = await apiFetch('/api/settings');
         if (!res.ok) throw new Error();
         const s = await res.json();
-        
+
         document.getElementById('set_slogan').value = s.slogan || '';
         document.getElementById('set_wa_link').value = s.wa_link || '';
         document.getElementById('set_fb_link').value = s.fb_link || '';
         document.getElementById('set_ig_link').value = s.ig_link || 'https://www.instagram.com/pizzaazzura?igsh=MW9zcmtnNDAwdzlheQ==';
         document.getElementById('set_tt_link').value = s.tt_link || 'https://vt.tiktok.com/ZS9v7FKmt/';
-        document.getElementById('set_op_weekday').value = s.op_weekday || '';
-        document.getElementById('set_op_weekend').value = s.op_weekend || '';
-        document.getElementById('set_op_holiday').value = s.op_holiday || '';
+
+        document.getElementById('set_op_weekday').value = stripPrefix(s.op_weekday, 'Senin - Jumat:');
+        document.getElementById('set_op_weekend').value = stripPrefix(s.op_weekend, 'Sabtu - Minggu:');
+        document.getElementById('set_op_holiday').value = stripPrefix(s.op_holiday, 'Libur Nasional:');
+
         document.getElementById('set_contact_address').value = s.contact_address || '';
         document.getElementById('set_contact_phone').value = s.contact_phone || '';
         document.getElementById('set_contact_email').value = s.contact_email || '';
@@ -521,74 +549,74 @@ async function loadSettingsTab() {
         document.getElementById('set_store_name').value = s.store_name || 'Pizza Azura Jakarta';
         document.getElementById('set_store_address').value = s.store_address || 'Jl. Sudirman No. 123, Jakarta Selatan';
         document.getElementById('set_store_maps_link').value = s.store_maps_link || 'https://maps.app.goo.gl/tVq8NLXusB9Wgr4g8';
-        
-        // WhatsApp settings
-        document.getElementById('set_fonnte_token').value = s.fonnte_token || '';
-        document.getElementById('set_admin_wa').value = s.admin_wa || '6285198042502';
 
         loading.style.display = 'none';
         container.style.display = 'grid';
-    } catch(e) {
+
+        initSettingsMap(s.store_lat || -6.2146, s.store_lng || 106.8215);
+    } catch (e) {
         console.error('Error loading settings:', e);
         loading.innerHTML = '<span style="color:var(--danger)">Gagal memuat pengaturan toko.</span>';
     }
 }
 
 async function saveAllSettings() {
-    const payload = {
-        slogan: document.getElementById('set_slogan').value,
-        wa_link: document.getElementById('set_wa_link').value,
-        fb_link: document.getElementById('set_fb_link').value,
-        ig_link: document.getElementById('set_ig_link').value,
-        tt_link: document.getElementById('set_tt_link').value,
-        op_weekday: document.getElementById('set_op_weekday').value,
-        op_weekend: document.getElementById('set_op_weekend').value,
-        op_holiday: document.getElementById('set_op_holiday').value,
-        contact_address: document.getElementById('set_contact_address').value,
-        contact_phone: document.getElementById('set_contact_phone').value,
-        contact_email: document.getElementById('set_contact_email').value,
-        about_content: document.getElementById('set_about_content').value,
-        store_lat: document.getElementById('set_store_lat').value.trim(),
-        store_lng: document.getElementById('set_store_lng').value.trim(),
-        store_name: document.getElementById('set_store_name').value.trim(),
-        store_address: document.getElementById('set_store_address').value.trim(),
-        store_maps_link: document.getElementById('set_store_maps_link').value.trim(),
-        fonnte_token: document.getElementById('set_fonnte_token').value.trim(),
-        admin_wa: document.getElementById('set_admin_wa').value.trim()
-    };
-
-    // Simple URL validation (allow empty, #, or starting with http/https)
-    const isValidUrl = (u) => !u || u === '#' || /^https?:\/\//i.test(u);
-    if (!isValidUrl(payload.fb_link) || !isValidUrl(payload.ig_link) || !isValidUrl(payload.tt_link)) {
-        showToast('❌ Salah satu URL sosial tidak valid. Gunakan http(s)://');
-        return;
-    }
-
     const saveBtn = document.getElementById('saveSettingsBtn');
-    saveBtn.disabled = true;
-    saveBtn.textContent = '⏳ Menyimpan...';
 
     try {
+        const payload = {
+            slogan: document.getElementById('set_slogan').value,
+            wa_link: document.getElementById('set_wa_link').value,
+            fb_link: document.getElementById('set_fb_link').value,
+            ig_link: document.getElementById('set_ig_link').value,
+            tt_link: document.getElementById('set_tt_link').value,
+            op_weekday: document.getElementById('set_op_weekday').value,
+            op_weekend: document.getElementById('set_op_weekend').value,
+            op_holiday: document.getElementById('set_op_holiday').value,
+            contact_address: document.getElementById('set_contact_address').value,
+            contact_phone: document.getElementById('set_contact_phone').value,
+            contact_email: document.getElementById('set_contact_email').value,
+            about_content: document.getElementById('set_about_content').value,
+            store_lat: document.getElementById('set_store_lat').value.trim(),
+            store_lng: document.getElementById('set_store_lng').value.trim(),
+            store_name: document.getElementById('set_store_name').value.trim(),
+            store_address: document.getElementById('set_store_address').value.trim(),
+            store_maps_link: document.getElementById('set_store_maps_link').value.trim()
+        };
+
+        const isValidUrl = (u) => !u || u === '#' || /^https?:\/\//i.test(u);
+        if (!isValidUrl(payload.fb_link) || !isValidUrl(payload.ig_link) || !isValidUrl(payload.tt_link)) {
+            showToast('Salah satu URL sosial tidak valid. Gunakan http(s)://');
+            return;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Menyimpan...';
+
         const res = await apiFetch('/api/settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        
+
         if (res.ok) {
-            showToast('✅ Semua pengaturan disimpan');
+            showToast('Semua pengaturan disimpan');
             setTimeout(() => {
                 switchTab('orders');
             }, 1000);
-        } else {
-            showToast('❌ Gagal menyimpan');
-            saveBtn.disabled = false;
-            saveBtn.textContent = '💾 Simpan Semua Pengaturan';
+            return;
         }
-    } catch(e) {
-        showToast('❌ Kesalahan server');
-        saveBtn.disabled = false;
-        saveBtn.textContent = '💾 Simpan Semua Pengaturan';
+
+        const errData = await res.json().catch(() => ({}));
+        showToast(errData.error || 'Gagal menyimpan (HTTP ' + res.status + ')');
+    } catch (e) {
+        console.error('saveAllSettings error:', e);
+        showToast('Kesalahan: ' + (e.message || 'Koneksi server gagal'));
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Simpan Semua Pengaturan';
+        }
     }
 }
 
@@ -604,14 +632,14 @@ async function loadMenuItems() {
             renderMenuItems(menuItems);
         }
     } catch(e) {
-        showToast('❌ Gagal memuat daftar menu');
+        showToast('Gagal memuat daftar menu');
     }
 }
 
 function renderMenuItems(items) {
     const list = document.getElementById('adminMenuList');
     if (items.length === 0) {
-        list.innerHTML = `<div class="empty-state"><span>🍕</span><p>Belum ada menu. Tambahkan menu baru!</p></div>`;
+        list.innerHTML = `<div class="empty-state"><span><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg></span><p>Belum ada menu. Tambahkan menu baru!</p></div>`;
         return;
     }
     
@@ -627,12 +655,19 @@ function renderMenuItems(items) {
                     <p style="font-size:13px; color:var(--text-secondary); margin-top:4px; max-width: 450px; line-height: 1.4;">${item.description}</p>
                     <p style="font-size:13px; color:var(--accent); font-weight:700; margin-top:6px;">
                         Size 22: ${formatCurrency(item.price_s)} &nbsp;|&nbsp; Size 26: ${formatCurrency(item.price_m)}
+                        &nbsp;|&nbsp; Stok: <span style="color:${item.stock <= 0 ? 'red' : 'inherit'}">${item.stock ?? 100} Porsi</span>
                     </p>
                 </div>
             </div>
             <div style="display:flex; gap:8px;">
-                <button class="action-btn" onclick="openMenuFormModal('${item.id}')" style="padding: 8px 14px; font-size:13px;">✏️ Edit</button>
-                <button class="action-btn danger" onclick="deleteMenuItem('${item.id}')" style="padding: 8px 14px; font-size:13px;">🗑️ Hapus</button>
+                <button class="action-btn" onclick="openMenuFormModal('${item.id}')" style="padding: 8px 14px; font-size:13px; display:inline-flex; align-items:center; gap:4px;">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    Edit
+                </button>
+                <button class="action-btn danger" onclick="deleteMenuItem('${item.id}')" style="padding: 8px 14px; font-size:13px; display:inline-flex; align-items:center; gap:4px;">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Hapus
+                </button>
             </div>
         </div>
     `).join('');
@@ -644,16 +679,25 @@ function openMenuFormModal(menuId = null) {
     const form = document.getElementById('menuForm');
     const title = document.getElementById('menuFormTitle');
     const idInput = document.getElementById('menu_id');
+    const presetSelect = document.getElementById('menu_image_preset');
+    const base64Input = document.getElementById('menu_image_base64');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImg = document.getElementById('menu_image_preview');
     
     form.reset();
     
     // Clear custom image inputs
     const fileInput = document.getElementById('menu_image_file');
     if (fileInput) fileInput.value = '';
-    document.getElementById('menu_image_base64').value = '';
-    document.getElementById('imagePreviewContainer').style.display = 'none';
-    document.getElementById('menu_image_preview').src = '';
+    base64Input.value = '';
+    previewContainer.style.display = 'none';
+    previewImg.src = '';
     document.getElementById('menu_is_bestseller').checked = false;
+    
+    const isEdit = !!menuId;
+    document.getElementById('group_menu_id').style.display = isEdit ? 'none' : 'block';
+    document.getElementById('group_menu_category').style.display = isEdit ? 'none' : 'block';
+    document.getElementById('group_menu_image_preset').style.display = isEdit ? 'none' : 'block';
     
     if (menuId) {
         title.innerHTML = 'Edit Menu Pizza';
@@ -667,30 +711,16 @@ function openMenuFormModal(menuId = null) {
             document.getElementById('menu_category').value = item.category || 'classic';
             document.getElementById('menu_price_s').value = item.price_s;
             document.getElementById('menu_price_m').value = item.price_m;
+            document.getElementById('menu_stock').value = item.stock ?? 100;
             document.getElementById('menu_is_bestseller').checked = item.is_bestseller === 1;
             
-            const presetSelect = document.getElementById('menu_image_preset');
-            const base64Input = document.getElementById('menu_image_base64');
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            const previewImg = document.getElementById('menu_image_preview');
-            
-            const presets = [
-                '/images/pizza_supreme.webp', 'images/pizza_supreme.webp',
-                '/images/pizza_pepperoni.webp', 'images/pizza_pepperoni.webp',
-                '/images/pizza_corn_cheese.webp', 'images/pizza_corn_cheese.webp',
-                '/images/pizza_sosis.webp', 'images/pizza_sosis.webp',
-                '/images/pizza_chicken.webp', 'images/pizza_chicken.webp',
-                '/images/pizza_mushroom.webp', 'images/pizza_mushroom.webp',
-                '/images/pizza_tuna.webp', 'images/pizza_tuna.webp'
-            ];
-            
+            const presets = Array.from(presetSelect.options).map(opt => opt.value);
             const isCustom = item.image && (item.image.startsWith('data:') || !presets.includes(item.image));
             
             if (isCustom) {
                 base64Input.value = item.image;
                 previewImg.src = item.image;
                 previewContainer.style.display = 'flex';
-                // Set preset dropdown selection blank or default to Supreme
                 presetSelect.value = '/images/pizza_supreme.webp';
             } else {
                 presetSelect.value = item.image || '/images/pizza_supreme.webp';
@@ -700,7 +730,8 @@ function openMenuFormModal(menuId = null) {
     } else {
         title.innerHTML = 'Tambah Pizza Baru';
         idInput.disabled = false;
-        document.getElementById('menu_image_preset').value = '/images/pizza_supreme.webp';
+        presetSelect.value = '/images/pizza_supreme.webp';
+        document.getElementById('menu_stock').value = 100;
     }
     
     modal.classList.add('active');
@@ -724,6 +755,7 @@ async function saveMenuItem(e) {
     const category = document.getElementById('menu_category').value;
     const price_s = parseInt(document.getElementById('menu_price_s').value);
     const price_m = parseInt(document.getElementById('menu_price_m').value);
+    const stock = parseInt(document.getElementById('menu_stock').value);
     
     const customImageVal = document.getElementById('menu_image_base64').value;
     const presetSelectVal = document.getElementById('menu_image_preset').value;
@@ -731,18 +763,18 @@ async function saveMenuItem(e) {
     
     const is_bestseller = document.getElementById('menu_is_bestseller').checked ? 1 : 0;
     
-    if (!id || !name || isNaN(price_s) || isNaN(price_m)) {
-        showToast('⚠️ Data tidak lengkap');
+    if (!id || !name || isNaN(price_s) || isNaN(price_m) || isNaN(stock)) {
+        showToast('Data tidak lengkap');
         return;
     }
     
-    const payload = { id, name, description, category, price_s, price_m, image, is_bestseller };
+    const payload = { id, name, description, category, price_s, price_m, image, is_bestseller, stock };
     const method = editingMenuId ? 'PUT' : 'POST';
     const url = editingMenuId ? `/api/menu/${editingMenuId}` : '/api/menu';
     
     const submitBtn = document.getElementById('menuSubmitBtn');
     submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Menyimpan...';
+    submitBtn.textContent = 'Menyimpan...';
     
     try {
         const res = await apiFetch(url, {
@@ -753,17 +785,17 @@ async function saveMenuItem(e) {
         
         const result = await res.json();
         if (res.ok) {
-            showToast('✅ Menu berhasil disimpan');
+            showToast('Menu berhasil disimpan');
             closeMenuFormModal();
             loadMenuItems();
         } else {
-            showToast('❌ ' + (result.error || 'Gagal menyimpan menu'));
+            showToast(result.error || 'Gagal menyimpan menu');
         }
     } catch(err) {
-        showToast('❌ Kesalahan koneksi server');
+        showToast('Kesalahan koneksi server');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = '💾 Simpan Pizza';
+        submitBtn.textContent = 'Simpan Pizza';
     }
 }
 
@@ -773,14 +805,14 @@ async function deleteMenuItem(menuId) {
     try {
         const res = await apiFetch(`/api/menu/${menuId}`, { method: 'DELETE' });
         if (res.ok) {
-            showToast('🗑️ Menu berhasil dihapus');
+            showToast('Menu berhasil dihapus');
             loadMenuItems();
         } else {
             const err = await res.json();
-            showToast('❌ ' + (err.error || 'Gagal menghapus menu'));
+            showToast(err.error || 'Gagal menghapus menu');
         }
     } catch(e) {
-        showToast('❌ Kesalahan koneksi server');
+        showToast('Kesalahan koneksi server');
     }
 }
 
@@ -823,12 +855,12 @@ async function loadAdminList() {
             adminList = await res.json();
             renderAdminTable(adminList);
         } else if (res.status === 403) {
-            showToast('⛔ Akses ditolak — hanya untuk Super Admin');
+            showToast('Akses ditolak — hanya untuk Super Admin');
             switchTab('orders');
         }
     } catch (e) {
         console.error('Load admin error:', e);
-        showToast('❌ Gagal memuat daftar admin');
+        showToast('Gagal memuat daftar admin');
     }
 }
 
@@ -843,8 +875,8 @@ function renderAdminTable(admins) {
 
     tbody.innerHTML = admins.map((admin, idx) => {
         const roleBadge = admin.role === 'super_admin'
-            ? '<span class="role-badge role-super-admin">👑 Super Admin</span>'
-            : '<span class="role-badge role-admin">🔧 Admin</span>';
+            ? '<span class="role-badge role-super-admin">Super Admin</span>'
+            : '<span class="role-badge role-admin">Admin</span>';
         
         const isSelf = admin.username === myUsername;
         const isSuperAdmin = admin.role === 'super_admin';
@@ -856,24 +888,34 @@ function renderAdminTable(admins) {
         if (isSuperAdmin) {
             // Super admin hanya bisa di-edit oleh dirinya sendiri
             if (isSelf) {
-                actionButtons = `<button class="action-btn" onclick="openAdminFormModal(${admin.id})" style="padding:6px 12px; font-size:12px;">✏️ Edit</button>`;
+                actionButtons = `
+                    <button class="action-btn" onclick="openAdminFormModal(${admin.id})">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        <span>Edit</span>
+                    </button>`;
             } else {
                 actionButtons = '<span style="font-size:12px; color:var(--text-muted);">—</span>';
             }
         } else {
             // Admin biasa: bisa edit & hapus
             actionButtons = `
-                <button class="action-btn" onclick="openAdminFormModal(${admin.id})" style="padding:6px 12px; font-size:12px;">✏️ Edit</button>
-                <button class="action-btn danger" onclick="deleteAdmin(${admin.id})" style="padding:6px 12px; font-size:12px;">🗑️ Hapus</button>
+                <button class="action-btn" onclick="openAdminFormModal(${admin.id})">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <span>Edit</span>
+                </button>
+                <button class="action-btn danger" onclick="deleteAdmin(${admin.id})">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Hapus</span>
+                </button>
             `;
         }
         
         return `
             <tr>
-                <td>${idx + 1}</td>
-                <td><strong>${admin.username}</strong>${selfTag}</td>
-                <td>${roleBadge}</td>
-                <td>
+                <td data-label="No">${idx + 1}</td>
+                <td data-label="Username"><strong>${admin.username}</strong>${selfTag}</td>
+                <td data-label="Role">${roleBadge}</td>
+                <td data-label="Aksi">
                     <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
                         ${actionButtons}
                     </div>
@@ -886,7 +928,7 @@ function openAdminFormModal(adminId = null) {
     editingAdminId = adminId;
     const modal = document.getElementById('adminFormModal');
     const form = document.getElementById('adminForm');
-    const title = document.getElementById('adminFormTitle');
+    const titleText = document.getElementById('adminFormTitleText') || document.getElementById('adminFormTitle');
     const passwordInput = document.getElementById('admin_password');
     const passwordHint = document.getElementById('admin_password_hint');
     
@@ -895,7 +937,7 @@ function openAdminFormModal(adminId = null) {
     if (adminId) {
         const admin = adminList.find(a => a.id === adminId);
         const isSuperAdmin = admin && admin.role === 'super_admin';
-        title.textContent = isSuperAdmin ? '👑 Edit Akun Super Admin' : '✏️ Edit Admin';
+        titleText.textContent = isSuperAdmin ? 'Edit Akun Super Admin' : 'Edit Admin';
         if (admin) {
             document.getElementById('admin_username').value = admin.username;
         }
@@ -903,7 +945,7 @@ function openAdminFormModal(adminId = null) {
         passwordInput.placeholder = 'Kosongkan jika tidak diubah';
         passwordHint.style.display = 'block';
     } else {
-        title.textContent = '➕ Tambah Admin Baru';
+        titleText.textContent = 'Tambah Admin Baru';
         passwordInput.required = true;
         passwordInput.placeholder = 'Masukkan password';
         passwordHint.style.display = 'none';
@@ -927,12 +969,12 @@ async function saveAdmin(e) {
     const password = document.getElementById('admin_password').value;
     
     if (!username) {
-        showToast('⚠️ Username wajib diisi');
+        showToast('Username wajib diisi');
         return;
     }
     
     if (!editingAdminId && !password) {
-        showToast('⚠️ Password wajib diisi untuk admin baru');
+        showToast('Password wajib diisi untuk admin baru');
         return;
     }
     
@@ -944,7 +986,7 @@ async function saveAdmin(e) {
     
     const submitBtn = document.getElementById('adminSubmitBtn');
     submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Menyimpan...';
+    submitBtn.textContent = 'Menyimpan...';
     
     try {
         const res = await apiFetch(url, {
@@ -955,17 +997,17 @@ async function saveAdmin(e) {
         
         const result = await res.json();
         if (res.ok) {
-            showToast('✅ Admin berhasil disimpan');
+            showToast('Admin berhasil disimpan');
             closeAdminFormModal();
             loadAdminList();
         } else {
-            showToast('❌ ' + (result.error || 'Gagal menyimpan admin'));
+            showToast(result.error || 'Gagal menyimpan admin');
         }
     } catch (err) {
-        showToast('❌ Kesalahan koneksi server');
+        showToast('Kesalahan koneksi server');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = '💾 Simpan Admin';
+        submitBtn.textContent = 'Simpan Admin';
     }
 }
 
@@ -976,12 +1018,92 @@ async function deleteAdmin(adminId) {
         const res = await apiFetch(`/api/admins/${adminId}`, { method: 'DELETE' });
         const result = await res.json();
         if (res.ok) {
-            showToast('🗑️ Admin berhasil dihapus');
+            showToast('Admin berhasil dihapus');
             loadAdminList();
         } else {
-            showToast('❌ ' + (result.error || 'Gagal menghapus admin'));
+            showToast(result.error || 'Gagal menghapus admin');
         }
     } catch (e) {
-        showToast('❌ Kesalahan koneksi server');
+        showToast('Kesalahan koneksi server');
     }
 }
+
+const stripPrefix = (val, prefix) => {
+    if (!val) return '';
+    if (val.startsWith(prefix)) {
+        return val.substring(prefix.length).trim();
+    }
+    return val;
+};
+
+let settingsMap = null;
+let settingsMarker = null;
+
+function initSettingsMap(lat, lng) {
+    lat = parseFloat(lat);
+    lng = parseFloat(lng);
+    
+    if (typeof L === 'undefined') {
+        setTimeout(() => initSettingsMap(lat, lng), 100);
+        return;
+    }
+    
+    const mapContainer = document.getElementById('settingsMap');
+    if (!mapContainer) return;
+    
+    if (settingsMap) {
+        settingsMap.setView([lat, lng], 14);
+        if (settingsMarker) {
+            settingsMarker.setLatLng([lat, lng]);
+        }
+        settingsMap.invalidateSize();
+        return;
+    }
+    
+    settingsMap = L.map('settingsMap', {
+        center: [lat, lng],
+        zoom: 14,
+        zoomControl: true,
+        scrollWheelZoom: false
+    });
+    
+    L.tileLayer('http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}', {
+        attribution: 'Google Maps Hybrid'
+    }).addTo(settingsMap);
+    
+    const storeIcon = L.divIcon({
+        html: `<div style="position:relative; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
+                 <div style="position:absolute; width:100%; height:100%; background:rgba(255,107,53,0.5); border-radius:50%; animation:pulseMap 2s infinite;"></div>
+                 <div style="background:var(--accent); width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow:0 0 15px rgba(0,0,0,0.8); z-index:2;"></div>
+               </div>
+               <style>@keyframes pulseMap{0%{transform:scale(0.8);opacity:1;}100%{transform:scale(2.5);opacity:0;}}</style>`,
+        className: 'custom-settings-marker',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    });
+    
+    settingsMarker = L.marker([lat, lng], {
+        icon: storeIcon,
+        draggable: true
+    }).addTo(settingsMap);
+    
+    const updateCoords = (newLat, newLng) => {
+        document.getElementById('set_store_lat').value = newLat.toFixed(6);
+        document.getElementById('set_store_lng').value = newLng.toFixed(6);
+    };
+    
+    settingsMarker.on('dragend', function(e) {
+        const position = settingsMarker.getLatLng();
+        updateCoords(position.lat, position.lng);
+    });
+    
+    settingsMap.on('click', function(e) {
+        settingsMarker.setLatLng(e.latlng);
+        updateCoords(e.latlng.lat, e.latlng.lng);
+    });
+    
+    setTimeout(() => {
+        settingsMap.invalidateSize();
+    }, 200);
+}
+

@@ -6,7 +6,7 @@
     <meta name="description" content="Pizza Azura — Pesan pizza favorit Anda secara digital. Pilih menu, topping, dan langsung checkout tanpa antri!">
     <title>Pizza Azura — Digital Ordering</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+    <link rel="icon" href="public/images/logo.webp" type="image/webp">
 </head>
 <body>
 <!-- PRELOADER -->
@@ -19,13 +19,12 @@
 <header class="header">
     <div class="header-inner">
         <a href="index.html" class="logo">
-            <span class="logo-icon">🍕</span>
-            <span class="logo-text">Pizza Azura</span>
+            <img src="public/images/logo.webp" alt="Pizza Azura" class="logo-img" style="background-color: #000000; border-radius: 8px; padding: 4px; display: block;">
         </a>
         <div class="nav-links">
-            <a href="admin.html" class="nav-link">🔧 Admin</a>
             <button class="cart-btn" id="openCartBtn" onclick="openCart()">
-                🛒 Keranjang
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span>Keranjang</span>
                 <span class="cart-badge" id="cartBadge">0</span>
             </button>
         </div>
@@ -105,7 +104,7 @@
         </div>
     </div>
     <div class="footer-bottom">
-        <p>&copy; 2024 Pizza Azura. All rights reserved.</p>
+        <p>&copy; 2026 Pizza Azura. All rights reserved.</p>
     </div>
 </footer>
 

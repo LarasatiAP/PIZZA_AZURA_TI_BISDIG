@@ -612,7 +612,7 @@ body::before {
    ============================================ */
 .settings-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
     gap: 24px;
     margin-top: 16px;
 }
@@ -680,11 +680,29 @@ input[type="file"].form-input::file-selector-button:hover {
 /* ============================================
    ADMIN TABLE (Kelola Admin)
    ============================================ */
+#adminMgmtTab {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: block;
+}
+
+#adminMgmtTab .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
 .admin-table-wrap {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: var(--bg-card);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 .admin-table {
@@ -699,7 +717,6 @@ input[type="file"].form-input::file-selector-button:hover {
 
 .admin-table th {
     padding: 14px 18px;
-    text-align: left;
     font-weight: 700;
     font-size: 13px;
     color: var(--text-secondary);
@@ -708,9 +725,29 @@ input[type="file"].form-input::file-selector-button:hover {
     border-bottom: 2px solid var(--border);
 }
 
-.admin-table th:first-child { text-align: center; width: 50px; }
-.admin-table th:last-child { text-align: center; width: 180px; }
-.admin-table th:nth-child(3) { text-align: center; }
+/* Column widths and alignments for desktop */
+.admin-table th:first-child,
+.admin-table td:first-child {
+    text-align: center;
+    width: 70px;
+}
+
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) {
+    text-align: left;
+}
+
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3) {
+    text-align: center;
+    width: 180px;
+}
+
+.admin-table th:last-child,
+.admin-table td:last-child {
+    text-align: center;
+    width: 220px;
+}
 
 .admin-table td {
     padding: 14px 18px;
@@ -718,9 +755,7 @@ input[type="file"].form-input::file-selector-button:hover {
     vertical-align: middle;
 }
 
-.admin-table td:first-child { text-align: center; color: var(--text-muted); font-weight: 600; }
-.admin-table td:last-child { text-align: center; }
-.admin-table td:nth-child(3) { text-align: center; }
+.admin-table td:first-child { color: var(--text-muted); font-weight: 600; }
 
 .admin-table tbody tr {
     transition: background 0.2s;
@@ -732,6 +767,15 @@ input[type="file"].form-input::file-selector-button:hover {
 
 .admin-table tbody tr:last-child td {
     border-bottom: none;
+}
+
+.admin-table .action-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* ============================================
@@ -799,7 +843,7 @@ input[type="file"].form-input::file-selector-button:hover {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
-/* Responsive export buttons */
+/* Responsive export buttons & table */
 @media (max-width: 768px) {
     .export-buttons {
         margin-left: 0 !important;
@@ -808,5 +852,96 @@ input[type="file"].form-input::file-selector-button:hover {
     .export-btn {
         flex: 1;
         justify-content: center;
+    }
+
+    /* Kelola Admin Mobile Layout */
+    #adminMgmtTab .section-header {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 16px;
+    }
+    #adminMgmtTab .section-title {
+        justify-content: center;
+        font-size: 20px;
+    }
+    #adminMgmtTab .filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Turn admin table into beautiful cards */
+    .admin-table-wrap {
+        background: transparent;
+        border: none;
+    }
+    .admin-table, 
+    .admin-table thead, 
+    .admin-table tbody, 
+    .admin-table tr, 
+    .admin-table th, 
+    .admin-table td {
+        display: block;
+        width: 100%;
+    }
+    .admin-table thead {
+        display: none; /* Hide standard headers */
+    }
+    .admin-table tbody tr {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 16px;
+        padding: 16px 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .admin-table tbody tr:hover {
+        background: var(--bg-card);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 107, 53, 0.06);
+    }
+    .admin-table td {
+        border-bottom: 1px solid rgba(180, 180, 200, 0.05);
+        padding: 12px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right !important;
+    }
+    .admin-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-top: 8px;
+    }
+    .admin-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--text-secondary);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        float: left;
+        text-align: left;
+    }
+    .admin-table td:first-child::before {
+        content: "No. Urut";
+    }
+    .admin-table td:first-child {
+        text-align: right !important;
+        color: var(--text-muted);
+    }
+    .admin-table td:last-child {
+        justify-content: space-between;
+        align-items: center;
+    }
+    .admin-table td:last-child div {
+        width: auto;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end !important;
+    }
+    .admin-table .action-btn {
+        padding: 8px 14px;
+        font-size: 13px;
     }
 }

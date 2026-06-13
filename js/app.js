@@ -264,11 +264,6 @@ function renderCheckout() {
         </div>
 
         <div class="form-group">
-            <label>No. HP / WhatsApp</label>
-            <input type="tel" class="form-input" id="custPhone" placeholder="08xxxxxxxxxx">
-        </div>
-
-        <div class="form-group">
             <label>Tipe Pesanan</label>
             <div class="radio-group">
                 <div class="radio-option">
@@ -324,7 +319,6 @@ function renderCheckout() {
 
 function submitOrder() {
     const name = document.getElementById('custName').value.trim();
-    const phone = document.getElementById('custPhone').value.trim();
 
     if (!name) {
         showToast('⚠️ Masukkan nama pemesan!');
@@ -337,7 +331,7 @@ function submitOrder() {
 
     const result = PizzaAzura.createOrder({
         name,
-        phone,
+        phone: '',
         orderType,
         paymentMethod: payMethod,
         notes,

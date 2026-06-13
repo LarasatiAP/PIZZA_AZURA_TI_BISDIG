@@ -102,16 +102,16 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- SEED DATA: menu
 -- ============================================
 INSERT INTO `menu` (`id`, `name`, `description`, `image`, `category`, `price_s`, `price_m`, `price_l`, `is_bestseller`) VALUES
-('corn_cheese', 'Pizza Corn Cheese', 'Perpaduan jagung manis dan keju leleh di atas adonan pizza renyah.', '/images/pizza_corn_cheese.png', 'classic', 25000, 40000, 0, 0),
-('corn_sosis', 'Pizza Corn Sosis', 'Jagung manis dengan irisan sosis premium di atas pizza crispy.', '/images/pizza_sosis.png', 'classic', 25000, 40000, 0, 0),
-('chicken_cheese', 'Pizza Chicken Cheese', 'Ayam berbumbu dengan lelehan keju mozzarella yang melimpah.', '/images/pizza_chicken.png', 'classic', 35000, 50000, 0, 0),
-('chicken_blackpepper', 'Pizza Chicken Blackpepper', 'Ayam blackpepper dengan rempah pilihan dan keju gurih.', '/images/pizza_chicken.png', 'classic', 35000, 55000, 0, 0),
-('mushroom_corn', 'Pizza Mushroom Corn', 'Jamur segar dan jagung manis dengan saus spesial.', '/images/pizza_mushroom.png', 'standard', 35000, 55000, 0, 0),
-('chicken_corn_mayo', 'Pizza Chicken Corn Mayo', 'Ayam, jagung manis, dan saus mayo creamy yang lezat.', '/images/pizza_chicken.png', 'standard', 35000, 55000, 0, 0),
-('tuna_corn_mayo', 'Pizza Tuna Corn Mayo', 'Tuna pilihan dengan jagung dan mayo — kombinasi segar!', '/images/pizza_tuna.png', 'standard', 35000, 55000, 0, 0),
-('beef_pepperoni', 'Pizza Beef Pepperoni', 'Pepperoni beef premium dengan keju mozzarella berlapis.', '/images/pizza_pepperoni.png', 'premium', 45000, 65000, 0, 0),
-('beef_petties', 'Pizza Beef Petties', 'Daging sapi giling berbumbu spesial di atas pizza renyah.', '/images/pizza_pepperoni.png', 'premium', 45000, 65000, 0, 0),
-('super_supreme', 'Pizza Super Supreme', 'Semua topping premium dalam satu pizza — the ultimate choice!', '/images/pizza_supreme.png', 'premium', 55000, 75000, 0, 0);
+('corn_cheese', 'Pizza Corn Cheese', 'Perpaduan jagung manis dan keju leleh di atas adonan pizza renyah.', '/images/pizza_corn_cheese.webp', 'classic', 25000, 40000, 0, 0),
+('corn_sosis', 'Pizza Corn Sosis', 'Jagung manis dengan irisan sosis premium di atas pizza crispy.', '/images/pizza_sosis.webp', 'classic', 25000, 40000, 0, 0),
+('chicken_cheese', 'Pizza Chicken Cheese', 'Ayam berbumbu dengan lelehan keju mozzarella yang melimpah.', '/images/pizza_chicken.webp', 'classic', 35000, 50000, 0, 0),
+('chicken_blackpepper', 'Pizza Chicken Blackpepper', 'Ayam blackpepper dengan rempah pilihan dan keju gurih.', '/images/pizza_chicken.webp', 'classic', 35000, 55000, 0, 0),
+('mushroom_corn', 'Pizza Mushroom Corn', 'Jamur segar dan jagung manis dengan saus spesial.', '/images/pizza_mushroom.webp', 'standard', 35000, 55000, 0, 0),
+('chicken_corn_mayo', 'Pizza Chicken Corn Mayo', 'Ayam, jagung manis, dan saus mayo creamy yang lezat.', '/images/pizza_chicken.webp', 'standard', 35000, 55000, 0, 0),
+('tuna_corn_mayo', 'Pizza Tuna Corn Mayo', 'Tuna pilihan dengan jagung dan mayo — kombinasi segar!', '/images/pizza_tuna.webp', 'standard', 35000, 55000, 0, 0),
+('beef_pepperoni', 'Pizza Beef Pepperoni', 'Pepperoni beef premium dengan keju mozzarella berlapis.', '/images/pizza_pepperoni.webp', 'premium', 45000, 65000, 0, 0),
+('beef_petties', 'Pizza Beef Petties', 'Daging sapi giling berbumbu spesial di atas pizza renyah.', '/images/pizza_pepperoni.webp', 'premium', 45000, 65000, 0, 0),
+('super_supreme', 'Pizza Super Supreme', 'Semua topping premium dalam satu pizza — the ultimate choice!', '/images/pizza_supreme.webp', 'premium', 55000, 75000, 0, 0);
 
 -- ============================================
 -- SEED DATA: toppings

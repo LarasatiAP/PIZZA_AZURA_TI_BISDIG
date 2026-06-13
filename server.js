@@ -209,7 +209,7 @@ app.delete('/api/admins/:id', authMiddleware, superAdminMiddleware, async (req, 
 
 app.get('/api/menu', async (req, res) => {
     try {
-        const menu = await queryAll('SELECT * FROM menu');
+        const menu = await queryAll('SELECT id, name, description, image, category, price_s, price_m, price_l, is_bestseller, COALESCE(stock, 100) AS stock FROM menu');
         res.json(menu);
     } catch (err) {
         console.error('Get menu error:', err);
@@ -261,7 +261,7 @@ function saveBase64Image(base64Str, menuId) {
 // Add a new menu item (admin only)
 app.post('/api/menu', authMiddleware, async (req, res) => {
     try {
-        let { id, name, description, image, category, price_s, price_m, is_bestseller } = req.body;
+        let { id, name, description, image, category, price_s, price_m, is_bestseller, stock } = req.body;
         if (!id || !name || price_s === undefined || price_m === undefined) {
             return res.status(400).json({ error: 'Data menu tidak lengkap' });
         }
@@ -275,9 +275,11 @@ app.post('/api/menu', authMiddleware, async (req, res) => {
             image = saveBase64Image(image, id);
         }
         
+        const finalStock = Number.isFinite(Number(stock)) ? Math.max(0, Number(stock)) : 100;
+
         await runSql(
-            'INSERT INTO menu (id, name, description, image, category, price_s, price_m, price_l, is_bestseller) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)',
-            [id, name, description || '', image || '/images/pizza_supreme.webp', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0]
+            'INSERT INTO menu (id, name, description, image, category, price_s, price_m, price_l, is_bestseller, stock) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?)',
+            [id, name, description || '', image || '/images/pizza_supreme.webp', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, finalStock]
         );
         res.json({ success: true });
     } catch (err) {
@@ -289,7 +291,7 @@ app.post('/api/menu', authMiddleware, async (req, res) => {
 // Update a menu item (admin only)
 app.put('/api/menu/:id', authMiddleware, async (req, res) => {
     try {
-        let { name, description, image, category, price_s, price_m, is_bestseller } = req.body;
+        let { name, description, image, category, price_s, price_m, is_bestseller, stock } = req.body;
         const { id } = req.params;
         
         const existing = await queryOne('SELECT * FROM menu WHERE id = ?', [id]);
@@ -305,9 +307,11 @@ app.put('/api/menu/:id', authMiddleware, async (req, res) => {
             image = saveBase64Image(image, id);
         }
         
+        const finalStock = Number.isFinite(Number(stock)) ? Math.max(0, Number(stock)) : (existing.stock ?? 100);
+
         await runSql(
-            'UPDATE menu SET name = ?, description = ?, image = ?, category = ?, price_s = ?, price_m = ?, is_bestseller = ? WHERE id = ?',
-            [name, description || '', image || '/images/pizza_supreme.webp', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, id]
+            'UPDATE menu SET name = ?, description = ?, image = ?, category = ?, price_s = ?, price_m = ?, is_bestseller = ?, stock = ? WHERE id = ?',
+            [name, description || '', image || '/images/pizza_supreme.webp', category || 'classic', price_s, price_m, is_bestseller ? 1 : 0, finalStock, id]
         );
         res.json({ success: true });
     } catch (err) {
@@ -406,15 +410,15 @@ async function sendWhatsAppNotification(orderId, queueNumber, customerName, phon
             return detail;
         }).join('\n');
 
-        const message = `🍕 *PESANAN BARU - PIZZA AZURA* 🍕\n\n` +
-            `ID Pesanan : *${orderId}*\n` +
-            `No Antrian : *#${q}*\n` +
-            `Pelanggan  : *${customerName}*\n` +
+        const message = `🍕 PESANAN BARU - PIZZA AZURA 🍕\n\n` +
+            `ID Pesanan : ${orderId}\n` +
+            `No Antrian : #${q}\n` +
+            `Pelanggan  : ${customerName}\n` +
             `No WA      : ${phone || '-'}\n` +
-            `Tipe       : *${orderType === 'dinein' ? '🍽️ Dine In' : '📦 Take Away'}*\n` +
+            `Tipe       : ${orderType === 'dinein' ? 'Dine In' : 'Take Away'}\n` +
             `Catatan    : ${notes || '-'}\n\n` +
-            `*Detail Pesanan:*\n${itemList}\n\n` +
-            `*Total Bayar:* *Rp ${total.toLocaleString('id-ID')}*\n\n` +
+            `Detail Pesanan:\n${itemList}\n\n` +
+            `Total Bayar: Rp ${total.toLocaleString('id-ID')}\n\n` +
             `Silakan konfirmasi pesanan ini melalui dashboard admin Anda.`;
 
         const response = await fetch('https://api.fonnte.com/send', {
@@ -452,6 +456,19 @@ app.post('/api/orders', async (req, res) => {
             return res.status(400).json({ error: 'Data tidak lengkap' });
         }
 
+        const menuRows = await queryAll('SELECT id, COALESCE(stock, 0) AS stock FROM menu');
+        const stockMap = new Map(menuRows.map(row => [String(row.id), Number(row.stock) || 0]));
+
+        for (const item of items) {
+            const available = stockMap.get(String(item.menuId));
+            if (available === undefined) {
+                return res.status(400).json({ error: `Menu ${item.name} tidak ditemukan.` });
+            }
+            if (available <= 0 || Number(item.quantity || 0) > available) {
+                return res.status(400).json({ error: `Stok ${item.name} tidak cukup. Sisa: ${available}` });
+            }
+        }
+
         const queueNumber = await getNextQueueNumber();
         const now = new Date().toISOString();
         const orderId = 'AZR-' + Date.now().toString(36).toUpperCase();
@@ -473,6 +490,8 @@ app.post('/api/orders', async (req, res) => {
                 "INSERT INTO order_items (order_id, menu_id, menu_name, menu_image, size, price, quantity, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 [orderId, item.menuId, item.name, item.image, item.size, item.price, item.quantity, item.notes || '']
             );
+
+            await runSql('UPDATE menu SET stock = GREATEST(0, stock - ?) WHERE id = ?', [Number(item.quantity || 0), item.menuId]);
             const itemId = result.insertId;
 
             for (const topping of (item.toppings || [])) {

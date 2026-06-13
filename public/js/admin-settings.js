@@ -55,21 +55,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     let html = '';
     
     if (type === 'slogan') {
-        formTitle.textContent = '📝 Edit Slogan Footer';
+        formTitle.textContent = 'Edit Slogan Footer';
         html = `
             <div class="form-group" style="margin-bottom:15px;">
                 <label style="display:block;margin-bottom:5px;font-size:13px;color:var(--text-secondary);">Slogan Footer</label>
                 <textarea id="set_slogan" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;resize:vertical;" rows="4">${currentSettings.slogan || ''}</textarea>
             </div>`;
     } else if (type === 'walink') {
-        formTitle.textContent = '💬 Edit Link WhatsApp';
+        formTitle.textContent = 'Edit Link WhatsApp';
         html = `
             <div class="form-group" style="margin-bottom:15px;">
                 <label style="display:block;margin-bottom:5px;font-size:13px;color:var(--text-secondary);">Link WhatsApp (Banner Atas)</label>
                 <input type="text" id="set_wa_link" value="${currentSettings.wa_link || ''}" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
             </div>`;
     } else if (type === 'sosmed') {
-        formTitle.textContent = '🌐 Edit Media Sosial';
+        formTitle.textContent = 'Edit Media Sosial';
         html = `
             <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
                 <div>
@@ -86,24 +86,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </div>`;
     } else if (type === 'jam') {
-        formTitle.textContent = '⏰ Edit Jam Operasional';
+        formTitle.textContent = 'Edit Jam Operasional';
         html = `
             <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
                 <div>
                     <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Senin - Jumat</label>
-                    <input type="text" id="set_op_weekday" value="${currentSettings.op_weekday || ''}" placeholder="Contoh: Senin - Jumat: 10.00 - 22.00" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
+                    <input type="text" id="set_op_weekday" value="${stripPrefix(currentSettings.op_weekday, 'Senin - Jumat:')}" placeholder="contoh: 10.00 - 22.00" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
                 </div>
                 <div>
                     <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Sabtu - Minggu</label>
-                    <input type="text" id="set_op_weekend" value="${currentSettings.op_weekend || ''}" placeholder="Contoh: Sabtu - Minggu: 11.00 - 23.00" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
+                    <input type="text" id="set_op_weekend" value="${stripPrefix(currentSettings.op_weekend, 'Sabtu - Minggu:')}" placeholder="contoh: 11.00 - 23.00" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
                 </div>
                 <div>
                     <label style="display:block;margin-bottom:5px;font-size:12px;color:var(--text-secondary);">Libur Nasional</label>
-                    <input type="text" id="set_op_holiday" value="${currentSettings.op_holiday || ''}" placeholder="Contoh: Libur Nasional: Buka" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
+                    <input type="text" id="set_op_holiday" value="${stripPrefix(currentSettings.op_holiday, 'Libur Nasional:')}" placeholder="contoh: Buka" style="width:100%;padding:10px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:8px;font-family:inherit;">
                 </div>
             </div>`;
     } else if (type === 'kontak') {
-        formTitle.textContent = '📍 Edit Kontak & Alamat';
+        formTitle.textContent = 'Edit Kontak & Alamat';
         html = `
             <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
                 <div>
@@ -189,3 +189,12 @@ async function saveSettings() {
         saveBtn.textContent = '💾 Simpan Pengaturan';
     }
 }
+
+const stripPrefix = (val, prefix) => {
+    if (!val) return '';
+    if (val.startsWith(prefix)) {
+        return val.substring(prefix.length).trim();
+    }
+    return val;
+};
+

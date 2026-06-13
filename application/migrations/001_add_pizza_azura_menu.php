@@ -40,6 +40,11 @@ class Migration_Add_pizza_azura_menu extends CI_Migration {
                     'constraint' => 100,
                     'default' => 'pizza-default.webp',
                 ),
+                'stok' => array(
+                    'type' => 'INT',
+                    'constraint' => 11,
+                    'default' => 0,
+                ),
                 'created_at' => array(
                     'type' => 'TIMESTAMP',
                     'default' => 'CURRENT_TIMESTAMP',
@@ -90,6 +95,8 @@ class Migration_Add_pizza_azura_menu extends CI_Migration {
                 $this->db->insert('pizzas', $item);
             }
         }
+
+        $this->db->where('stok IS NULL')->update('pizzas', ['stok' => 0]);
     }
 
     public function down()

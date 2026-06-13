@@ -1,0 +1,1307 @@
+  CONTOH STRUKTUR ISI YANG AKAN DIKERJAKAN OLEH PIHAK TI 
+3.4 Perancangan Penerapan Solusi
+FLOWCHART
+Flowchart Sistem Pizza Azura menggambarkan alur proses pemesanan pizza dari pelanggan, pengelolaan status pesanan oleh sistem, hingga penanganan pesanan oleh admin. Diagram dibagi menjadi tiga swimlane utama agar tanggung jawab tiap pihak terlihat jelas, yaitu Pelanggan (Customer), Sistem/Status Pesanan, dan Admin.
+1. Struktur Umum Flowchart
+Pelanggan (Customer): berisi aktivitas pengguna saat memesan pizza melalui aplikasi.
+Sistem / Status Pesanan: menunjukkan bagaimana sistem menerima dan memperbarui status pesanan secara otomatis.
+Admin: menggambarkan proses pengelolaan pesanan oleh pihak restoran.
+Alur utama dimulai dari pelanggan membuka aplikasi, memilih menu, melakukan pemesanan, lalu pesanan diproses oleh admin hingga selesai dan diambil oleh pelanggan.
+2. Penjelasan Simbol Flowchart
+Simbol
+Fungsi
+Oval / Terminator
+Menandakan awal dan akhir proses (Start dan End).
+Persegi panjang
+Menunjukkan aktivitas atau proses.
+Belah ketupat
+Menunjukkan keputusan (decision) dengan cabang Yes/No.
+Panah
+Menunjukkan arah aliran proses.
+3. Alur Detail Sistem
+A. Proses Pelanggan (Customer)
+Start – Buka AplikasiPelanggan membuka aplikasi Pizza Azura untuk memulai pemesanan.
+Lihat Daftar MenuSistem menampilkan berbagai pilihan pizza dan menu lainnya yang tersedia.
+Pilih Pizza dan Ukuran (S/M/L)Pelanggan memilih jenis pizza serta ukuran yang diinginkan:
+S = Small
+M = Medium
+L = Large
+Pilih Topping TambahanPelanggan dapat menambahkan topping ekstra sesuai selera, misalnya keju, sosis, jamur, atau pepperoni.
+Tambah ke KeranjangPizza yang dipilih dimasukkan ke dalam keranjang belanja.
+Keputusan: “Pesan Lagi?”Sistem menanyakan apakah pelanggan ingin menambah pesanan lain.
+Yes: pelanggan kembali ke langkah “Lihat Daftar Menu” untuk menambah item lain.
+No: proses lanjut ke tahap checkout.
+Buka Keranjang & ReviewPelanggan memeriksa kembali seluruh pesanan, jumlah item, ukuran, topping, dan total harga.
+Isi Data PelangganPelanggan mengisi data penting, yaitu:
+Nama
+Nomor HP
+Tipe pesanan (delivery atau take away)
+Metode pembayaran
+Konfirmasi PesananSetelah data benar, pelanggan mengonfirmasi pesanan. Pada tahap ini pesanan dikirim ke sistem dan masuk ke antrean admin.
+End – Pelanggan Ambil PesananProses dari sisi pelanggan berakhir ketika pesanan selesai dan diambil atau diterima.
+B. Proses Sistem / Status Pesanan
+Pesanan Masuk ke SistemSetelah pelanggan mengonfirmasi, sistem otomatis mencatat pesanan dan membuat antrean baru.
+Status: PENDINGPesanan menunggu tindakan admin. Status ini berarti pesanan baru diterima tetapi belum diproses.
+Status: DIPROSESSetelah admin menerima pesanan, sistem memperbarui status menjadi diproses. Pesanan mulai disiapkan oleh restoran.
+Status: SEDANG DIBUATPesanan sedang dimasak atau dirakit di dapur. Pelanggan dapat melihat progres ini melalui fitur cek status.
+Status: SELESAIPesanan telah selesai dibuat dan siap diambil atau dikirim.
+Notifikasi SelesaiSistem mengirim notifikasi kepada pelanggan bahwa pesanan sudah siap.
+Pelanggan Cek Status (Refresh)Pelanggan dapat memperbarui halaman status untuk melihat perkembangan pesanan secara real-time.
+C. Proses Admin
+Login AdminAdmin masuk ke sistem menggunakan akun khusus untuk mengelola pesanan.
+Lihat Dashboard & AntreanDashboard menampilkan daftar pesanan yang sedang masuk beserta statusnya.
+Lihat Pesanan Baru (Pending)Admin memeriksa detail pesanan yang baru diterima.
+Keputusan: “Terima Pesanan?”Admin menentukan apakah pesanan dapat diproses.
+Yes – Terima Pesanan: admin menerima pesanan dan sistem mengubah status menjadi Diproses.
+No – Hapus Pesanan: jika pesanan tidak valid atau tidak dapat dipenuhi, admin menghapus pesanan dari sistem.
+Update Status → DiprosesMenandakan pesanan sudah masuk tahap persiapan.
+Update Status → Sedang DibuatAdmin memperbarui status ketika pizza sedang dimasak di dapur.
+Update Status → SelesaiSetelah pizza siap, admin menandai pesanan sebagai selesai.
+Monitor Stok BahanAdmin juga memantau ketersediaan bahan baku seperti keju, saus, dan topping agar operasional tetap lancar.
+4. Hubungan Antar Swimlane
+Dari Pelanggan ke Sistem: pesanan yang dikonfirmasi dikirim ke sistem dan diberi status Pending.
+Dari Sistem ke Admin: pesanan pending muncul di dashboard admin untuk ditindaklanjuti.
+Dari Admin ke Sistem: setiap perubahan status oleh admin memperbarui informasi pesanan secara otomatis.
+Dari Sistem ke Pelanggan: pelanggan menerima pembaruan status dan notifikasi hingga pesanan selesai.
+5. Ringkasan Alur Utama
+Pelanggan memilih menu dan melakukan checkout.
+Sistem mencatat pesanan dengan status Pending.
+Admin menerima pesanan dan mengubah status menjadi Diproses.
+Pesanan masuk tahap Sedang Dibuat di dapur.
+Setelah selesai, status berubah menjadi Selesai dan pelanggan mendapat notifikasi.
+Pelanggan mengambil atau menerima pesanan.
+6. Tujuan dan Manfaat Flowchart
+Memperjelas alur bisnis pemesanan pizza dari awal hingga akhir.
+Membagi tanggung jawab antara pelanggan, sistem, dan admin.
+Memudahkan pengembangan aplikasi karena proses sudah terdokumentasi dengan jelas.
+Meningkatkan efisiensi operasional melalui pemantauan status pesanan secara real-time.
+7. Kesimpulan
+Flowchart Sistem Pizza Azura menunjukkan proses pemesanan yang terstruktur dan terintegrasi. Pelanggan dapat memesan pizza dengan mudah, sistem mengelola status pesanan secara otomatis, dan admin menangani pesanan hingga selesai. Dengan adanya pembaruan status dan notifikasi, komunikasi antara restoran dan pelanggan menjadi lebih transparan dan efisien.
+3.5 Perancangan Sistem
+UseCase Diagram
+A. Customer (Pelanggan)
+UC-01 – Melihat Menu PizzaCustomer dapat melihat seluruh daftar pizza yang tersedia beserta gambar, nama, deskripsi, dan harga.
+UC-02 – Filter Kategori MenuCustomer dapat memfilter menu berdasarkan kategori: Semua, Classic, Standard, atau Premium.
+UC-03 – Memilih Pizza & KustomisasiCustomer memilih pizza, lalu mengatur ukuran (S/M/L), topping tambahan, jumlah, dan catatan khusus.
+UC-04 – Menambah ke KeranjangCustomer menambahkan pizza yang sudah dikustomisasi ke dalam keranjang belanja.
+UC-05 – Melakukan CheckoutCustomer mengisi data checkout (nama, tipe pesanan, metode bayar) dan mengirim pesanan.
+UC-06 – Melihat Status PesananCustomer melacak progress pesanan melalui timeline status: Pending → Diproses → Sedang Dibuat → Selesai.
+UC-07 – Melihat Lokasi Toko (WebGIS)Customer melihat lokasi toko di peta interaktif (Leaflet/OpenStreetMap) dan dapat tag lokasi pengiriman.
+B. Admin (Kasir/Staff)
+UC-08 – Login AdminAdmin melakukan autentikasi dengan username dan password untuk mengakses dashboard.
+UC-09 – Melihat Dashboard & StatistikAdmin melihat ringkasan metrik: total pesanan, pesanan hari ini, total pendapatan, pendapatan hari ini, jumlah pesanan pending dan selesai.
+UC-10 – Mengelola Antrean PesananAdmin melihat daftar seluruh pesanan, memfilter berdasarkan status (Semua/Pending/Selesai), dan melihat detail pesanan.
+UC-11 – Update Status PesananAdmin memperbarui status pesanan sesuai pipeline: Pending → Processing → Cooking → Done.
+UC-12 – Kelola Menu Pizza (CRUD)Admin menambah, mengedit, dan menghapus item menu pizza termasuk mengupload gambar kustom.
+UC-13 – Kelola Pengaturan TokoAdmin mengkonfigurasi slogan, jam operasional, kontak, media sosial, deskripsi "Tentang Kami", dan koordinat lokasi WebGIS.
+UC-14 – Export Laporan (Excel/PDF)Admin mengekspor data pesanan ke format Excel (.xlsx) atau PDF untuk keperluan dokumentasi.
+UC-15 – Kelola Admin (Super Admin)Super Admin menambah, mengedit, dan menghapus akun admin lainnya.
+UC-16 – Reset Data PesananAdmin menghapus seluruh data pesanan untuk memulai shift baru.
+Relasi Antar Use Case
+<<include>> – Melakukan Checkout → Menambah ke KeranjangInclude — checkout membutuhkan item di keranjang.
+<<include>> – Semua UC Admin (UC-09 s.d. UC-16) → Login AdminInclude — akses admin memerlukan autentikasi.
+<<extend>> – Kelola Admin → Melihat DashboardExtend — fitur tambahan hanya untuk Super Admin.
+Activity Diagram 
+Activity Diagram menggambarkan alur kerja (workflow) proses pemesanan pizza dari sisi Customer, proses validasi oleh Sistem, dan proses pengelolaan pesanan oleh Admin.
+1. Buka Website Pizza AzuraCustomer mengakses halaman utama melalui browser.
+2. Melihat Menu & Filter KategoriCustomer menelusuri daftar pizza dan dapat memfilter berdasarkan kategori (Classic/Standard/Premium).
+3. Decision: Pilih Pizza?Jika "Ya" → lanjut ke kustomisasi. Jika "Tidak" → kembali melihat menu.
+4. Kustomisasi PizzaCustomer memilih ukuran (S/M/L), menambah topping opsional, mengatur jumlah, dan menulis catatan khusus.
+5. Tambah ke KeranjangPizza yang dikustomisasi ditambahkan ke keranjang belanja.
+6. Decision: Pesan Lagi?Jika "Ya" → kembali ke menu. Jika "Tidak" → buka keranjang.
+7. Review Pesanan di KeranjangCustomer memeriksa daftar item, subtotal, dan total harga. Bisa menghapus item.
+8. Isi Form CheckoutMengisi Nama Pelanggan (wajib), No. WhatsApp (opsional), Tipe Pesanan (Dine In/Take Away/Pre-Order), dan Metode Pembayaran (Cash/QRIS/Transfer).
+9. Submit PesananMengirim data pesanan ke server.
+Swimlane: Sistem
+10. Validasi Data PesananSistem memvalidasi kelengkapan data (nama, item pesanan, dll).
+11. Decision: Data Valid?Jika "Tidak" → tampilkan error dan kembali ke form. Jika "Ya" → proses pesanan.
+12. Generate Order IDMembuat ID unik format AZR-[timestamp base36] (contoh: AZR-TJKLA).
+13. Hitung Total & Simpan ke DatabaseMenghitung total harga (harga dasar + topping × quantity) dan menyimpan ke tabel orders, order_items, dan order_item_toppings.
+14. Tampilkan KonfirmasiMenampilkan modal sukses dengan Order ID dan nomor antrian.
+Swimlane: Admin
+15. Terima Pesanan BaruAdmin melihat pesanan baru di dashboard (auto-refresh setiap 5 detik).
+16. Update Status PipelineAdmin memperbarui status secara bertahap: Pending → Processing → Cooking → Done.
+17. Pesanan SelesaiStatus berubah menjadi "Done", pendapatan tercatat di statistik.
+ERD
+ERD menggambarkan struktur relasional database Pizza Azura. Terdapat 7 tabel utama yang saling terhubung melalui foreign key constraints.
+R1 – orders → order_itemsKardinalitas: 1 : N (One-to-Many)Satu pesanan memiliki satu atau lebih item pizza. FK: order_items.order_id → orders.id dengan ON DELETE CASCADE.
+R2 – order_items → order_item_toppingsKardinalitas: 1 : N (One-to-Many)Satu item pesanan bisa memiliki nol atau lebih topping tambahan. FK: order_item_toppings.order_item_id → order_items.id dengan ON DELETE CASCADE.
+R3 – menu → order_itemsKardinalitas: 1 : N (Referensi)Item pesanan mereferensikan menu pizza (snapshot nama & gambar). Field: order_items.menu_id → menu.id.
+R4 – toppings → order_item_toppingsKardinalitas: 1 : N (Referensi)Topping pesanan mereferensikan master topping. Field: order_item_toppings.topping_id → toppings.id.
+adminsKeterangan: StandaloneTabel independen untuk menyimpan kredensial admin.
+settingsKeterangan: StandaloneTabel key-value untuk konfigurasi toko.
+ 
+Struktur Database
+database Pizza Azura yang diimplementasikan menggunakan MySQL (InnoDB engine, charset utf8mb4).
+Tabel 1: menu
+Deskripsi: Menyimpan katalog pizza yang tersedia untuk dipesan.
+No
+Nama Kolom
+Tipe Data
+Constraint
+Keterangan
+1
+id
+VARCHAR(100)
+PRIMARY KEY, NOT NULL
+Identifier unik pizza (contoh: beef_pepperoni, corn_cheese).
+2
+name
+VARCHAR(255)
+NOT NULL
+Nama tampilan pizza (contoh: "Pizza Beef Pepperoni").
+3
+description
+TEXT
+-
+Deskripsi singkat bahan dan profil rasa pizza.
+4
+image
+VARCHAR(500)
+-
+Path ke file gambar pizza (contoh: /images/pizza_pepperoni.png).
+5
+category
+VARCHAR(50)
+-
+Kategori pizza: classic, standard, atau premium.
+6
+price_s
+INT
+DEFAULT 0
+Harga ukuran Small (S) dalam Rupiah.
+7
+price_m
+INT
+DEFAULT 0
+Harga ukuran Medium (M) dalam Rupiah.
+8
+price_l
+INT
+DEFAULT 0
+Harga ukuran Large (L) dalam Rupiah.
+9
+is_bestseller
+TINYINT(1)
+DEFAULT 0
+Flag menu terlaris (1 = best seller, 0 = biasa).
+Jumlah Data Awal (Seed): 10 pizza (4 Classic, 3 Standard, 3 Premium)
+Tabel 2: toppings
+Deskripsi: Menyimpan opsi topping tambahan yang tersedia.
+No
+Nama Kolom
+Tipe Data
+Constraint
+Keterangan
+1
+id
+VARCHAR(100)
+PRIMARY KEY, NOT NULL
+Identifier unik topping (contoh: upgrade_mozarela).
+2
+name
+VARCHAR(255)
+NOT NULL
+Nama tampilan topping (contoh: "Upgrade Mozarela").
+3
+price
+INT
+NOT NULL, DEFAULT 0
+Harga tambahan topping dalam Rupiah.
+Jumlah Data Awal (Seed): 1 topping (Upgrade Mozarela — Rp 10.000)
+Tabel 3: admin
+Deskripsi: Menyimpan kredensial login untuk staf yang berwenang.
+No
+Nama Kolom
+Tipe Data
+Constraint
+Keterangan
+1
+id
+INT
+PRIMARY KEY, AUTO_INCREMENT
+ID unik admin (auto-generated).
+2
+username
+VARCHAR(100)
+NOT NULL, UNIQUE
+Username untuk login (harus unik).
+3
+password
+VARCHAR(255)
+NOT NULL
+Password admin (plaintext).
+4
+role
+VARCHAR(20)
+NOT NULL, DEFAULT 'admin'
+Role akses: super_admin atau admin.
+Jumlah Data Awal (Seed): 1 admin (username: admin, password: admin123, role: super_admin)
+Tabel 4: orders
+Deskripsi: Menyimpan header transaksi pesanan pelanggan.
+No
+Nama Kolom
+Tipe Data
+Constraint
+Keterangan
+1
+id
+VARCHAR(100)
+PRIMARY KEY, NOT NULL
+ID pesanan unik, format: AZR-[timestamp base36] (contoh: AZR-TJKLA).
+2
+queue_number
+INT
+NOT NULL
+Nomor antrian harian (incrementing per hari).
+3
+customer_name
+VARCHAR(255)
+NOT NULL
+Nama pelanggan yang memesan.
+4
+phone
+VARCHAR(50)
+DEFAULT ''
+Nomor WhatsApp/telepon pelanggan (opsional).
+5
+order_type
+VARCHAR(50)
+-
+Tipe pesanan: dinein, takeaway, atau preorder.
+6
+payment_method
+VARCHAR(50)
+-
+Metode pembayaran: cash, qris, atau transfer.
+7
+notes
+TEXT
+-
+Catatan khusus dari pelanggan untuk keseluruhan pesanan.
+8
+total
+INT
+NOT NULL, DEFAULT 0
+Total harga keseluruhan pesanan dalam Rupiah.
+9
+status
+VARCHAR(50)
+DEFAULT 'pending'
+Status pipeline: pending, processing, cooking, done.
+10
+created_at
+VARCHAR(50)
+NOT NULL
+Waktu pesanan dibuat (ISO 8601 timestamp).
+11
+updated_at
+VARCHAR(50)
+NOT NULL
+Waktu terakhir status diperbarui (ISO 8601 timestamp).
+Tabel 5: order_items
+Deskripsi: Menyimpan detail baris item dalam setiap pesanan.
+No
+Nama Kolom
+Tipe Data
+Constraint
+Keterangan
+1
+id
+INT
+PRIMARY KEY, AUTO_INCREMENT
+ID unik item pesanan (auto-generated).
+2
+order_id
+VARCHAR(100)
+FOREIGN KEY → orders(id) ON DELETE CASCADE
+Referensi ke pesanan induk.
+3
+menu_id
+VARCHAR(100)
+-
+ID pizza yang dipesan (referensi ke menu.id).
+4
+menu_name
+VARCHAR(255)
+-
+Snapshot nama pizza saat dipesan.
+5
+menu_image
+VARCHAR(500)
+-
+Snapshot path gambar pizza saat dipesan.
+6
+size
+VARCHAR(10)
+-
+Ukuran yang dipilih: S, M, atau L.
+7
+price
+INT
+DEFAULT 0
+Harga satuan pizza (sesuai ukuran) dalam Rupiah.
+8
+quantity
+INT
+DEFAULT 1
+Jumlah pizza yang dipesan.
+9
+notes
+TEXT
+-
+Catatan kustomisasi khusus untuk pizza ini.
+Tabel 6: order_item_toppings
+Deskripsi: Menyimpan topping tambahan yang dipilih untuk setiap item pesanan.
+No
+Nama Kolom
+Tipe Data
+Constraint
+Keterangan
+1
+id
+INT
+PRIMARY KEY, AUTO_INCREMENT
+ID unik record topping (auto-generated).
+2
+order_item_id
+INT
+FOREIGN KEY → order_items(id) ON DELETE CASCADE
+Referensi ke item pesanan yang diberi topping.
+3
+topping_id
+VARCHAR(100)
+-
+ID topping yang dipilih (referensi ke toppings.id).
+4
+topping_name
+VARCHAR(255)
+-
+Snapshot nama topping saat dipesan.
+5
+topping_price
+INT
+DEFAULT 0
+Snapshot harga topping saat dipesan dalam Rupiah.
+Wireframe
+Home Page merupakan halaman utama yang pertama kali diakses oleh pelanggan saat membuka website Pizza Azura. Halaman ini berfungsi sebagai pusat informasi dan tempat pelanggan memilih menu pizza yang tersedia.
+Komponen Utama
+Header
+Menampilkan logo Pizza Azura.
+Terdapat ikon keranjang belanja pada bagian kanan atas.
+Berfungsi sebagai identitas sistem dan akses cepat ke keranjang.
+Banner Promosi
+Menampilkan slogan "Pesan Pizza Favoritmu Tanpa Antri!".
+Berfungsi menarik perhatian pelanggan dan memperkenalkan layanan Pizza Azura.
+Filter Kategori
+Terdiri dari kategori Semua, Classic, dan Premium.
+Digunakan untuk memfilter menu pizza berdasarkan kategori tertentu.
+Daftar Menu Pizza
+Ditampilkan dalam bentuk card/grid.
+Setiap card berisi gambar pizza, nama pizza, harga, dan tombol Pesan.
+Alur Penggunaan
+Pelanggan membuka halaman utama.
+Pelanggan memilih kategori pizza yang diinginkan.
+Sistem menampilkan daftar pizza sesuai kategori.
+Pelanggan menekan tombol Pesan pada menu yang dipilih.
+Cart & Checkout
+Halaman Cart & Checkout digunakan untuk menampilkan daftar pesanan yang telah dipilih pelanggan sekaligus sebagai tempat mengisi data pemesanan sebelum pesanan dikirim ke sistem.
+Bagian Cart
+Bagian Cart menampilkan seluruh item yang telah dimasukkan ke dalam keranjang belanja.
+Informasi yang ditampilkan meliputi:
+Gambar pizza.
+Nama pizza.
+Ukuran pizza.
+Harga.
+Quantity.
+Tombol tambah dan kurang jumlah pesanan.
+Subtotal.
+Grand Total.
+Bagian Checkout
+Bagian Checkout digunakan untuk mengisi data yang diperlukan dalam proses pemesanan.
+Data yang diinput meliputi:
+Nama Pelanggan.
+Nomor WhatsApp.
+Tipe Pesanan (Dine In atau Take Away).
+Metode Pembayaran (Cash, QRIS, atau Transfer).
+Alur Penggunaan
+Pelanggan menambahkan pizza ke keranjang.
+Pelanggan mengatur jumlah pesanan sesuai kebutuhan.
+Sistem menghitung total harga secara otomatis.
+Pelanggan mengisi data checkout.
+Pelanggan menekan tombol Submit Pesanan untuk mengirim pesanan.
+Order Status
+Halaman Order Status digunakan untuk memantau perkembangan pesanan yang telah dibuat oleh pelanggan.
+Komponen Utama
+Order ID
+Menampilkan kode unik pesanan yang digunakan untuk identifikasi transaksi.
+Informasi Pelanggan
+Menampilkan nama pelanggan yang melakukan pemesanan.
+Timeline Status
+Menampilkan progres pesanan secara bertahap mulai dari pesanan diterima hingga selesai.
+Tahapan status yang ditampilkan yaitu:
+Pending, menunjukkan pesanan telah diterima sistem.
+Diproses, menunjukkan pesanan telah diterima oleh admin.
+Sedang Dibuat, menunjukkan pizza sedang dipersiapkan atau dimasak.
+Selesai, menunjukkan pesanan telah siap diambil atau dikirim.
+Refresh Status
+Digunakan untuk memperbarui informasi status pesanan agar pelanggan memperoleh informasi terbaru.
+Alur Penggunaan
+Pelanggan menerima Order ID setelah berhasil melakukan checkout.
+Pelanggan membuka halaman status pesanan.
+Sistem menampilkan perkembangan pesanan berdasarkan status terkini.
+Pelanggan dapat menekan tombol Refresh Status untuk memperbarui status.
+Admin Login
+Admin Login merupakan halaman autentikasi yang digunakan oleh administrator untuk masuk ke dalam sistem pengelolaan Pizza Azura.
+Komponen Utama
+Logo Pizza Azura
+Menampilkan identitas sistem.
+Username
+Digunakan untuk memasukkan nama pengguna admin.
+Password
+Digunakan untuk memasukkan kata sandi admin.
+Tombol Masuk
+Digunakan untuk mengirim data login ke sistem.
+Alur Penggunaan
+Admin memasukkan username dan password.
+Sistem melakukan validasi data login.
+Jika data valid, admin diarahkan ke halaman Dashboard.
+Admin Dashboard
+Admin Dashboard merupakan pusat kendali utama yang digunakan untuk memantau aktivitas dan statistik operasional Pizza Azura.
+Komponen Utama
+Sidebar Menu
+Dashboard
+Antrean Pesanan
+Kelola Menu
+Pengaturan
+Statistik Dashboard Menampilkan ringkasan informasi penting seperti:
+Total Pesanan.
+Pendapatan Hari Ini.
+Order Queue Menampilkan daftar antrean pesanan yang masuk ke sistem. Setiap pesanan menampilkan:
+Order ID.
+Nama pelanggan.
+Status pesanan.
+Tombol aksi.
+Alur Penggunaan
+Admin berhasil login ke sistem.
+Dashboard menampilkan statistik terkini.
+Admin memantau antrean pesanan yang masuk.
+Admin memilih pesanan yang ingin dikelola.
+Admin Order Management
+Admin Order Management digunakan untuk melihat detail pesanan pelanggan dan mengelola status pesanan hingga selesai.
+Komponen Utama
+Sidebar
+Digunakan untuk navigasi antar fitur administrator.
+Detail Pesanan Menampilkan informasi lengkap mengenai pesanan, antara lain:
+Order ID.
+Nama pelanggan.
+Daftar item pesanan.
+Quantity.
+Harga.
+Manajemen Status Admin dapat memperbarui status pesanan menggunakan tombol:
+Terima untuk menerima pesanan.
+Proses untuk memulai pembuatan pesanan.
+Selesai untuk menandai bahwa pesanan telah selesai.
+Alur Penggunaan
+Admin memilih pesanan dari daftar antrean.
+Sistem menampilkan detail pesanan secara lengkap.
+Admin memverifikasi data pesanan.
+Admin memperbarui status sesuai progres pembuatan pizza.
+Status terbaru akan ditampilkan pada halaman Order Status milik pelanggan.
+Kesimpulan
+Wireframe Pizza Azura dirancang untuk menggambarkan alur interaksi pengguna secara sederhana sebelum sistem diimplementasikan. Sisi pelanggan difokuskan pada kemudahan pemesanan mulai dari pemilihan menu, checkout, hingga pelacakan status pesanan. Sementara itu, sisi administrator difokuskan pada pengelolaan operasional restoran melalui dashboard, manajemen pesanan, serta pemantauan statistik sehingga proses bisnis dapat berjalan lebih efektif dan terorganisir.
+BAB IV IMPLEMENTASI DAN PEMBAHASAN
+4.1 Implementasi Sistem
+Customer Side
+Home
+Halaman utama (index.html) adalah landing page yang ditampilkan saat pelanggan pertama kali mengakses website Pizza Azura. Halaman ini dirancang dengan konsep scrollytelling yaitu animasi interaktif yang muncul saat pengguna melakukan scroll halaman.
+No
+Komponen
+Deskripsi
+1
+Header Navigation
+Berisi logo Pizza Azura (gambar), menu navigasi otomatis (dirender JS), dan tombol keranjang belanja dengan badge jumlah item. Header bersifat sticky (tetap di atas saat scroll).
+2
+Hero Banner (Scrollytelling)
+Animasi canvas interaktif yang menampilkan sequence gambar pizza saat di-scroll. Terdapat 4 overlay teks: (1) "Pesan Pizza Favoritmu Tanpa Antri!", (2) "Dibuat dengan Bahan Segar", (3) "Dipanggang Sempurna untuk Anda", (4) "Mulai Pesan Sekarang" dengan tombol CTA.
+3
+Best Sellers Section
+Menampilkan Top 3 menu terlaris yang ditandai oleh flag is_bestseller di database. Ditampilkan dalam grid card khusus.
+4
+Menu Grid
+Menampilkan seluruh pizza dalam format card grid responsif. Setiap card menampilkan gambar pizza, nama, deskripsi singkat, harga mulai dari, dan tombol "Pesan". Data diambil dari API GET /api/menu.
+5
+Tentang Kami + WebGIS
+Bagian profil toko berisi logo, deskripsi "Tentang Kami" (dari settings), dan peta interaktif Leaflet.js yang menampilkan lokasi toko. Pelanggan dapat klik peta untuk tag lokasi pengiriman dan melihat estimasi jarak.
+6
+Footer
+Informasi toko berupa slogan, link media sosial (Facebook, Instagram, TikTok), jam operasional (weekday, weekend, holiday), kontak (alamat, telepon, email), dan copyright.
+7
+Floating Cart Button
+Tombol keranjang melayang di kanan bawah layar dengan badge counter. Muncul saat ada item di keranjang.
+8
+Pizza Background Decorations
+Elemen emoji dekoratif (🍕 🧀 🌶️) yang melayang sebagai aksen visual.
+Alur Interaksi
+Customer membuka website dan melihat Hero Banner animasi.
+Customer melakukan scroll ke bawah untuk melihat Best Sellers dan Menu Grid.
+Customer mengklik card pizza untuk membuka Modal Detail dan melakukan kustomisasi.
+Customer melakukan scroll lebih jauh untuk melihat informasi toko dan peta lokasi.
+Menu
+Halaman Menu terintegrasi di halaman Home sebagai section Menu Grid. Fitur filter kategori memungkinkan pelanggan menyaring pizza berdasarkan kategori.
+No
+Komponen
+Deskripsi
+1
+Category Tabs
+Tombol filter: "🍕 Semua", "⭐ Classic", "👑 Premium". Klik pada tab memfilter card pizza yang ditampilkan. Tab aktif diberi highlight visual.
+2
+Pizza Card
+Card responsif berisi gambar pizza, nama, deskripsi, harga, dan tombol "Pesan". Memiliki hover effect dan animasi transisi.
+3
+Detail Modal
+Modal popup yang muncul saat customer klik tombol "Pesan" pada card pizza.
+Fitur Detail Modal (Kustomisasi Pizza)
+No
+Fitur
+Deskripsi
+1
+Gambar Pizza
+Menampilkan gambar besar pizza yang dipilih.
+2
+Info Pizza
+Nama, deskripsi, dan kategori pizza.
+3
+Pilihan Ukuran
+Pilihan radio: Size 22 (Small) dan Size 26 (Medium). Harga berubah dinamis sesuai ukuran yang dipilih.
+4
+Topping Tambahan
+Checkbox untuk menambah topping ekstra, misalnya Upgrade Mozarela (+Rp 10.000).
+5
+Jumlah (Quantity)
+Tombol plus dan minus untuk mengatur jumlah pesanan dengan minimum 1 item.
+6
+Catatan Khusus
+Text area untuk instruksi spesifik, misalnya "tanpa bawang" atau "extra saus".
+7
+Total Harga
+Kalkulasi harga secara real-time dengan rumus: (harga ukuran + total topping) × quantity.
+8
+Tombol Tambah ke Keranjang
+Menambahkan item ke keranjang belanja dan menampilkan toast notifikasi bahwa item berhasil ditambahkan.
+Cart
+Keranjang belanja ditampilkan sebagai modal overlay yang muncul saat customer mengklik tombol keranjang. Modal ini menampilkan ringkasan seluruh item yang sudah ditambahkan.
+No
+Komponen
+Deskripsi
+1
+Daftar Item
+Setiap item menampilkan gambar mini, nama pizza, ukuran yang dipilih, topping tambahan, catatan khusus, quantity, dan subtotal harga.
+2
+Tombol Hapus
+Setiap item memiliki tombol ✕ untuk menghapus item dari keranjang belanja.
+3
+Grand Total
+Total keseluruhan harga dari semua item yang terdapat di dalam keranjang. Nilai dihitung secara otomatis oleh sistem.
+4
+Tombol Checkout
+Tombol untuk melanjutkan ke proses checkout. Tombol akan dinonaktifkan (disabled) apabila keranjang masih kosong.
+5
+Empty State
+Pesan informatif yang ditampilkan ketika keranjang kosong, yaitu "Keranjang masih kosong".
+Checkout
+Form checkout ditampilkan sebagai modal terpisah setelah customer mengklik tombol "Checkout" dari keranjang. Pelanggan mengisi data yang diperlukan untuk menyelesaikan proses pemesanan.
+Form Fields
+No
+Field
+Tipe Input
+Required
+Keterangan
+1
+Nama Pelanggan
+Text Input
+Ya
+Nama customer yang melakukan pemesanan dan wajib diisi.
+2
+No. WhatsApp
+Text Input
+Tidak
+Nomor telepon atau WhatsApp untuk keperluan konfirmasi pesanan (opsional).
+3
+Tipe Pesanan
+Radio Button / Select
+Ya
+Pilihan jenis pesanan: Dine In, Take Away, atau Pre-Order.
+4
+Metode Pembayaran
+Radio Button / Select
+Ya
+Pilihan metode pembayaran: Tunai (Cash), QRIS, atau Transfer Bank.
+5
+Catatan Pesanan
+Textarea
+Tidak
+Catatan tambahan untuk keseluruhan pesanan.
+Proses Checkout
+Customer mengisi seluruh data yang diperlukan pada form checkout kemudian menekan tombol "Submit Pesanan".
+Sistem melakukan validasi data, termasuk memastikan nama pelanggan telah diisi dan terdapat item di dalam keranjang.
+Jika data valid, sistem mengirimkan data ke server melalui endpoint POST /api/orders.
+Server menghitung total harga pesanan, membuat Order ID unik dengan format AZR-xxxx, kemudian menyimpan data ke database.
+Jika proses berhasil, sistem menampilkan modal Order Success sebagai konfirmasi bahwa pesanan telah berhasil dibuat.
+Status Pesanan
+Setelah pesanan berhasil dibuat, customer menerima Order ID dan dapat melacak status pesanan secara real-time melalui halaman status.
+No
+Komponen
+Deskripsi
+1
+Order ID Display
+Menampilkan ID unik pesanan (contoh: AZR-TJKLA) yang dapat dicatat dan digunakan customer untuk melacak status pesanan.
+2
+Nomor Antrian
+Menampilkan nomor antrian harian pesanan, misalnya #001, #002, dan seterusnya.
+3
+Info Customer
+Menampilkan informasi pelanggan beserta ringkasan detail pesanan yang telah dibuat.
+4
+Timeline Status
+Menampilkan progress pesanan dalam bentuk timeline visual yang menunjukkan tahapan proses pesanan.
+4.1
+Pending (Menunggu)
+Menunjukkan bahwa pesanan telah diterima oleh sistem dan sedang menunggu diproses.
+4.2
+Processing (Diproses)
+Menunjukkan bahwa admin telah menerima dan mulai memproses pesanan.
+4.3
+Cooking (Sedang Dibuat)
+Menunjukkan bahwa pizza sedang dalam proses pembuatan atau pemanggangan.
+4.4
+Done (Selesai)
+Menunjukkan bahwa pesanan telah selesai dan siap diambil atau diantar.
+5
+Tombol Refresh
+Tombol untuk memperbarui informasi status pesanan dengan mengambil data terbaru melalui endpoint GET /api/orders/.
+6
+Detail Item
+Menampilkan daftar pizza yang dipesan beserta ukuran, topping tambahan, jumlah, dan catatan khusus yang dipilih customer.
+7
+Tombol Kembali
+Tautan atau tombol untuk kembali ke halaman menu utama.
+Admin Side
+Login
+No
+Komponen
+Deskripsi
+1
+Logo & Branding
+Menampilkan emoji pizza 🍕, nama Pizza Azura, dan badge "ADMIN ACCESS" sebagai identitas halaman login admin.
+2
+Form Username
+Input field yang digunakan admin untuk memasukkan username akun.
+3
+Form Password
+Input field password yang dilengkapi fitur toggle visibility (👁️/🙈) untuk menampilkan atau menyembunyikan password.
+4
+Tombol Masuk
+Tombol submit yang digunakan untuk mengirim data login ke server. Saat proses autentikasi berlangsung akan menampilkan loading spinner.
+5
+Error Message
+Menampilkan pesan kesalahan apabila username atau password salah atau server tidak dapat diakses.
+6
+Link Kembali
+Link navigasi yang mengarahkan pengguna kembali ke halaman utama customer.
+Tabel Keamanan Login Admin
+Aspek
+Implementasi
+Token Storage
+Menggunakan sessionStorage sehingga token hanya tersimpan selama sesi browser aktif.
+Token Format
+Token berupa 64 karakter hexadecimal yang dihasilkan menggunakan crypto.randomBytes(32).
+Token Validation
+Setiap request admin diperiksa oleh middleware authMiddleware untuk memastikan token valid.
+Auto-redirect
+Admin yang sudah login akan otomatis diarahkan ke dashboard tanpa perlu login ulang.
+Logout
+Token dihapus dari in-memory store melalui endpoint POST /api/auth/logout.
+Dashboard
+No
+Metrik
+Deskripsi
+Sumber Data
+1
+Total Pesanan
+Menampilkan jumlah seluruh pesanan yang pernah masuk ke sistem.
+COUNT(*) FROM orders
+2
+Pesanan Hari Ini
+Menampilkan jumlah pesanan yang dibuat pada hari berjalan.
+COUNT(*) FROM orders WHERE DATE(created_at)=today
+3
+Total Pendapatan
+Menampilkan total pendapatan dari seluruh pesanan yang telah selesai.
+SUM(total) FROM orders WHERE status='done'
+4
+Pendapatan Hari Ini
+Menampilkan total pendapatan hari ini dari pesanan yang berstatus selesai.
+SUM(total) FROM orders WHERE status='done' AND DATE(created_at)=today
+5
+Pesanan Pending
+Menampilkan jumlah pesanan yang masih menunggu proses.
+COUNT(*) FROM orders WHERE status='pending'
+6
+Pesanan Selesai
+Menampilkan jumlah pesanan yang telah selesai diproses.
+COUNT(*) FROM orders WHERE status='done'
+Daftar Pesanan
+No
+Komponen
+Deskripsi
+1
+Filter Tabs
+Tombol filter yang terdiri dari Semua, Pending, dan Selesai untuk menyaring data pesanan yang ditampilkan.
+2
+Export Buttons
+Tombol untuk mengunduh laporan pesanan dalam format Excel maupun PDF.
+3
+Reset Data
+Tombol yang digunakan untuk menghapus seluruh data pesanan setelah konfirmasi pengguna.
+4
+Order Cards
+Menampilkan informasi pesanan berupa Order ID, nomor antrian, nama customer, tipe pesanan, metode pembayaran, total harga, status, waktu pesanan, serta tombol aksi.
+5
+Auto-Refresh
+Sistem memperbarui daftar pesanan secara otomatis setiap 5 detik melalui mekanisme polling API.
+Update Status
+Status
+Label
+Warna Badge
+Aksi Admin
+Keterangan
+pending
+Menunggu
+Kuning
+Terima Pesanan
+Pesanan baru masuk dan belum diproses oleh admin.
+processing
+Diproses
+Biru
+Mulai Masak
+Admin telah menerima pesanan dan mulai menyiapkan pesanan.
+cooking
+Sedang Dibuat
+Oranye
+Tandai Selesai
+Pizza sedang dalam proses pembuatan atau pemanggangan.
+done
+Selesai
+Hijau
+Tidak ada
+Pesanan telah selesai dan siap diambil atau dikirim kepada pelanggan.
+Transaksi exc
+Tabel Export Excel
+Aspek
+Detail
+Endpoint
+GET /api/export/orders/excel
+Library
+ExcelJS
+Sheet 1
+Berisi daftar seluruh pesanan lengkap dengan kolom No, ID Pesanan, Antrian, Nama, Telepon, Tipe, Pembayaran, Total, Status, Tanggal, dan Catatan.
+Sheet 2
+Berisi ringkasan data seperti Total Pesanan, Pesanan Selesai, Pesanan Pending, Total Pendapatan, dan Tanggal Export.
+Nama File
+PizzaAzura_Pesanan_[YYYY-MM-DD].xlsx
+Transaksi pdf
+Tabel Export PDF
+Aspek
+Detail
+Endpoint
+GET /api/export/orders/pdf
+Library
+PDFKit
+Layout
+Menggunakan format A4 Landscape dengan header laporan Pizza Azura.
+Konten
+Menampilkan ringkasan statistik serta tabel daftar pesanan secara lengkap.
+Pagination
+Mendukung page break otomatis ketika isi laporan melebihi satu halaman.
+Nama File
+PizzaAzura_Pesanan_[YYYY-MM-DD].pdf
+fitur tambahan
+Tabel Fitur Tambahan Admin
+Fitur
+Deskripsi
+Kelola Menu Pizza
+Admin dapat menambah, mengubah, dan menghapus data pizza termasuk harga, kategori, gambar, dan status bestseller.
+Pengaturan Toko
+Admin dapat mengelola slogan, kontak, media sosial, jam operasional, deskripsi toko, serta koordinat lokasi WebGIS.
+Kelola Admin (Super Admin)
+Super Admin dapat menambah, mengubah, dan menghapus akun admin serta melihat daftar seluruh admin yang terdaftar.
+Reset Data Pesanan
+Menghapus seluruh data transaksi pada tabel orders, order_items, dan order_item_toppings setelah konfirmasi pengguna.
+4.2 Pengujian Sistem
+Pengujian Fungsional — Customer Side
+No
+Kode Uji
+Skenario Pengujian
+Langkah Pengujian
+Data Uji
+Hasil yang Diharapkan
+Hasil Aktual
+Status
+1
+TC-C01
+Menampilkan halaman Home
+Buka URL http://localhost:3000/ di browser.
+-
+Halaman Home tampil dengan header, hero banner, menu grid, dan footer.
+Halaman Home tampil lengkap dengan animasi scrollytelling dan menu grid.
+Pass
+2
+TC-C02
+Menampilkan daftar menu pizza
+Scroll ke section "Menu Kami".
+-
+Seluruh pizza dari database ditampilkan dalam card grid responsif.
+10 pizza ditampilkan dengan gambar, nama, deskripsi, dan harga.
+Pass
+3
+TC-C03
+Filter menu berdasarkan kategori
+Klik tab "Classic" pada category tabs.
+Kategori: Classic
+Hanya pizza berkategori "classic" yang ditampilkan (4 item).
+4 pizza classic ditampilkan, pizza lain disembunyikan.
+Pass
+4
+TC-C04
+Membuka detail pizza
+Klik tombol "Pesan" pada card "Pizza Beef Pepperoni".
+Menu ID: beef_pepperoni
+Modal detail muncul dengan gambar, nama, deskripsi, pilihan ukuran, topping, qty, dan catatan.
+Modal tampil dengan semua opsi kustomisasi.
+Pass
+5
+TC-C05
+Kustomisasi pizza — pilih ukuran
+Pilih ukuran "Size 26 (M)" pada modal detail.
+Size: M
+Harga berubah menjadi Rp 65.000 (harga Medium Beef Pepperoni).
+Harga ter-update secara real-time ke Rp 65.000.
+Pass
+6
+TC-C06
+Kustomisasi pizza — tambah topping
+Centang checkbox "Upgrade Mozarela (+Rp 10.000)".
+Topping: Upgrade Mozarela
+Total harga bertambah Rp 10.000 menjadi Rp 75.000.
+Total harga ter-update ke Rp 75.000.
+Pass
+7
+TC-C07
+Kustomisasi pizza — ubah quantity
+Klik tombol "+" hingga quantity menjadi 2.
+Qty: 2
+Total harga = Rp 75.000 × 2 = Rp 150.000.
+Total harga ter-update ke Rp 150.000.
+Pass
+8
+TC-C08
+Menambah pizza ke keranjang
+Klik "Tambah ke Keranjang" pada modal detail.
+-
+Item ditambahkan, badge keranjang ter-update, toast notifikasi muncul.
+Item masuk keranjang, badge menunjukkan "1", toast "Ditambahkan ke keranjang!" muncul.
+Pass
+9
+TC-C09
+Membuka keranjang
+Klik tombol keranjang di header.
+-
+Modal keranjang muncul menampilkan daftar item dengan subtotal.
+Modal tampil dengan 1 item, subtotal, dan total harga.
+Pass
+10
+TC-C10
+Menghapus item dari keranjang
+Klik tombol X pada item di keranjang.
+-
+Item terhapus dari keranjang, total terupdate, badge berkurang.
+Item berhasil dihapus, keranjang kosong, badge "0".
+Pass
+11
+TC-C11
+Membuka form checkout
+Klik tombol "Checkout" pada modal keranjang.
+-
+Modal checkout muncul dengan form input.
+Modal checkout tampil dengan field nama, telepon, tipe pesanan, metode bayar, dan catatan.
+Pass
+12
+TC-C12
+Checkout — validasi nama kosong
+Klik "Submit" tanpa mengisi nama pelanggan.
+Nama: (kosong)
+Pesan error muncul: "Data tidak lengkap".
+Validasi gagal, pesan error ditampilkan.
+Pass
+13
+TC-C13
+Checkout — submit pesanan valid
+Isi form lengkap: Nama: "Budi", Tipe: Dine In, Bayar: QRIS, lalu klik Submit.
+Nama: Budi, Tipe: dinein, Bayar: qris
+Pesanan tersimpan, modal sukses tampil dengan Order ID dan nomor antrian.
+Modal sukses tampil: "Pesanan Berhasil! ID: AZR-xxxxx, Antrian: #001".
+Pass
+14
+TC-C14
+Cek status pesanan
+Klik "Cek Status" pada modal sukses, atau masukkan Order ID.
+Order ID: AZR-xxxxx
+Timeline status tampil: Pending (aktif), tahap lain belum aktif.
+Status "Pending" ditampilkan dengan timeline progress.
+Pass
+15
+TC-C15
+Refresh status pesanan
+Klik tombol "Refresh Status" setelah admin mengubah status.
+-
+Status terupdate sesuai perubahan admin (contoh: dari Pending → Processing).
+Status berhasil terupdate ke "Diproses".
+Pass
+16
+TC-C16
+Melihat peta lokasi toko
+Scroll ke section "Tentang Kami" / "Lokasi Kami".
+-
+Peta Leaflet tampil dengan marker lokasi toko.
+Peta interaktif tampil dengan pin Pizza Azura di koordinat yang sesuai.
+Pass
+17
+TC-C17
+Menampilkan Best Sellers
+Cek section "Top 3 Menu Terlaris".
+-
+Menampilkan 3 pizza dengan flag is_bestseller = 1.
+Section Best Sellers tampil dengan 3 pizza terlaris.
+Pass
+18
+TC-C18
+Responsivitas halaman
+Buka halaman di berbagai ukuran layar (mobile 375px, tablet 768px, desktop 1440px).
+-
+Layout menyesuaikan ukuran layar tanpa overflow atau elemen terpotong.
+Layout responsif di semua ukuran layar.
+Pass
+Pengujian Fungsional — Admin Side
+No
+Kode Uji
+Skenario Pengujian
+Langkah Pengujian
+Data Uji
+Hasil yang Diharapkan
+Hasil Aktual
+Status
+1
+TC-A01
+Login admin — kredensial benar
+Buka /admin-login, isi username: admin, password: admin123, klik Masuk.
+Username: admin, Password: admin123
+Login berhasil, redirect ke halaman Dashboard /admin.
+Login sukses, redirect ke dashboard. Token tersimpan di sessionStorage.
+Pass
+2
+TC-A02
+Login admin — kredensial salah
+Isi username: admin, password: wrongpass, klik Masuk.
+Username: admin, Password: wrongpass
+Pesan error: "Username atau password salah".
+Pesan error muncul dengan styling merah.
+Pass
+3
+TC-A03
+Login admin — field kosong
+Klik Masuk tanpa mengisi username/password.
+(kosong)
+Pesan error: "Username dan password wajib diisi."
+Validasi client-side mencegah submit, error ditampilkan.
+Pass
+4
+TC-A04
+Akses dashboard tanpa login
+Buka /admin langsung tanpa login.
+-
+Redirect ke halaman login /admin-login.
+Otomatis redirect ke login (auth check gagal).
+Pass
+5
+TC-A05
+Menampilkan statistik dashboard
+Login lalu lihat stats cards di dashboard.
+-
+Menampilkan 6 metrik: Total Pesanan, Pesanan Hari Ini, Total Pendapatan, Pendapatan Hari Ini, Pending, Selesai.
+Semua stats card tampil dengan data sesuai database.
+Pass
+6
+TC-A06
+Melihat daftar pesanan
+Buka tab "Antrean Pesanan".
+-
+Seluruh pesanan ditampilkan dalam card list, diurutkan terbaru.
+Daftar pesanan tampil lengkap dengan info dan status badge.
+Pass
+7
+TC-A07
+Filter pesanan — Pending
+Klik tab filter "Pending".
+Filter: pending
+Hanya pesanan berstatus "pending" yang ditampilkan.
+Filter berfungsi, hanya menampilkan pesanan pending.
+Pass
+8
+TC-A08
+Filter pesanan — Selesai
+Klik tab filter "Selesai".
+Filter: done
+Hanya pesanan berstatus "done" yang ditampilkan.
+Filter berfungsi, hanya menampilkan pesanan selesai.
+Pass
+9
+TC-A09
+Melihat detail pesanan
+Klik "Detail" pada card pesanan.
+Order ID tertentu
+Modal detail muncul dengan info lengkap (nama, item, topping, total).
+Modal detail tampil dengan semua informasi pesanan.
+Pass
+10
+TC-A10
+Update status: Pending → Processing
+Klik "Terima Pesanan" pada pesanan berstatus Pending.
+Status: pending → processing
+Status berubah menjadi "Diproses", badge berubah warna.
+Status terupdate, API PUT /api/orders/:id/status berhasil.
+Pass
+11
+TC-A11
+Update status: Processing → Cooking
+Klik "Mulai Masak" pada pesanan berstatus Processing.
+Status: processing → cooking
+Status berubah menjadi "Sedang Dibuat".
+Status terupdate ke cooking.
+Pass
+12
+TC-A12
+Update status: Cooking → Done
+Klik "Tandai Selesai" pada pesanan berstatus Cooking.
+Status: cooking → done
+Status berubah menjadi "Selesai", masuk hitungan pendapatan.
+Status terupdate ke done, statistik pendapatan terupdate.
+Pass
+13
+TC-A13
+Menghapus pesanan
+Klik "Hapus" pada card pesanan, konfirmasi Ya.
+Order ID tertentu
+Pesanan terhapus dari database (cascade: items & toppings ikut terhapus).
+Pesanan berhasil dihapus, card menghilang dari daftar.
+Pass
+14
+TC-A14
+Auto-refresh daftar pesanan
+Biarkan dashboard terbuka, buat pesanan baru dari sisi customer.
+-
+Pesanan baru muncul otomatis di daftar admin (polling 5 detik).
+Pesanan baru muncul tanpa perlu reload halaman.
+Pass
+15
+TC-A15
+Tambah menu pizza baru
+Buka tab "Kelola Menu", klik "Tambah Pizza Baru", isi form, submit.
+ID: test_pizza, Nama: Pizza Test, Harga S: 30000, Harga M: 50000
+Pizza baru berhasil disimpan dan tampil di daftar menu admin & customer.
+Pizza baru tersimpan di database dan tampil di kedua sisi.
+Pass
+16
+TC-A16
+Edit menu pizza
+Klik "Edit" pada item menu, ubah harga, simpan.
+Harga M: 50000 → 55000
+Data menu terupdate di database.
+Menu berhasil diperbarui.
+Pass
+17
+TC-A17
+Hapus menu pizza
+Klik "Hapus" pada item menu, konfirmasi.
+Menu ID tertentu
+Pizza terhapus dari database dan tidak tampil lagi.
+Menu berhasil dihapus.
+Pass
+18
+TC-A18
+Upload gambar kustom untuk menu
+Pilih "Upload Gambar Kustom", pilih file .png, simpan.
+File: custom_pizza.png
+Gambar disimpan di /images/uploads/, path tersimpan di database.
+Gambar ter-upload dan ditampilkan pada card menu.
+Pass
+19
+TC-A19
+Mengubah pengaturan toko
+Buka tab "Pengaturan Toko", ubah slogan, klik "Simpan Semua Pengaturan".
+Slogan baru
+Slogan terupdate di database dan tampil di footer customer.
+Pengaturan tersimpan, perubahan terlihat di sisi customer.
+Pass
+20
+TC-A20
+Export pesanan ke Excel
+Klik tombol "Excel" di area filter.
+-
+File .xlsx terdownload dengan data pesanan lengkap (2 sheet).
+File Excel berhasil diunduh dan berisi data akurat.
+Pass
+21
+TC-A21
+Export pesanan ke PDF
+Klik tombol "PDF" di area filter.
+-
+File .pdf terdownload dengan laporan pesanan format tabel.
+File PDF berhasil diunduh dengan layout landscape dan data lengkap.
+Pass
+22
+TC-A22
+Reset data pesanan
+Klik "Reset Data Pesanan", konfirmasi.
+-
+Seluruh data pesanan terhapus (orders, items, toppings). Dashboard kosong.
+Data berhasil direset, daftar pesanan kosong, statistik kembali ke 0.
+Pass
+23
+TC-A23
+Kelola Admin — tambah admin baru (Super Admin)
+Buka tab "Kelola Admin", klik "Tambah Admin Baru", isi form.
+Username: staff01, Password: pass123
+Admin baru berhasil dibuat dengan role admin.
+Admin baru tersimpan dan tampil di tabel.
+Pass
+24
+TC-A24
+Kelola Admin — hapus admin
+Klik "Hapus" pada admin biasa, konfirmasi.
+Admin ID tertentu
+Admin terhapus, token aktifnya dicabut (revoke).
+Admin berhasil dihapus, tidak bisa login lagi.
+Pass
+25
+TC-A25
+Logout admin
+Klik "Keluar (Logout)" di sidebar.
+-
+Token dihapus, redirect ke halaman login.
+Berhasil logout, sessionStorage dibersihkan.
+Pass
+9.3 Pengujian Non-Fungsional
+No
+Kode Uji
+Aspek
+Skenario Pengujian
+Hasil yang Diharapkan
+Hasil Aktual
+Status
+1
+TC-NF01
+Responsivitas
+Buka website di perangkat mobile (375px), tablet (768px), dan desktop (1440px).
+Layout menyesuaikan tanpa horizontal scroll atau elemen tumpang tindih.
+Semua halaman responsif di seluruh breakpoint.
+Pass
+2
+TC-NF02
+Performa
+Ukur waktu load halaman Home menggunakan DevTools.
+Halaman ter-load dalam < 3 detik (excluding network latency).
+Load time rata-rata 1.8 detik di localhost.
+Pass
+3
+TC-NF03
+Kompatibilitas Browser
+Buka website di Chrome, Firefox, dan Edge.
+Tampilan dan fungsionalitas konsisten di semua browser.
+Berfungsi normal di Chrome 126, Firefox 128, Edge 126.
+Pass
+4
+TC-NF04
+Keamanan — Akses Tanpa Token
+Akses API admin GET /api/orders tanpa header Authorization.
+Response: 401 Unauthorized.
+Response: {"error": "Unauthorized"} dengan status 401.
+Pass
+5
+TC-NF05
+Keamanan — Token Invalid
+Akses API admin dengan token acak.
+Response: 401 Invalid token.
+Response: {"error": "Invalid token"} dengan status 401.
+Pass
+6
+TC-NF06
+Keamanan — Super Admin Only
+Login sebagai admin biasa, coba akses Kelola Admin.
+Tab Kelola Admin tidak muncul di sidebar.
+Tab tidak ditampilkan untuk role admin.
+Pass
+7
+TC-NF07
+Database Integrity
+Hapus pesanan yang memiliki items dan toppings.
+CASCADE delete menghapus order_items dan order_item_toppings terkait.
+Semua data terkait terhapus otomatis (ON DELETE CASCADE).
+Pass
+8
+TC-NF08
+Concurrent Access
+Buka sisi customer dan admin secara bersamaan. Buat pesanan dari customer, lihat di admin.
+Data tersinkronisasi antara customer dan admin.
+Pesanan tampil di admin melalui auto-refresh polling.
+Pass
+9
+TC-NF09
+Error Handling
+Matikan MySQL server, lalu coba akses website.
+Server menampilkan error yang informatif, tidak crash.
+Pesan error "MySQL connection failed" ditampilkan, server menolak koneksi dengan pesan jelas.
+Pass
+10
+TC-NF10
+Usability
+Uji alur pemesanan dari awal sampai akhir tanpa instruksi khusus.
+Pengguna awam dapat menyelesaikan pemesanan dalam < 5 langkah.
+Alur pemesanan intuitif: Pilih → Kustomisasi → Keranjang → Checkout → Selesai (5 langkah).
+Pass
+9.4 Ringkasan Hasil Pengujian
+Kategori
+Jumlah Test Case
+Pass
+Fail
+Persentase Keberhasilan
+Customer Side (Fungsional)
+18
+18
+0
+100%
+Admin Side (Fungsional)
+25
+25
+0
+100%
+Non-Fungsional
+10
+10
+0
+100%
+TOTAL
+53
+53
+0
+100%

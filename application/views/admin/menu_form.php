@@ -22,7 +22,7 @@
     </header>
 
     <div class="form-card">
-        <form method="POST" action="<?= site_url($action === 'edit' ? 'admin/update_menu/'.$pizza->id : 'admin/save_menu') ?>" enctype="multipart/form-data">
+        <form method="POST" action="<?= site_url($action === 'edit' ? 'admin/menu/update/'.$pizza->id : 'admin/menu/save') ?>" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Nama Pizza</label>
                 <input type="text" name="nama_pizza" value="<?= isset($pizza) ? $pizza->nama_pizza : '' ?>" required>
@@ -36,6 +36,11 @@
             <div class="form-group">
                 <label>Harga</label>
                 <input type="number" name="harga" value="<?= isset($pizza) ? $pizza->harga : '' ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label>Stok Pizza</label>
+                <input type="number" name="stok" min="0" value="<?= isset($pizza) ? (int) $pizza->stok : 0 ?>" required>
             </div>
 
             <div class="form-group">

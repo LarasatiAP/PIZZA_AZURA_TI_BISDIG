@@ -28,6 +28,7 @@
                 <div class="pizza-info">
                     <h4><?= $p->nama_pizza ?></h4>
                     <p class="pizza-description"><?= $p->deskripsi ?></p>
+                    <p class="pizza-stock">Sisa stok: <?= (int) $p->stok > 0 ? (int) $p->stok : 'Habis' ?></p>
                 </div>
                 <div class="pizza-pricing">
                     <div class="price-row">
@@ -103,6 +104,13 @@
     font-size: 0.9rem;
     color: #999;
     margin: 0;
+}
+
+.pizza-stock {
+    margin-top: 8px;
+    font-size: 0.88rem;
+    color: #c8e563;
+    font-weight: 600;
 }
 
 .pizza-pricing {

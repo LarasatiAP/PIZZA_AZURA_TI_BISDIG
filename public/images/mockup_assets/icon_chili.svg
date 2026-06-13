@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <rect x="0" y="0" width="100" height="100" rx="16" fill="#2c2c31" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+  <!-- Stem -->
+  <path d="M56 24 Q52 14 40 16 Q42 20 48 24 Z" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.5"/>
+  <!-- Chili body -->
+  <path d="M48 24 Q72 38 62 68 Q52 86 28 90 Q42 72 44 48 Q45 28 48 24 Z" fill="#e63946" stroke="#9b2226" stroke-width="2.5"/>
+</svg>

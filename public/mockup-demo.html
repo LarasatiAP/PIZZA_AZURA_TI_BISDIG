@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Mockup Studio — Pizza Azura</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --studio-bg: #131316;
+            --studio-panel: #1a1a1e;
+            --studio-border: rgba(255, 255, 255, 0.08);
+            --studio-active: #ff6b35;
+        }
+
+        [data-theme="light"] {
+            --studio-bg: #e6e3e0;
+            --studio-panel: #ffffff;
+            --studio-border: rgba(0, 0, 0, 0.08);
+            --studio-active: #ff6b35;
+        }
+
+        body.studio-body {
+            background: var(--studio-bg);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            padding: 0;
+            margin: 0;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        body.studio-body::before {
+            display: none; /* Disable default pizza background deco for clean mockup recording */
+        }
+
+        /* STUDIO HEADER */
+        .studio-header {
+            background: var(--studio-panel);
+            border-bottom: 1px solid var(--studio-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            transition: background 0.4s;
+        }
+
+        .studio-logo-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .studio-logo-img {
+            height: 48px;
+            width: auto;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+
+        .studio-brand-title {
+            font-family: 'Lilita One', cursive;
+            font-size: 20px;
+            font-weight: normal;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        [data-theme="light"] .studio-brand-title {
+            color: #1a1a1e;
+        }
+
+        .studio-badge {
+            background: rgba(255, 107, 53, 0.12);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .studio-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .studio-nav-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--studio-border);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        [data-theme="light"] .studio-nav-btn {
+            background: rgba(0,0,0,0.02);
+            color: #555560;
+        }
+
+        .studio-nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        [data-theme="light"] .studio-nav-btn:hover {
+            background: rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.15);
+        }
+
+        .studio-nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        /* SCENE WRAPPERS */
+        .studio-viewport {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+            background: radial-gradient(circle at center, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            transition: background 0.4s;
+        }
+
+        .scene-container {
+            width: 100%;
+            max-width: 1200px;
+            display: none;
+            animation: sceneFadeIn 0.4s ease;
+        }
+
+        .scene-container.active {
+            display: block;
+        }
+
+        @keyframes sceneFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* DEVICE FRAMES */
+        .mockup-grid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        /* 📱 Phone Frame */
+        .phone-mockup {
+            width: 320px;
+            height: 650px;
+            background: #18181c;
+            border: 10px solid #2d2d35;
+            border-radius: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dynamic Island */
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 20px;
+            background: #000;
+            border-radius: 10px;
+            z-index: 100;
+        }
+
+        .phone-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #121214;
+        }
+
+        /* 💻 Laptop Frame */
+        .laptop-mockup {
+            width: 720px;
+            height: 440px;
+            background: #1c1d22;
+            border: 12px solid #2c2d35;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .laptop-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #1e1e24;
+        }
+
+        /* Laptop Container & Scaling */
+        .laptop-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Laptop Base */
+        .laptop-base {
+            width: 820px;
+            height: 14px;
+            background: #23242c;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            margin-top: -2px;
+            z-index: 10;
+        }
+
+        .laptop-base::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background: #14151a;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Responsive scale down for laptop frame on narrow screens */
+        @media (max-width: 900px) {
+            .laptop-container {
+                transform: scale(0.8);
+                transform-origin: center top;
+                margin-bottom: -90px;
+            }
+        }
+        @media (max-width: 700px) {
+            .laptop-container {
+                transform: scale(0.6);
+                transform-origin: center top;
+                margin-bottom: -180px;
+            }
+        }
+        @media (max-width: 500px) {
+            .laptop-container {
+                transform: scale(0.45);
+                transform-origin: center top;
+                margin-bottom: -240px;
+            }
+        }
+        @media (max-width: 400px) {
+            .laptop-container {
+                transform: scale(0.38);
+                transform-origin: center top;
+                margin-bottom: -270px;
+            }
+        }
+
+        /* SCENE 2: INTERACTIVE CUSTOMIZER */
+        .customizer-showcase {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .customizer-showcase {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .topping-preview-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 480px;
+        }
+
+        .mock-pizza-plate {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%), #1a1a1e;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s ease;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mock-pizza-img {
+            width: 94%;
+            height: 94%;
+            object-fit: contain;
+            border-radius: 50%;
+            transform: rotate(0deg);
+            transition: transform 12s linear;
+        }
+
+        .mock-pizza-plate.spin .mock-pizza-img {
+            transform: rotate(360deg);
+        }
+
+        .floating-toppings-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .floating-topping-svg {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            opacity: 0;
+            transform: scale(0.2) translateY(-100px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+        }
+
+        .floating-topping-svg.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .customizer-control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .customizer-control-panel h3 {
+            font-family: 'Lilita One', cursive;
+            font-size: 22px;
+            font-weight: normal;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .toppings-showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .topping-showcase-card {
+            background: var(--bg-primary);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .topping-showcase-card:hover {
+            border-color: rgba(255, 107, 53, 0.3);
+            background: var(--bg-secondary);
+        }
+
+        .topping-showcase-card.selected {
+            border-color: var(--accent);
+            background: rgba(255, 107, 53, 0.08);
+        }
+
+        .topping-showcase-card-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topping-showcase-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .topping-showcase-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .topping-showcase-price {
+            font-size: 11px;
+            color: var(--accent2);
+            font-weight: bold;
+        }
+
+        /* SCENE 3: WHATSAPP NOTIFICATION POPUP */
+        .phone-lockscreen {
+            background: url('images/pizza_bg.webp') no-repeat center center;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 60px;
+            box-sizing: border-box;
+        }
+
+        .lockscreen-time {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            font-size: 64px;
+            color: #fff;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            margin-bottom: 4px;
+        }
+
+        .lockscreen-date {
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            margin-bottom: 80px;
+        }
+
+        .wa-popup {
+            width: 90%;
+            background: rgba(20, 20, 25, 0.82);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 18px;
+            padding: 16px;
+            box-sizing: border-box;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .wa-popup.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .wa-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .wa-popup-sender {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #25d366;
+        }
+
+        .wa-popup-app-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .wa-popup-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .wa-popup-title {
+            font-weight: 800;
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .wa-popup-body {
+            font-size: 13px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.4;
+            white-space: pre-line;
+            text-align: left;
+        }
+
+        /* CONTROL HUD PANEL */
+        .studio-hud {
+            background: var(--studio-panel);
+            border-top: 1px solid var(--studio-border);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            bottom: 0;
+            z-index: 1000;
+            transition: background 0.4s;
+        }
+
+        .hud-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hud-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hud-select {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--studio-border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: inherit;
+            outline: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        [data-theme="light"] .hud-select {
+            background: #f0eeec;
+            color: #1a1a1e;
+        }
+
+        .hud-select:hover {
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body class="studio-body">
+
+    <!-- STUDIO HEADER -->
+    <header class="studio-header">
+        <div class="studio-logo-group">
+            <img src="images/logo.webp" alt="Logo" class="studio-logo-img">
+            <div>
+                <h2 class="studio-brand-title">Pizza Azura</h2>
+                <span style="font-size: 11px; color:var(--text-muted);">Interactive Video Mockup Studio</span>
+            </div>
+            <span class="studio-badge">UX STUDIO</span>
+        </div>
+
+        <nav class="studio-nav">
+            <button class="studio-nav-btn active" onclick="switchScene('dual', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg> Dual Device Sync
+            </button>
+            <button class="studio-nav-btn" onclick="switchScene('customizer', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg> Toppings Customizer
+            </button>
+            <button class="studio-nav-btn" onclick="switchScene('whatsapp', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> WhatsApp Notification
+            </button>
+            <a href="admin" class="studio-nav-btn" style="text-decoration: none; background: rgba(255, 255, 255, 0.08); color: #fff; display: inline-flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg> Kembali ke Admin
+            </a>
+        </nav>
+    </header>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="studio-viewport">
+        
+        <!-- SCENE 1: DUAL DEVICE SHOWCASE -->
+        <div class="scene-container active" id="scene-dual">
+            <div class="mockup-grid">
+                <!-- Customer Client Phone -->
+                <div class="phone-mockup">
+                    <iframe src="index.html" class="phone-iframe" id="customerFrame"></iframe>
+                </div>
+
+                <!-- Admin Dashboard Laptop -->
+                <div class="laptop-container">
+                    <div class="laptop-mockup">
+                        <iframe src="admin" class="laptop-iframe" id="adminFrame"></iframe>
+                    </div>
+                    <div class="laptop-base"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 2: INTERACTIVE CUSTOMIZER -->
+        <div class="scene-container" id="scene-customizer">
+            <div class="customizer-showcase">
+                <div class="topping-preview-box">
+                    <div class="mock-pizza-plate" id="pizzaPlate">
+                        <img src="images/pizza_supreme.webp" class="mock-pizza-img" alt="Pizza">
+                        <div class="floating-toppings-container" id="toppingsContainer"></div>
+                    </div>
+                    <h2 style="font-size: 22px; font-family:'Lilita One', cursive; margin-top:24px; color: #fff;" id="pizzaNameDisplay">Pizza Supreme</h2>
+                    <p style="font-size:15px; color:var(--accent2); font-weight:700; margin-top:6px;" id="pizzaPriceDisplay">Rp 55.000</p>
+                </div>
+
+                <div class="customizer-control-panel">
+                <h3><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg> Toppings Customizer</h3>
+                    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px; line-height:1.5;">Simulasikan penambahan topping interaktif dengan menaruh topping-topping kustom Anda di atas pizza. Berguna untuk visualisasi menu dan presentasi UI/UX.</p>
+                    
+                    <!-- Pizza Model Selector -->
+                    <div style="margin-bottom:20px;">
+                        <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">1. Pilih Model Pizza:</label>
+                        <select class="hud-select" style="width:100%;" onchange="changePizzaModel(this.value)">
+                            <option value="supreme|pizza_supreme.webp|55000">Pizza Supreme (Rp 55.000)</option>
+                            <option value="pepperoni|pizza_pepperoni.webp|50000">Pizza Pepperoni (Rp 50.000)</option>
+                            <option value="mushroom|pizza_mushroom.webp|45000">Pizza Mushroom (Rp 45.000)</option>
+                            <option value="sosis|pizza_sosis.webp|48000">Pizza Meat Sosis (Rp 48.000)</option>
+                            <option value="tuna|pizza_tuna.webp|58000">Pizza Spicy Tuna (Rp 58.000)</option>
+                            <option value="chicken|pizza_chicken.webp|52000">Pizza Chicken Curry (Rp 52.000)</option>
+                            <option value="corn_cheese|pizza_corn_cheese.webp|46000">Pizza Corn & Cheese (Rp 46.000)</option>
+                        </select>
+                    </div>
+
+                    <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">2. Tambah Topping:</label>
+                    <div class="toppings-showcase-grid">
+                        <div class="topping-showcase-card" onclick="toggleMockTopping('upgrade_mozarela', 'cheese', 10000, this)">
+                            <div class="topping-showcase-card-left">
+                                <img src="images/mockup_assets/icon_cheese.svg" class="topping-showcase-icon" alt="Keju">
+                                <span class="topping-showcase-name">Mozzarella</span>
+                            </div>
+                            <span class="topping-showcase-price">+Rp 10.000</span>
+                        </div>
+                        <div class="topping-showcase-card" onclick="toggleMockTopping('sosis', 'sausage', 5000, this)">
+                            <div class="topping-showcase-card-left">
+                                <img src="images/mockup_assets/icon_sausage.svg" class="topping-showcase-icon" alt="Sosis">
+                                <span class="topping-showcase-name">Sosis Sapi</span>
+                            </div>
+                            <span class="topping-showcase-price">+Rp 5.000</span>
+                        </div>
+                        <div class="topping-showcase-card" onclick="toggleMockTopping('chili', 'chili', 3000, this)">
+                            <div class="topping-showcase-card-left">
+                                <img src="images/mockup_assets/icon_chili.svg" class="topping-showcase-icon" alt="Cabai">
+                                <span class="topping-showcase-name">Ekstra Pedas</span>
+                            </div>
+                            <span class="topping-showcase-price">+Rp 3.000</span>
+                        </div>
+                        <div class="topping-showcase-card" onclick="toggleMockTopping('mushroom', 'mushroom', 4000, this)">
+                            <div class="topping-showcase-card-left">
+                                <img src="images/mockup_assets/icon_mushroom.svg" class="topping-showcase-icon" alt="Jamur">
+                                <span class="topping-showcase-name">Jamur Kancing</span>
+                            </div>
+                            <span class="topping-showcase-price">+Rp 4.000</span>
+                        </div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid var(--border); padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:14px; font-weight:700;">Subtotal Mockup:</span>
+                        <span style="font-size:18px; font-weight:800; color:var(--accent);" id="mockTotal">Rp 55.000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 3: WHATSAPP NOTIFICATION -->
+        <div class="scene-container" id="scene-whatsapp">
+            <div class="mockup-grid">
+                <div class="phone-mockup" style="height:600px;">
+                    <div class="phone-lockscreen">
+                        <div class="lockscreen-time" id="lockTime">23:45</div>
+                        <div class="lockscreen-date" id="lockDate">Selasa, 9 Juni</div>
+
+                        <div class="wa-popup" id="waPopup">
+                            <div class="wa-popup-header">
+                                <div class="wa-popup-sender">
+                                    <img src="images/mockup_assets/icon_whatsapp.svg" class="wa-popup-app-icon" alt="WhatsApp">
+                                    <span>WhatsApp</span>
+                                </div>
+                                <span class="wa-popup-time">Sekarang</span>
+                            </div>
+                            <div class="wa-popup-title">Pizza Azura Admin</div>
+                            <div class="wa-popup-body" id="waBody">Pesanan Baru Diterima!
+ID: AZR-KY18S2
+Pelanggan: Fyban
+Tipe: Dine In
+Detail:
+- Pizza Supreme (Size 26) x1
+- Pizza Pepperoni (Size 22) x1
+
+Total: Rp 105.000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="customizer-control-panel" style="max-width:400px; width:100%;">
+                    <h3><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> WhatsApp Simulator</h3>
+                    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px; line-height:1.5;">Simulasikan push notification WhatsApp untuk memperagakan proses pesanan masuk dari pelanggan ke dashboard admin Anda. Sempurna untuk demonstrasi video.</p>
+                    <button onclick="triggerWaPopup()" class="checkout-btn" style="width:100%; padding:14px; font-weight:bold; color:white; border:none; border-radius: 12px; display:flex; align-items:center; justify-content:center; gap:8px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Pemicu Notifikasi WA</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="studio-hud">
+        <div class="hud-group">
+            <button class="studio-nav-btn" onclick="toggleTheme()" id="themeToggleBtn" style="display:inline-flex; align-items:center; gap:4px;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20"></path></svg> Ganti Tema
+            </button>
+            <button class="studio-nav-btn" onclick="startAutoScroll()" id="scrollBtn" style="display:inline-flex; align-items:center; gap:4px;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Auto Scroll Demo
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Set time and date in Lockscreen
+        function updateLockscreenTime() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            const timeEl = document.getElementById('lockTime');
+            if (timeEl) timeEl.textContent = `${hrs}:${mins}`;
+            
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const dateEl = document.getElementById('lockDate');
+            if (dateEl) dateEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
+        }
+        setInterval(updateLockscreenTime, 1000);
+        updateLockscreenTime();
+
+        // Switch Scenes
+        function switchScene(sceneId, btn) {
+            document.querySelectorAll('.scene-container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.studio-nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`scene-${sceneId}`).classList.add('active');
+            btn.classList.add('active');
+            
+            // Spin pizza if customizing
+            const plate = document.getElementById('pizzaPlate');
+            if (sceneId === 'customizer') {
+                plate.classList.add('spin');
+            } else {
+                plate.classList.remove('spin');
+            }
+        }
+
+        // Auto Scroll Simulator
+        let scrollInterval = null;
+        function startAutoScroll() {
+            const iframe = document.getElementById('customerFrame');
+            const btn = document.getElementById('scrollBtn');
+            if (scrollInterval) {
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+                btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Auto Scroll Demo';
+                btn.classList.remove('active');
+                return;
+            }
+
+            btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect></svg> Hentikan Scroll';
+            btn.classList.add('active');
+            
+            let scrollAmount = 0;
+            let dir = 1;
+            scrollInterval = setInterval(() => {
+                const iframeWindow = iframe.contentWindow;
+                if(iframeWindow) {
+                    iframeWindow.scrollTo(0, scrollAmount);
+                    scrollAmount += (3 * dir);
+                    if (scrollAmount >= 1200) dir = -1;
+                    if (scrollAmount <= 0) dir = 1;
+                }
+            }, 30);
+        }
+
+        // Interactive Toppings Customizer
+        let basePizzaPrice = 55000;
+        let toppingsPriceTotal = 0;
+        const activeMockToppings = {};
+
+        function changePizzaModel(val) {
+            const [id, filename, price] = val.split('|');
+            basePizzaPrice = parseInt(price);
+            
+            // Update image & details
+            document.querySelector('#pizzaPlate .mock-pizza-img').src = `images/${filename}`;
+            // Convert e.g., "corn_cheese" to "Corn Cheese"
+            const prettyName = id.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            document.getElementById('pizzaNameDisplay').textContent = `Pizza ${prettyName}`;
+            document.getElementById('pizzaPriceDisplay').textContent = `Rp ${basePizzaPrice.toLocaleString('id-ID')}`;
+            
+            // Clear current mock toppings when switching
+            const container = document.getElementById('toppingsContainer');
+            container.innerHTML = '';
+            for (let toppingId in activeMockToppings) {
+                delete activeMockToppings[toppingId];
+            }
+            document.querySelectorAll('.topping-showcase-card').forEach(c => c.classList.remove('selected'));
+            toppingsPriceTotal = 0;
+            
+            // Recalculate
+            updateMockPrice();
+        }
+
+        function toggleMockTopping(toppingId, iconName, price, card) {
+            const container = document.getElementById('toppingsContainer');
+            
+            if (activeMockToppings[toppingId]) {
+                // Remove topping
+                delete activeMockToppings[toppingId];
+                card.classList.remove('selected');
+                toppingsPriceTotal -= price;
+                
+                // Remove elements from plate
+                const elems = container.querySelectorAll(`.topping-svg-${toppingId}`);
+                elems.forEach(el => el.remove());
+            } else {
+                // Add topping
+                activeMockToppings[toppingId] = true;
+                card.classList.add('selected');
+                toppingsPriceTotal += price;
+                
+                // Spawn 6 floating toppings in random spots on plate
+                for (let i = 0; i < 6; i++) {
+                    const el = document.createElement('img');
+                    el.src = `images/mockup_assets/icon_${iconName}.svg`;
+                    el.className = `floating-topping-svg topping-svg-${toppingId}`;
+                    
+                    // Random positions inside circular radius
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 90 + 20; // Radius distance
+                    const x = 140 + Math.cos(angle) * distance - 16; // center offset (32px / 2 = 16)
+                    const y = 140 + Math.sin(angle) * distance - 16;
+                    
+                    el.style.left = `${x}px`;
+                    el.style.top = `${y}px`;
+                    
+                    container.appendChild(el);
+                    
+                    // Animate drop effect
+                    setTimeout(() => {
+                        el.classList.add('active');
+                    }, 50 + i * 80);
+                }
+            }
+            
+            updateMockPrice();
+        }
+
+        function updateMockPrice() {
+            const total = basePizzaPrice + toppingsPriceTotal;
+            document.getElementById('mockTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        // WhatsApp Notification trigger
+        function triggerWaPopup() {
+            const popup = document.getElementById('waPopup');
+            popup.classList.remove('show');
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 200);
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Sync frames
+            const frames = document.querySelectorAll('iframe');
+            frames.forEach(f => {
+                try {
+                    const doc = f.contentDocument || f.contentWindow.document;
+                    if(doc && doc.documentElement) {
+                        doc.documentElement.setAttribute('data-theme', newTheme);
+                        // Trigger local storage save if app exists
+                        f.contentWindow.localStorage.setItem('pizzaAzura_theme', newTheme);
+                        if (typeof f.contentWindow.initTheme === 'function') {
+                            f.contentWindow.initTheme();
+                        }
+                    }
+                } catch(e) {
+                    console.log("Could not access iframe styling for cross-origin reasons");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
